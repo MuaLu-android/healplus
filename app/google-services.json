@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "380999269272",
+    "project_id": "healplus-7eca1",
+    "storage_bucket": "healplus-7eca1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380999269272:android:fb41f6592ad32187b189ed",
+        "android_client_info": {
+          "package_name": "com.example.healplus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTKh_m4A5IIplgJay1u-EtLRanfxvhH3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
