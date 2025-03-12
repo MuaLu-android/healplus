@@ -1,26 +1,20 @@
-package com.example.healplus.ViewModel
+package com.example.core.viewmodel.authviewmodel
 
 import retrofit2.Callback
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.healplus.Model.IngredientsModel
-import com.example.healplus.Model.CategoryModel
-import com.example.healplus.Model.ProductsModel
-import com.example.healplus.Model.BannersModel
-import com.example.healplus.Model.ElementsModel
-import com.example.healplus.RetrofitClient.RetrofitClient
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
+import com.example.core.model.banners.BannersModel
+import com.example.core.model.categories.CategoryModel
+import com.example.core.model.elements.ElementsModel
+import com.example.core.model.ingredients.IngredientsModel
+import com.example.core.model.products.ProductsModel
+import com.example.core.network.retrofitclients.RetrofitClient
 import retrofit2.Call
 import retrofit2.Response
 
 class CategoryProductViewModel: ViewModel() {
-    private val firebaseDatabase = FirebaseDatabase.getInstance()
     private val _banner = MutableLiveData<List<BannersModel>>()
     private val _category = MutableLiveData<MutableList<CategoryModel>>()
     private val _ingredient = MutableLiveData<MutableList<IngredientsModel>>()

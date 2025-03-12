@@ -1,9 +1,9 @@
-package com.example.healplus.ViewModel
+package com.example.core.viewmodel.apiviewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.healplus.Model.UserModel
+import com.example.core.model.users.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
