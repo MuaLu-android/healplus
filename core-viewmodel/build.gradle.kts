@@ -37,7 +37,7 @@ dependencies {
     implementation(project(":core-model"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.material)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.squareup.retrofit)

@@ -36,7 +36,7 @@ dependencies {
     implementation(project(":core-model"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.material)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)
     testImplementation(libs.junit)

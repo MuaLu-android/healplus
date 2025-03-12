@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ManagmentCart
+import com.example.core.ui.cart.CartScreen
 import com.example.core.ui.home.DetailScreen
 import com.example.core.ui.home.MainActivityScreen
 import com.example.core.ui.settings.SettingScreen
@@ -70,10 +71,10 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
         }
 
         composable("cart") {
-//            CartScreen(
-//                managementCart = ManagmentCart(LocalContext.current),
-//                navController
-//            )
+            CartScreen(
+                    managementCart = ManagmentCart(LocalContext.current),
+            navController
+            )
         }
 
         composable("settings") {

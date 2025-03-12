@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
+    implementation(libs.material)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.firebase.database)
@@ -62,7 +63,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.google.accompanist.pager)
     implementation(libs.coil.compose)
@@ -72,4 +72,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)
+    implementation(libs.androidx.compose.material3)
 }
