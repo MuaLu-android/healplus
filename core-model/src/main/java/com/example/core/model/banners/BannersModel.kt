@@ -1,4 +1,4 @@
-package com.example.healplus.Model
+package com.example.core.model.banners
 
 data class BannersModel(
     val idbner: Int,

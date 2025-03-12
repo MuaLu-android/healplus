@@ -1,4 +1,4 @@
-package com.example.healplus.Model
+package com.example.core.model.products
 
 import android.os.Parcel
 import android.os.Parcelable

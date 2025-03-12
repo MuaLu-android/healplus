@@ -1,4 +1,4 @@
-package com.example.core.viewmodel.authviewmodel
+package com.example.core.viewmodel.apiviewmodel
 
 import retrofit2.Callback
 import android.util.Log
@@ -14,7 +14,7 @@ import com.example.core.network.retrofitclients.RetrofitClient
 import retrofit2.Call
 import retrofit2.Response
 
-class CategoryProductViewModel: ViewModel() {
+class ApiCallViewModel: ViewModel() {
     private val _banner = MutableLiveData<List<BannersModel>>()
     private val _category = MutableLiveData<MutableList<CategoryModel>>()
     private val _ingredient = MutableLiveData<MutableList<IngredientsModel>>()

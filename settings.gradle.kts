@@ -21,4 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "HealPlus"
 include(":app")
- 
+include(":core-network")
+include(":core-model")
+include(":core-viewmodel")
+include(":core-ui")
+include(":core-navigation")
+include(":core-tinyDB")

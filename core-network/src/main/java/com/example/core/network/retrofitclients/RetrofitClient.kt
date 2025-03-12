@@ -1,5 +1,6 @@
-package com.example.healplus.RetrofitClient
+package com.example.core.network.retrofitclients
 
+import com.example.core.network.apis.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

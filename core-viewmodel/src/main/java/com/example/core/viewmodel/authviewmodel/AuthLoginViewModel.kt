@@ -1,4 +1,4 @@
-package com.example.core.viewmodel.apiviewmodel
+package com.example.core.viewmodel.authviewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

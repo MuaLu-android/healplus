@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.0"
+composeVersion = "1.6.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -11,12 +12,22 @@ composeBom = "2024.04.01"
 googleGmsGoogleServices = "4.4.2"
 firebaseDatabase = "21.0.0"
 appcompat = "1.7.0"
-material = "1.12.0"
 activity = "1.10.0"
 firebaseAuth = "23.2.0"
 firebaseFirestore = "25.1.2"
+composeMaterial3 = "1.2.0"
+constraintLayoutCompose = "1.0.1"
+accompanistPager = "0.32.0"
+coilCompose = "2.6.0"
+runtimeLiveData = "1.6.0"
+lottieCompose = "6.1.0"
+gson = "2.10.1"
+navigationCompose = "2.7.5"
+retrofit = "2.9.0"
+material = "1.12.0"
 
 [libraries]
+androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -30,17 +41,30 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
-
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayoutCompose" }
+google-accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanistPager" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLiveData" }
+airbnb-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
+google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+squareup-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+squareup-retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 
+[bundles]
+androidComposeLibs = ["firebase-auth", "firebase-firestore", "androidx-compose-material3",
+    "androidx-constraintlayout-compose",
+]

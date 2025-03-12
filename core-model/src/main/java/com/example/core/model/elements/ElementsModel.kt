@@ -1,4 +1,4 @@
-package com.example.healplus.Model
+package com.example.core.model.elements
 
 data class ElementsModel(
     val ide: String = "",

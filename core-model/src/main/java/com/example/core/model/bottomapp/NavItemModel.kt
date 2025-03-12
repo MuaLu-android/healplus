@@ -1,4 +1,4 @@
-package com.example.healplus.Model
+package com.example.core.model.bottomapp
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

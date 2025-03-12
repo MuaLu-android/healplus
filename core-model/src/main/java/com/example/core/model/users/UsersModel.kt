@@ -1,4 +1,4 @@
-package com.example.healplus.Model
+package com.example.core.model.users
 
 data class UserModel(
     val userId: String,

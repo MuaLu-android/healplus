@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
@@ -32,11 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
-import com.example.healplus.Model.NavItemModel
-import com.example.healplus.MyAppNavigation
+import com.example.core.model.bottomapp.NavItemModel
+import com.example.core.navigation.mynavigation.MyAppNavigation
+import com.example.core.viewmodel.authviewmodel.AuthSate
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
-import com.example.healplus.ViewModel.AuthSate
-import com.example.healplus.ViewModel.AuthViewModel
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
