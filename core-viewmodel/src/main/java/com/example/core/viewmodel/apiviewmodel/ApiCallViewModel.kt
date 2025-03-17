@@ -5,12 +5,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
 import com.example.core.model.elements.ElementsModel
 import com.example.core.model.ingredients.IngredientsModel
 import com.example.core.model.products.ProductsModel
 import com.example.core.network.retrofitclients.RetrofitClient
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
 
@@ -25,6 +32,37 @@ class ApiCallViewModel: ViewModel() {
     val ingredient: LiveData<MutableList<IngredientsModel>> = _ingredient
     val recommended: LiveData<MutableList<ProductsModel>> = _recommended
     val element: LiveData<MutableList<ElementsModel>> = _element
+    private var currentCall: Call<List<ProductsModel>>? = null
+
+
+    fun loadProductBySearch(search: String) {
+        Log.d("API_REQUEST1", "Gửi yêu cầu API để lấy sản phẩm của danh mục $search")
+        Log.d("API_DEBUG", "Thời gian gửi request: ${System.currentTimeMillis()}")
+        // Hủy request cũ nếu có
+        currentCall?.cancel()
+
+        // Tạo request mới
+        currentCall = RetrofitClient.instance.getSearchProduct(search)
+        currentCall?.enqueue(object : Callback<List<ProductsModel>> {
+            override fun onResponse(call: Call<List<ProductsModel>>, response: Response<List<ProductsModel>>) {
+                Log.d("API_RESPONSE1", "Nhận phản hồi từ API - Code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    val productList = response.body()?.toMutableList() ?: mutableListOf()
+                    _recommended.value = productList
+                    Log.d("API_RESPONSE1", "Số lượng sản phẩm nhận được: ${productList.size}")
+                    productList.forEachIndexed { index, item ->
+                        Log.d("API_RESPONSE1", "Sản phẩm [$index]: $item")
+                    }
+                } else {
+                    Log.e("API_ERROR1", "Lỗi Response Code: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+            override fun onFailure(call: Call<List<ProductsModel>>, t: Throwable) {
+                Log.e("API_ERROR1", "Lỗi khi gọi API: ${t.message}")
+            }
+        })
+    }
     fun loadProductByCategory(idc: String) {
         Log.d("API_REQUEST", "Gửi yêu cầu API để lấy sản phẩm của danh mục $idc...")
         RetrofitClient.instance.getProductsByCategory(idc).enqueue(object : Callback<List<ProductsModel>> {
@@ -158,7 +196,7 @@ class ApiCallViewModel: ViewModel() {
     fun loadRecommended() {
         Log.d("API_REQUEST", "Gửi yêu cầu API để lấy sản phẩm được đề xuất...")
 
-        RetrofitClient.instance.getRecommendedProducts(0).enqueue(object : Callback<List<ProductsModel>> {
+        RetrofitClient.instance.getRecommendedProducts(1).enqueue(object : Callback<List<ProductsModel>> {
             override fun onResponse(call: Call<List<ProductsModel>>, response: Response<List<ProductsModel>>) {
                 Log.d("API_RESPONSE", "Nhận phản hồi từ API - Code: ${response.code()}")
                 if (response.isSuccessful) {

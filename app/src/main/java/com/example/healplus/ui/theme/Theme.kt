@@ -1,4 +1,4 @@
-package com.example.compose
+package com.example.healplus.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,7 +13,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import com.example.ui.theme.Typography1
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,

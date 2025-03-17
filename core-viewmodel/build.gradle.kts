@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.firebase.auth)
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation(libs.firebase.firestore)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)

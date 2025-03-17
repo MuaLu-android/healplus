@@ -1,5 +1,6 @@
 package com.example.core.network.apis
 
+import android.icu.text.StringSearch
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
 import com.example.core.model.elements.ElementsModel
@@ -36,4 +37,7 @@ interface ApiService {
 
     @GET("get_elements_by_ingredient.php")
     fun getElementByIngredient(@Query("iding") iding: String): Call<List<ElementsModel>>
+
+    @GET("getsearch.php")
+    fun getSearchProduct(@Query("search") search: String): Call<List<ProductsModel>>
 }
