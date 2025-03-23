@@ -8,5 +8,7 @@ data class UserModel(
     var fullName: String = "",
     var phoneNumber: String = "",
     var localImageUrl: String = "",
+    var gender: String = "",
+    var birthDate: String = "",
     val role: String = "user"
 )

@@ -1,13 +1,17 @@
 package com.example.core.network.apis
 
 import android.icu.text.StringSearch
+import com.example.core.model.Api.ApiResponse
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
 import com.example.core.model.elements.ElementsModel
 import com.example.core.model.ingredients.IngredientsModel
 import com.example.core.model.products.ProductsModel
 import retrofit2.Call
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
@@ -40,4 +44,18 @@ interface ApiService {
 
     @GET("getsearch.php")
     fun getSearchProduct(@Query("search") search: String): Call<List<ProductsModel>>
+
+
+    @FormUrlEncoded
+    @POST("add_category.php") // Đường dẫn file PHP trên server
+    fun addCategory(
+        @Field("title") title: String
+    ): Call<ApiResponse>
+
+    @FormUrlEncoded
+    @POST("update_category.php") // Đường dẫn API cập nhật danh mục
+    fun updateCategory(
+        @Field("idc") idc: String,
+        @Field("title") title: String
+    ): Call<ApiResponse>
 }

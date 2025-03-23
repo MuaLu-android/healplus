@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Acitivity.LoginActivity"
+            android:name=".acitivity.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.HealPlus">
@@ -28,13 +28,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Acitivity.AdminActivity"
+            android:name=".acitivity.AdminActivity"
             android:exported="false" />
         <activity
-            android:name=".Acitivity.BaseActivity"
+            android:name=".acitivity.BaseActivity"
             android:exported="false" />
         <activity
-            android:name=".Acitivity.MainActivity"
+            android:name=".acitivity.MainActivity"
             android:exported="true">
         </activity>
     </application>

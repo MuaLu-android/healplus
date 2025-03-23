@@ -1,4 +1,4 @@
-package com.example.healplus.Acitivity
+package com.example.healplus.acitivity
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -10,7 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.healplus.Navigation.LoginNavigation
+import com.example.healplus.navigation.LoginNavigation
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.ui.theme.AppTheme
 

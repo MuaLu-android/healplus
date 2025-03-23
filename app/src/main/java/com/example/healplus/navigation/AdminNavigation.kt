@@ -1,4 +1,4 @@
-package com.example.healplus.Navigation
+package com.example.healplus.navigation
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -14,19 +14,24 @@ import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
-import com.example.healplus.admin.AddProductScreen
+import com.example.healplus.add.AddCategoryScreen
+import com.example.healplus.add.AddProductScreen
+import com.example.healplus.add.AddScreen
+import com.example.healplus.add.EditCategoryScreen
+import com.example.healplus.add.UpdateDeleteCategory
 import com.example.healplus.cart.CartScreen
 import com.example.healplus.category.CategoryScreen
 import com.example.healplus.home.DetailScreen
 import com.example.healplus.home.MainActivityScreen
 import com.example.healplus.search.SearchScreen
+import com.example.healplus.settings.ProfileScreen
 import com.example.healplus.settings.SettingScreen
-import com.example.healplus.settings.UserProfileScreen
+import com.example.healplus.settings.UpdateProfileScreen
 import com.google.gson.Gson
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
+fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
@@ -38,11 +43,23 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
         composable(route = "point"){
 
         }
+        //Admin
         composable(route = "add"){
-
+            AddScreen(modifier = modifier,
+                navController)
         }
-        composable(route = "cart"){
-
+        composable(route = "insert_category"){
+            val viewModel: ApiCallViewModel = viewModel()
+            AddCategoryScreen(navController, viewModel)
+        }
+        composable(route = "update_delete_category"){
+            UpdateDeleteCategory(navController)
+        }
+        composable("edit_category/{idc}/{title}") { backStackEntry ->
+            val viewModel: ApiCallViewModel = viewModel()
+            val idc = backStackEntry.arguments?.getString("idc") ?: ""
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            EditCategoryScreen(navController, viewModel, idc, title)
         }
         composable("detail/{itemsModel}") {
                 backStackEntry ->
@@ -58,8 +75,8 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
 
         composable("cart") {
             CartScreen(
-                    managementCart = ManagmentCart(LocalContext.current),
-            navController
+                managementCart = ManagmentCart(LocalContext.current),
+                navController
             )
         }
 
@@ -137,14 +154,18 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
         }
         composable("profile"){
             val viewModel: AuthViewModel = viewModel()
-            UserProfileScreen(
-                viewModel = viewModel
+            ProfileScreen(
+                viewModel = viewModel,
+                navController
             )
         }
-        composable("add"){
-            val viewModel: AuthViewModel = viewModel()
-            AddProductScreen(navController = navController,
-                authViewModel = viewModel)
+//        composable("add"){
+//            val viewModel: AuthViewModel = viewModel()
+//            AddProductScreen(navController = navController,
+//                authViewModel = viewModel)
+//        }
+        composable("updateProfile"){
+            UpdateProfileScreen()
         }
 //        composable(route = "cartScreen"){
 //            CartScreen(

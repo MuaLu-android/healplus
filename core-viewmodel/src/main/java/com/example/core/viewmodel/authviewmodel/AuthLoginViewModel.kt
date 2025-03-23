@@ -1,6 +1,5 @@
 package com.example.core.viewmodel.authviewmodel
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,10 +20,25 @@ class AuthViewModel: ViewModel() {
     }
 
     fun checkAuthSate(){
-        if (auth.currentUser == null){
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
             _authState.value = AuthSate.Unauthenticated
-        }else{
-            _authState.value = AuthSate.Authenticated
+            Log.d("AuthViewModel", "User is Unauthenticated")
+        } else {
+            db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val role = document.getString("role")
+                        _authState.value = if (role == "admin") AuthSate.Admin else AuthSate.User
+                        Log.d("AuthViewModel", "User role: $role")
+                    } else {
+                        _authState.value = AuthSate.Error("User data not found")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    _authState.value = AuthSate.Error(e.message ?: "Failed to fetch user role")
+                }
         }
     }
     fun loginAuthState(email: String, password: String){
@@ -84,7 +98,7 @@ class AuthViewModel: ViewModel() {
                             .document(userId)
                             .set(userModel)
                             .addOnSuccessListener {
-                                _authState.value = AuthSate.User
+                                checkAuthSate() // Cập nhật trạng thái sau khi đăng ký
                             }
                             .addOnFailureListener { e ->
                                 _authState.value = AuthSate.Error(e.message ?: "Failed to save user data")
@@ -126,7 +140,6 @@ class AuthViewModel: ViewModel() {
 
 }
 sealed class AuthSate{
-    object Authenticated: AuthSate()
     object Unauthenticated: AuthSate()
     object Loading: AuthSate()
     object Admin: AuthSate()

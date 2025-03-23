@@ -1,4 +1,5 @@
 package com.example.healplus.settings
+import android.content.Intent
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,10 +29,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
+import com.example.healplus.acitivity.LoginActivity
 import com.example.healplus.R
 
 @Composable
@@ -39,6 +42,7 @@ fun SettingScreen(modifier: Modifier = Modifier,
                   navController: NavController,
                   authViewModel: AuthViewModel
 ){
+
     Scaffold (
         topBar = {
             SettingTopAppBar(navController)
@@ -154,6 +158,7 @@ fun DeleteAccountButton() {
 }
 @Composable
 fun LogOut(authViewModel: AuthViewModel) {
+    val context = LocalContext.current
     Text(
         text = stringResource(R.string.logout),
         fontSize = 16.sp,
@@ -161,7 +166,10 @@ fun LogOut(authViewModel: AuthViewModel) {
         fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { authViewModel.signOut()}
+            .clickable {
+                authViewModel.signOut()
+                context.startActivity(Intent(context, LoginActivity::class.java))
+            }
             .padding(top = 24.dp),
         textAlign = TextAlign.Center
     )
@@ -173,7 +181,7 @@ fun Spacer(){
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color.Black)
+                .background(Color.Gray)
         )
     }
 }

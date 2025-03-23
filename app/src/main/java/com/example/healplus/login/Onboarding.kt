@@ -1,7 +1,6 @@
 package com.example.healplus.login
 
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -33,8 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.core.viewmodel.authviewmodel.AuthSate
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
-import com.example.healplus.Acitivity.AdminActivity
-import com.example.healplus.Acitivity.MainActivity
+import com.example.healplus.acitivity.AdminActivity
+import com.example.healplus.acitivity.MainActivity
 import com.example.healplus.R
 import kotlinx.coroutines.delay
 
@@ -43,6 +42,7 @@ fun OnboardingScreen(modifier: Modifier = Modifier, navController: NavController
     val context = LocalContext.current
     val authSate = authViewModel.authSate.observeAsState()
     LaunchedEffect(authSate.value) {
+        delay(3000)
         if (authSate.value is AuthSate.Admin) {
             // Chuyển sang MainActivity khi đã đăng nhập
             val intent = Intent(context, AdminActivity::class.java)

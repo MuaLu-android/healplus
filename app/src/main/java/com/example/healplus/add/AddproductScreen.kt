@@ -1,4 +1,4 @@
-package com.example.healplus.admin
+package com.example.healplus.add
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,10 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.core.model.products.ProductsModel
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 
 

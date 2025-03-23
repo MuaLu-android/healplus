@@ -55,8 +55,8 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.viewmodel.authviewmodel.AuthSate
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
-import com.example.healplus.Acitivity.AdminActivity
-import com.example.healplus.Acitivity.MainActivity
+import com.example.healplus.acitivity.AdminActivity
+import com.example.healplus.acitivity.MainActivity
 import com.example.healplus.R
 
 @Composable

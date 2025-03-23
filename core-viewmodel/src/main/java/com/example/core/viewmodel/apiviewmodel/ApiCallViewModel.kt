@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.model.Api.ApiResponse
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
 import com.example.core.model.elements.ElementsModel
@@ -262,5 +263,41 @@ class ApiCallViewModel: ViewModel() {
                 }
             })
 
+    }
+    fun addCategory(title: String, onResult: (ApiResponse) -> Unit) {
+        Log.d("AddCategory", "Đang gửi request với title: $title")
+        val call = RetrofitClient.instance.addCategory(title)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response:Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        Log.d("AddCategory", "Phản hồi thành công: $it")
+                        onResult(it)
+                        Log.e("AddCategory", "Phản hồi rỗng!")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                Log.e("AddCategory", "Lỗi kết nối: ${t.message}")
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun updateCategory(idc: String, title: String, onResult: (ApiResponse) -> Unit) {
+        val call = RetrofitClient.instance.updateCategory(idc, title)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onResult(it)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
     }
 }

@@ -1,4 +1,4 @@
-package com.example.healplus.Acitivity
+package com.example.healplus.acitivity
 
 import android.os.Bundle
 import android.view.View

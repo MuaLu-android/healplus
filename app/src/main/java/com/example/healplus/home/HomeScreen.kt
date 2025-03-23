@@ -286,7 +286,7 @@ fun CategoryList(categories: List<CategoryModel>,  navController: NavController)
             onItemClick = {
                 selectedIndex = index
 //                oPenElements(categories[index].idc, categories[index].title)
-                navController.navigate("category/${categories[index].idc}/${categories[index].title}")
+                navController.navigate("edit_category/${categories[index].idc}/${categories[index].title}")
 //                navController.navigate("home")
             }
            )

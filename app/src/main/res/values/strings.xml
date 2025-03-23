@@ -64,4 +64,5 @@
     <string name="Ingredient">Ingredient</string>
     <string name="description">Description</string>
     <string name="Registrationnumber">Registration number</string>
+    <string name="add">Add</string>
 </resources>
