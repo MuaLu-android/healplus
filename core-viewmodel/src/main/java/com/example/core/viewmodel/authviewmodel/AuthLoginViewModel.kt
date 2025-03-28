@@ -137,6 +137,9 @@ class AuthViewModel: ViewModel() {
         auth.signOut()
         _authState.value = AuthSate.Unauthenticated
     }
+    fun getUserId(): String? {
+        return auth.currentUser?.uid
+    }
 
 }
 sealed class AuthSate{

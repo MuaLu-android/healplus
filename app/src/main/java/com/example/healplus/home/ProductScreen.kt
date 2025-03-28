@@ -53,10 +53,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ManagmentCart
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import com.example.healplus.settings.SpacerProduct
 
@@ -83,12 +85,13 @@ fun ProductTopAppBar(onBackClick: () -> Unit) {
 @Composable
 fun DetailScreen(item: ProductsModel,
                  onBackClick: () -> Unit,
-                 navController: NavController
+                 navController: NavController,
+                 authViewModel: AuthViewModel = viewModel()
                  ) {
     var selectedImageUrl by remember { mutableStateOf(item.product_images.first()) }
     var selectedModelIndex by remember { mutableStateOf(-1) }
     var model by remember { mutableStateOf(item.unit_names.first()) }
-    val managmentCart = ManagmentCart(LocalContext.current)
+    val managmentCart = ManagmentCart(LocalContext.current, authViewModel.getUserId().toString())
     Scaffold(
         topBar = {
             ProductTopAppBar(onBackClick)

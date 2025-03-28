@@ -42,20 +42,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ChangeNumberItemsListener
 import com.example.core.tinydb.helper.ManagmentCart
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 
 @Composable
 fun CartScreen(
-    managementCart: ManagmentCart ? = null,
     navController: NavController,
+    authViewModel: AuthViewModel = viewModel()
 ){
     val context = LocalContext.current
-    val managementCart = remember { managementCart ?: ManagmentCart(context) }
+    val managementCart = remember { ManagmentCart(context, authViewModel.getUserId().toString()) }
     val cartItems = remember { mutableStateOf(managementCart.getListCart() ?: arrayListOf())  }
     val tax = remember { mutableStateOf(0.0) }
     calculatorCart(managementCart,tax)

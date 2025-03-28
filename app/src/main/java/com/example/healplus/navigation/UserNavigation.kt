@@ -56,7 +56,6 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
 
         composable("cart") {
             CartScreen(
-                    managementCart = ManagmentCart(LocalContext.current),
             navController
             )
         }

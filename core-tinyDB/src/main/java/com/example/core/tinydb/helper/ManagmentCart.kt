@@ -6,10 +6,10 @@ import android.widget.Toast
 import com.example.core.model.products.ProductsModel
 import com.google.gson.Gson
 
-class ManagmentCart(val context: Context) {
+class ManagmentCart(val context: Context, userId: String) {
 
     private val tinyDB = TinyDB(context)
-
+    val CartKey = "CartList-${userId}"
     fun insertFood(item: ProductsModel) {
         Log.d("ManagmentCart", "Start inser:")
         var listFood = getListCart()
@@ -23,7 +23,7 @@ class ManagmentCart(val context: Context) {
             listFood.add(item)
         }
         Log.d("ManagmentCart", "Dữ liệu trước khi lưu: ${Gson().toJson(listFood)}")
-        tinyDB.putListObject("CartList", listFood)
+        tinyDB.putListObject(CartKey, listFood)
         Log.d("ManagmentCart", "Dữ liệu đã lưu thành công")
         Log.d("ManagmentCart", "Sau khi thêm: $listFood")
         Toast.makeText(context, "Them vao gio hang", Toast.LENGTH_SHORT).show()
@@ -32,7 +32,7 @@ class ManagmentCart(val context: Context) {
     fun getListCart(): ArrayList<ProductsModel> {
         Log.d("ManagmentCart", "Start getList")
 //        return tinyDB.getListObject("CartList") ?: arrayListOf()
-        val listCart = tinyDB.getListObject("CartList") ?: arrayListOf()
+        val listCart = tinyDB.getListObject(CartKey) ?: arrayListOf()
         Log.d("ManagmentCart", "Danh sách sản phẩm trong giỏ hàng: $listCart")
         return listCart
     }
@@ -43,14 +43,14 @@ class ManagmentCart(val context: Context) {
         } else {
             listFood[position].quantity--
         }
-        tinyDB.putListObject("CartList", listFood)
+        tinyDB.putListObject(CartKey, listFood)
         listener.onChanged()
     }
 
     fun plusItem(listFood: ArrayList<ProductsModel>, position: Int, listener: ChangeNumberItemsListener) {
         if (position !in listFood.indices) return
         listFood[position].quantity++
-        tinyDB.putListObject("CartList", listFood)
+        tinyDB.putListObject(CartKey, listFood)
         listener.onChanged()
     }
 
