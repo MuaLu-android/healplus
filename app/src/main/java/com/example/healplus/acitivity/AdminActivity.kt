@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
@@ -57,9 +61,9 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     val navController = rememberNavController()
     val navItemList = listOf(
         NavItemModel(route = "home", label = stringResource(id = R.string.home), icon = Icons.Default.Home, badgeCount = 0),
-        NavItemModel(route = "point", label = stringResource(id = R.string.poit), icon = Icons.Default.FavoriteBorder, badgeCount = 0),
-        NavItemModel(route = "add", label = stringResource(id =R.string.add), icon = Icons.Default.Add, badgeCount = 0),
-        NavItemModel(route = "cart", label = stringResource(R.string.cart), icon = Icons.Default.ShoppingCart, badgeCount = 5),
+        NavItemModel(route = "point", label = stringResource(id = R.string.manager), icon = Icons.Default.List, badgeCount = 0),
+        NavItemModel(route = "add", label = stringResource(id =R.string.add), icon = Icons.Default.Email, badgeCount = 0),
+        NavItemModel(route = "oder", label = stringResource(R.string.oder), icon = Icons.Default.ExitToApp, badgeCount = 0),
         NavItemModel(route = "settings", label = stringResource(R.string.settings), icon = Icons.Default.Settings, badgeCount = 0),
     )
     var selectedIndex by remember {
@@ -74,8 +78,12 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (currentRoute != "detail/{itemsModel}" && currentRoute != "cart"
-                && currentRoute != "category/{categoryid}/{categorytitle}" && currentRoute != "add") { // Kiểm tra đăng nhập
+            if (currentRoute != "detail/{itemsModel}" && currentRoute != "oder"
+                && currentRoute != "category/{categoryid}/{categorytitle}" && currentRoute != "add"
+                && currentRoute != "update_delete_category"&& currentRoute != "Products"
+                && currentRoute != "Insert_Category" && currentRoute != "Category"
+                && currentRoute != "Ingredient" && currentRoute != "Insert_Ingredient"
+                && currentRoute != "edit_category/{idc}/{title}" && currentRoute != "oderscreen") { // Kiểm tra đăng nhập
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

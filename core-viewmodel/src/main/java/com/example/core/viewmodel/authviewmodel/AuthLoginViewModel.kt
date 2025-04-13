@@ -4,21 +4,224 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.core.model.chat.Message
 import com.example.core.model.users.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class AuthViewModel: ViewModel() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val _authState = MutableLiveData<AuthSate>()
     private val _user = MutableLiveData<UserModel?>()
+    private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val authSate: LiveData<AuthSate> = _authState
     val user: LiveData<UserModel?> = _user
+    val messages: StateFlow<List<Message>> = _messages
+    private val _adminChatRoomsLiveData = MutableLiveData<List<String>>()
+    val adminChatRoomsLiveData: LiveData<List<String>> = _adminChatRoomsLiveData
+    private var chatRoomId: String? = null
+    private val adminId = "HshH2bedEKUGuQEkHkvH00G2frf2"
+    private var adminChatRooms: List<String> = emptyList()
     init {
         checkAuthSate()
     }
+    init {
+        viewModelScope.launch {
+            getOrCreateChatRoom()
+            loadMessages()
+        }
+    }
+    suspend fun getOrCreateChatRoom() {
+        val userId = auth.currentUser?.uid ?: return
+        val userDoc = db.collection("users").document(userId).get().await()
+        val userRole = userDoc.getString("role")
 
+        if (userRole == "admin") {
+            // Admin: Tải danh sách các phòng chat
+            loadAdminChatRooms()
+        } else {
+            // Người dùng thường
+            // Kiểm tra xem phòng chat đã tồn tại chưa
+            val chatRoomsRef = db.collection("chat_rooms")
+            val query = chatRoomsRef.whereArrayContains("users", userId)
+            val querySnapshot = query.get().await()
+
+            chatRoomId = querySnapshot.documents.firstOrNull {
+                (it.get("users") as? List<String>)?.contains(adminId) == true && it.getString("adminId") == adminId
+            }?.id
+
+            if (chatRoomId == null) {
+                // Tạo phòng chat mới
+                val newChatRoom = hashMapOf(
+                    "users" to listOf(userId, adminId),
+                    "adminId" to adminId
+                )
+                val newChatRoomRef = chatRoomsRef.add(newChatRoom).await()
+                chatRoomId = newChatRoomRef.id
+            }
+        }
+    }
+
+    private fun loadAdminChatRooms() {
+        viewModelScope.launch {
+            db.collection("chat_rooms")
+                .whereEqualTo("adminId", adminId)
+                .get()
+                .addOnSuccessListener { documents ->
+                    val chatRooms = documents.map { it.id }
+                    adminChatRooms = chatRooms
+                    _adminChatRoomsLiveData.value = chatRooms
+                    Log.d("ChatViewModel", "loadAdminChatRooms: $chatRooms")
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("ChatViewModel", "Error getting admin chat rooms: ", exception)
+                }
+        }
+    }
+
+    fun loadMessages() {
+        val userId = auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            val userDoc = db.collection("users").document(userId).get().await()
+            val userRole = userDoc.getString("role")
+
+            if (userRole == "admin") {
+                // Admin: Kiểm tra xem có phòng chat nào được chọn không
+                chatRoomId?.let { roomId ->
+                    db.collection("chat_rooms")
+                        .document(roomId)
+                        .collection("messages")
+                        .orderBy("timestamp")
+                        .addSnapshotListener { snapshot, e ->
+                            if (e != null) {
+                                // Xử lý lỗi
+                                return@addSnapshotListener
+                            }
+
+                            if (snapshot != null && !snapshot.isEmpty) {
+                                val messageList = snapshot.documents.map { doc ->
+                                    doc.toObject(Message::class.java) ?: Message()
+                                }
+                                // Đảo ngược danh sách tin nhắn để hiển thị từ trên xuống
+                                _messages.value = messageList.reversed()
+                            } else {
+                                _messages.value = emptyList()
+                            }
+                        }
+                } ?: run {
+                    // Không có phòng chat nào được chọn, không tải tin nhắn
+                    _messages.value = emptyList()
+                }
+            } else {
+                // Người dùng thường: Truy vấn tin nhắn từ phòng chat cụ thể
+                chatRoomId?.let { roomId ->
+                    db.collection("chat_rooms")
+                        .document(roomId)
+                        .collection("messages")
+                        .orderBy("timestamp")
+                        .addSnapshotListener { snapshot, e ->
+                            if (e != null) {
+                                // Xử lý lỗi
+                                return@addSnapshotListener
+                            }
+
+                            if (snapshot != null && !snapshot.isEmpty) {
+                                val messageList = snapshot.documents.map { doc ->
+                                    doc.toObject(Message::class.java) ?: Message()
+                                }
+                                // Đảo ngược danh sách tin nhắn để hiển thị từ trên xuống
+                                _messages.value = messageList.reversed()
+                            } else {
+                                _messages.value = emptyList()
+                            }
+                        }
+                }
+            }
+        }
+    }
+    fun sendMessage(text: String) {
+        val userId = auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            val userDoc = db.collection("users").document(userId).get().await()
+            val userRole = userDoc.getString("role")
+
+            if (userRole == "admin") {
+                // Admin: Gửi tin nhắn đến phòng chat đã chọn
+                chatRoomId?.let { roomId ->
+                    val message = Message(senderId = userId, text = text)
+                    db.collection("chat_rooms")
+                        .document(roomId)
+                        .collection("messages")
+                        .add(message)
+                        .addOnSuccessListener {
+                            // Tin nhắn đã được gửi
+                        }
+                        .addOnFailureListener { e ->
+                            // Xử lý lỗi
+                        }
+                }
+            } else {
+                // Người dùng thường: Gửi tin nhắn đến phòng chat của mình với admin
+                chatRoomId?.let { roomId ->
+                    val message = Message(senderId = userId, text = text)
+                    db.collection("chat_rooms")
+                        .document(roomId)
+                        .collection("messages")
+                        .add(message)
+                        .addOnSuccessListener {
+                            // Tin nhắn đã được gửi
+                        }
+                        .addOnFailureListener { e ->
+                            // Xử lý lỗi
+                        }
+                }
+            }
+        }
+    }
+    fun sendMessage1(roomId: String, text: String) {
+        val userId = auth.currentUser?.uid
+        if (userId == null || text.isBlank()) {
+            // Không có người dùng đăng nhập hoặc tin nhắn rỗng, không gửi
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                // Không cần kiểm tra vai trò admin ở đây nếu logic gửi tin nhắn là giống nhau
+                // cho cả admin và người dùng thường đến một phòng chat cụ thể.
+                // Logic kiểm tra vai trò có thể được thực hiện ở nơi khác nếu cần phân quyền.
+
+                val message = Message(senderId = userId, text = text) // Thêm timestamp nếu cần
+
+                db.collection("chat_rooms")
+                    .document(roomId)
+                    .collection("messages")
+                    .add(message)
+                    .addOnSuccessListener {
+                        // Tin nhắn đã được gửi thành công
+                        // Có thể thêm log hoặc xử lý thành công khác ở đây
+                    }
+                    .addOnFailureListener { e ->
+                        // Xử lý lỗi khi gửi tin nhắn
+                        // Ví dụ: Log lỗi, hiển thị thông báo cho người dùng
+                        Log.e("AuthViewModel", "Error sending message to room $roomId", e)
+                    }
+            } catch (e: Exception) {
+                // Xử lý các lỗi khác có thể xảy ra trong coroutine
+                Log.e("AuthViewModel", "An unexpected error occurred while sending message", e)
+            }
+        }
+    }
+    fun selectChatRoom(roomId: String) {
+        chatRoomId = roomId
+        loadMessages()
+    }
     fun checkAuthSate(){
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -139,6 +342,27 @@ class AuthViewModel: ViewModel() {
     }
     fun getUserId(): String? {
         return auth.currentUser?.uid
+    }
+    fun getUserFullName(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("fullName")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
+    }
+    fun getUserPhone(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("phoneNumber")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
+    }
+    fun getEmail(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("email")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
     }
 
 }

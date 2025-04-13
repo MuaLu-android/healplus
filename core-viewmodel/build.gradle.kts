@@ -9,7 +9,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -39,7 +38,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.firebase.auth)
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.firebase.firestore)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)

@@ -1,178 +1,122 @@
 package com.example.healplus.add
 
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import com.example.core.model.categories.CategoryModel
-import com.example.core.ui.home.MediumTopAppBar
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
-import com.example.healplus.R
-import com.example.healplus.category.ListItems
-import com.example.healplus.home.Banners
-import com.example.healplus.home.CategoryItem
-import com.example.healplus.home.CategoryList
-import com.example.healplus.home.IngredientScreen
-import com.example.healplus.home.SectionTitle
-import com.example.healplus.home.UnSectionTitle
-import com.example.healplus.ui.theme.inversePrimaryDark
-import com.example.healplus.ui.theme.tertiaryDarkHighContrast
+import com.example.healplus.settings.ProfileTopAppBar
+import kotlinx.coroutines.launch
 
 @Composable
-fun AddScreen(modifier: Modifier = Modifier, navController: NavController){
-    Column (
-        modifier = Modifier
+fun AddCategoryScreen(navController: NavController, apiCallViewModel: ApiCallViewModel) {
+    var title by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        topBar = {
+            ProfileTopAppBar("Thêm mới doanh mục", navController)
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState,
+            modifier = Modifier
+                .fillMaxSize()  // Đảm bảo SnackbarHost chiếm toàn bộ chiều rộng
+                .wrapContentSize(Alignment.Center)
+        ){data ->
+            Snackbar(
+                snackbarData = data,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer, // Màu nền
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, // Màu chữ
+                actionColor = MaterialTheme.colorScheme.primary, // Màu nút
+                shape = MaterialTheme.shapes.medium,
+            )
+        } } // Thêm SnackbarHost
+    ) { paddingValues ->
+        Box(modifier = Modifier
             .fillMaxSize()
-    ){
-        Text(
-            text = "Category",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("update_delete_category")
-                }
-        )
-        Text(
-            text = "Insert_Category",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("insert_category")
-                }
-        )
-        Text(
-            text = "Ingredient",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("update_delete_ingredient")
-                }
-        )
-        Text(
-            text = "Insert_Ingredient",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("insert_ingredient")
-                }
-        )
-        Text(
-            text = "Element",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("update_delete_Element")
-                }
-        )
-        Text(
-            text = "Insert_Element",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("insert_ingredient")
-                }
-        )
-        Text(
-            text = "Products",
-            modifier = Modifier
-                .clickable {
-                    navController.navigate("insert_product")
-                }
-        )
-    }
-}
-@Composable
-fun UpdateDeleteCategory(
-    navController: NavController
-){
-    val viewModel = ApiCallViewModel()
-    val categories = remember { mutableStateListOf<CategoryModel>() }
-    var showCategoryLoading by remember { mutableStateOf(true) }
-    var selectedIndex by remember { mutableStateOf(-1) }
-    LaunchedEffect(Unit) {
-        viewModel.loadCategory()
-        viewModel.categories.observeForever{
-            categories.clear()
-            categories.addAll(it)
-            Log.d("LaunchedEffect", "item Categories nhân đc:${categories.size}")
-            showCategoryLoading = false
-        }
-    }
-    Scaffold (
-        topBar = {  }
-    ){paddingValues ->
-            LazyColumn (
+            .padding(paddingValues),
+            contentAlignment = Alignment.Center ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(vertical = 16.dp, horizontal = 16.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(categories.size) { index -> CategoryItemAdd(
-                    item = categories[index],
-                    iSelected = selectedIndex == index,
-                    onItemUpdateClick = {
-                        selectedIndex = index
-//                oPenElements(categories[index].idc, categories[index].title)
-                        navController.navigate("edit_category/${categories[index].idc}/${categories[index].title}")
-//                navController.navigate("home")
-                    },
-                    onItemDeleteClick = { }
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Nhập doanh mục sản phẩm") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 1
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            if (title.isNotEmpty()) {
+                                apiCallViewModel.addCategory(title) { response ->
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(response.message)
+                                    }
+                                }
+                            } else {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Vui lòng nhập tên danh mục!")
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .height(56.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Thêm mới",
+                            fontSize = 24.sp
+                        )
+                    }
                 }
             }
-
+        }
     }
 }
 @Composable
-fun CategoryItemAdd(
-    item: CategoryModel,
-    iSelected: Boolean,
-    onItemUpdateClick: () -> Unit,
-    onItemDeleteClick: () -> Unit) {
-    Row (modifier = Modifier
-        .fillMaxWidth()
-        .background(
-            color = if (iSelected) inversePrimaryDark else tertiaryDarkHighContrast,
-            shape = RoundedCornerShape(8.dp)
-        ),
-        verticalAlignment = Alignment.CenterVertically){
-        Text(
-            text = item.title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-        )
-        Button(
-            onClick = { onItemUpdateClick()}
-        ) { Text(
-            text = "Cap nhat"
-        ) }
-        Button(
-            onClick = { onItemDeleteClick()}
-        ) { Text(
-            text = "Xoa"
-        ) }
+fun AddIngredientsScreen(navController: NavController, apiCallViewModel: ApiCallViewModel) {
+    Scaffold(
+        topBar = {
+            ProfileTopAppBar("Thêm mới doanh mục sản phẩm", navController)
+        }
+
+    ){paddingValues ->
+        Column (modifier = Modifier.padding(paddingValues)){  }
     }
 }

@@ -55,15 +55,15 @@
     <string name="buynow">🏥 Mua ngay</string>
     <string name="addcart">🛒 Thêm vào cart</string>
     <string name="Ingredient">Nguyên liệu</string>
-    <string name="description">" Miêu tả"</string>
+    <string name="description">"Mô tả ngắn"</string>
     <string name="Registrationnumber">Số ăng kí</string>
     <string name="dogam_from">Dạng điều chế</string>
     <string name="Specification">Đặc điểm</string>
     <string name="origa">Nguồn gốc</string>
     <string name="Manufacturer">Nhà sản xuất</string>
-    <string name="product">Xuất xứ</string>
+    <string name="product">Ngày sản xuất</string>
     <string name="item_total">Tổng số mặt hàng:</string>
     <string name="tax">Thuế:</string>
     <string name="delivery">Vận chuyển:</string>
-    <string name="add">Thêm</string>
+    <string name="add">Email</string>
 </resources>

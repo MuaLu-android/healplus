@@ -1,5 +1,6 @@
 package com.example.healplus.acitivity
 import android.os.Bundle
+import android.os.StrictMode
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -57,8 +59,8 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     val navItemList = listOf(
         NavItemModel(route = "home", label = stringResource(id = R.string.home), icon = Icons.Default.Home, badgeCount = 0),
         NavItemModel(route = "point", label = stringResource(id = R.string.poit), icon = Icons.Default.FavoriteBorder, badgeCount = 0),
-        NavItemModel(route = "add", label = " ", icon = Icons.Default.Add, badgeCount = 0),
-        NavItemModel(route = "cart", label = stringResource(R.string.cart), icon = Icons.Default.ShoppingCart, badgeCount = 5),
+        NavItemModel(route = "add", label = "Email", icon = Icons.Default.Email, badgeCount = 0),
+        NavItemModel(route = "cart", label = stringResource(R.string.cart), icon = Icons.Default.ShoppingCart, badgeCount = 0),
         NavItemModel(route = "settings", label = stringResource(R.string.settings), icon = Icons.Default.Settings, badgeCount = 0),
     )
     var selectedIndex by remember {
@@ -77,7 +79,9 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         bottomBar = {
             if (currentRoute != "detail/{itemsModel}" && currentRoute != "cart"
                 && currentRoute != "category/{categoryid}/{categorytitle}"
-                && currentRoute != "add" && currentRoute != "profile") { // Kiểm tra đăng nhập
+                && currentRoute != "add" && currentRoute != "profile"
+                && currentRoute != "order_screen/{selectedProducts}/{itemTotal}/{tax}/{quantity}"
+                && currentRoute != "address") { // Kiểm tra đăng nhập
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

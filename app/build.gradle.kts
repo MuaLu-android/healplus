@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":core-model"))
     implementation(project(":core-tinyDB"))
     implementation(libs.androidx.core.ktx)
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.google.accompanist:accompanist-flowlayout:0.31.1-alpha")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.github.skydoves:landscapist-glide:2.2.8")
@@ -76,4 +77,5 @@ dependencies {
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)
     implementation(libs.androidx.compose.material3)
+
 }

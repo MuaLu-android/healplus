@@ -128,7 +128,9 @@ fun MediumTopAppBar(navController: NavController,
             }) {
                 Icon(imageVector = Icons.Filled.Search, contentDescription = null)
             }
-            IconButton(onClick = { }) {
+            IconButton(onClick = {
+                navController.navigate("add")
+            }) {
                 Icon(imageVector = Icons.Filled.Notifications, contentDescription = null)
             }
         }

@@ -39,7 +39,7 @@ class ManagmentCart(val context: Context, userId: String) {
 
     fun minusItem(listFood: ArrayList<ProductsModel>, position: Int, listener: ChangeNumberItemsListener) {
         if (listFood[position].quantity == 1) {
-            listFood.removeAt(position)
+            removeItemByProduct(listFood[position], listener)
         } else {
             listFood[position].quantity--
         }
@@ -53,13 +53,19 @@ class ManagmentCart(val context: Context, userId: String) {
         tinyDB.putListObject(CartKey, listFood)
         listener.onChanged()
     }
-
-    fun getTotalFee(): Double {
+    fun removeItemByProduct(item: ProductsModel, listener: ChangeNumberItemsListener) {
         val listFood = getListCart()
-        var fee = 0.0
-        for (item in listFood) {
-            fee += item.price * item.quantity
+        Log.d("ManagmentCart", "Sản phẩm cần xóa:${Gson().toJson(item)}")
+        Log.d("ManagmentCart", "Giỏ hàng trước khi xóa: ${Gson().toJson(listFood)}")
+        val index = listFood.indexOfFirst { it.idp == item.idp }
+
+        if (index != -1) {
+            listFood.removeAt(index)
+            tinyDB.putListObject(CartKey, listFood)
+            listener.onChanged()
+            Log.d("ManagmentCart", "Đã xóa sản phẩm: ${item.name}")
+        } else {
+            Log.d("ManagmentCart", "Không tìm thấy sản phẩm để xóa: ${item.name}")
         }
-        return fee
     }
 }

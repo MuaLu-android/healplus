@@ -15,15 +15,21 @@ import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.healplus.add.AddProductScreen
+import com.example.healplus.cart.AddressScreen
 import com.example.healplus.cart.CartScreen
+import com.example.healplus.cart.CheckOutScreen
 import com.example.healplus.category.CategoryScreen
+import com.example.healplus.chat.UserChatScreen
 import com.example.healplus.home.DetailScreen
 import com.example.healplus.home.MainActivityScreen
+import com.example.healplus.oder.UsersOder
 import com.example.healplus.search.SearchScreen
 import com.example.healplus.settings.ProfileScreen
 import com.example.healplus.settings.SettingScreen
 import com.example.healplus.settings.UpdateProfileScreen
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.net.URLDecoder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,8 +45,11 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
         composable(route = "point"){
 
         }
+        composable(route = "oderscreen"){
+            UsersOder(navController)
+        }
         composable(route = "add"){
-
+            UserChatScreen()
         }
         composable("detail/{itemsModel}") {
                 backStackEntry ->
@@ -49,7 +58,6 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             val item = Gson().fromJson(jsonItem, ProductsModel::class.java)
             DetailScreen(
                 item = item,
-                onBackClick = { navController.popBackStack() },
                 navController = navController
             )
         }
@@ -59,45 +67,25 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             navController
             )
         }
+        composable("order_screen/{selectedProducts}/{itemTotal}/{tax}/{quantity}") { backStackEntry ->
+            val selectedProductsJson = backStackEntry.arguments?.getString("selectedProducts") ?: "[]"
+            val totalAmount = backStackEntry.arguments?.getString("itemTotal")?.toDoubleOrNull() ?: 0.0
+            val tax = backStackEntry.arguments?.getString("tax")?.toDoubleOrNull() ?: 0.0
+            val quantity = backStackEntry.arguments?.getString("quantity")?.toInt() ?: 0
+            val selectedProducts: List<ProductsModel> = Gson().fromJson(
+                URLDecoder.decode(selectedProductsJson, "UTF-8"),
+                object : TypeToken<List<ProductsModel>>() {}.type
+            )
+
+            CheckOutScreen(navController, selectedProducts, totalAmount, tax, quantity)
+        }
+        composable("address"){
+            AddressScreen(navController)
+        }
 
         composable("settings") {
             SettingScreen(authViewModel = authViewModel, navController = navController)
         }
-//    val authState by authViewModel.authSate.observeAsState()
-//    NavHost(navController = navController, startDestination = "introApp", builder = {
-//        composable("introApp"){
-//            LottieLoadingAnimation(modifier, navController, authViewModel)
-//        }
-//        composable("onboarding"){
-//            OnboardingScreen(modifier, navController, authViewModel)
-//        }
-//        composable("signup"){
-//            CreateAccountScreen(modifier, navController, authViewModel)
-//        }
-//        composable("login"){
-//            LoginScreen(modifier,navController, authViewModel)
-//        }
-//        composable(route = "home"){
-//            MainActivityScreen(
-//                onCartClick = {
-//                    navController.navigate("cartScreen")
-//                },
-//                openItem = {
-//                        itemsModel ->
-//                    navController.navigate("detail/${Uri.encode(Gson().toJson(itemsModel))}")
-//                },
-//                oPenListCategory = {
-//                        categoryid, categorytitle ->
-//                    navController.navigate("category/$categoryid/$categorytitle")
-//                },
-//                oPenListCategoryItems = {
-//                        categoryid, categorytitle ->
-//                    navController.navigate("category/$categoryid/$categorytitle")
-//                },
-//                navController,
-//                authViewModel
-//            )
-//        }
         composable(route = "category/{categoryid}/{categorytitle}",
             arguments = listOf(
                 navArgument(name = "categoryid"){
@@ -138,11 +126,6 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 viewModel = viewModel,
                 navController
             )
-        }
-        composable("add"){
-            val viewModel: AuthViewModel = viewModel()
-            AddProductScreen(navController = navController,
-                authViewModel = viewModel)
         }
         composable("updateProfile"){
             UpdateProfileScreen()

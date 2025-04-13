@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,22 +61,29 @@ import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
+import com.example.healplus.R.string.product
 import com.example.healplus.settings.SpacerProduct
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductTopAppBar(onBackClick: () -> Unit) {
-    TopAppBar(
+fun ProductTopAppBar(navController: NavController) {
+    CenterAlignedTopAppBar(
         title = {
-
+            Text(
+                text = "Thông tin chi tiết sản phẩm",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
         },
         navigationIcon = {
-            IconButton(onClick = {onBackClick() }) {
+            IconButton(onClick = {navController.popBackStack() }) {
                 Icon(imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = null)
             }
         },
         actions = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = {navController.navigate("cart")}) {
                 Icon(imageVector = Icons.Filled.ShoppingCart, contentDescription = null)
             }
         }
@@ -84,7 +92,6 @@ fun ProductTopAppBar(onBackClick: () -> Unit) {
 
 @Composable
 fun DetailScreen(item: ProductsModel,
-                 onBackClick: () -> Unit,
                  navController: NavController,
                  authViewModel: AuthViewModel = viewModel()
                  ) {
@@ -94,7 +101,7 @@ fun DetailScreen(item: ProductsModel,
     val managmentCart = ManagmentCart(LocalContext.current, authViewModel.getUserId().toString())
     Scaffold(
         topBar = {
-            ProductTopAppBar(onBackClick)
+            ProductTopAppBar(navController)
         },
         bottomBar = {
             BottomAppBarView(onAddCartClick = {
@@ -105,11 +112,6 @@ fun DetailScreen(item: ProductsModel,
             })
         })
     { paddingValues ->
-//        LazyColumn(
-//            modifier = Modifier.fillMaxSize()
-//                .padding(paddingValues), // Dùng paddingValues để tránh che khuất
-//            contentPadding = PaddingValues(bottom = 184.dp) // Thêm padding dưới cùng
-//        ){}
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -170,13 +172,7 @@ fun DetailScreen(item: ProductsModel,
             }
 
             // Giá sản phẩm
-            Text(
-                text = "${item.price}00 VND/ ${model}",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF007AFF), // Màu xanh đậm
-                modifier = Modifier.padding(top = 8.dp, start = 16.dp)
-            )
+            PriceText(item.price, model)
 
             Text(
                 text = stringResource(R.string.SlectModel),
@@ -199,6 +195,18 @@ fun DetailScreen(item: ProductsModel,
 
     }
 
+}
+@Composable
+fun PriceText(price: Int, model: String) {
+    val formattedPrice = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(price) + " VND"
+
+    Text(
+        text = "$formattedPrice/ $model",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF007AFF), // Màu xanh đậm
+        modifier = Modifier.padding(top = 8.dp, start = 16.dp)
+    )
 }
 @Composable
 fun ProductInfoView(product: ProductsModel) {
@@ -224,15 +232,13 @@ fun ProductInfoView(product: ProductsModel) {
         Spacer(modifier = Modifier.height(8.dp))
 
         // Danh sách thông tin sản phẩm
-        ProductInfoItem(stringResource(R.string.categories), product.categoryItemName)
+        ProductInfoItem(stringResource(R.string.categories), product.element_names)
         ProductInfoItem(stringResource(R.string.dogam_from), product.preparation)
-        ProductInfoItem(stringResource(R.string.Specification), product.specification)
         ProductInfoItem(stringResource(R.string.origa), product.origin)
         ProductInfoItem(stringResource(R.string.Manufacturer), product.manufacturer)
-        ProductInfoItem(stringResource(R.string.product), product.production)
+        ProductInfoItem(stringResource(R.string.product), product.productiondate)
         ProductInfoItem(stringResource(R.string.Ingredient), product.ingredient)
         ProductInfoItem(stringResource(R.string.description), product.description)
-        ProductInfoItem(stringResource(R.string.Registrationnumber), product.register)
         SeeAllButton(onClick = { })
         SpacerProduct()
 
