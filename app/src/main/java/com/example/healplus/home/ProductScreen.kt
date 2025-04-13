@@ -60,7 +60,10 @@ import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
+import com.example.healplus.R.string.product
 import com.example.healplus.settings.SpacerProduct
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,13 +173,7 @@ fun DetailScreen(item: ProductsModel,
             }
 
             // Giá sản phẩm
-            Text(
-                text = "${item.price}00 VND/ ${model}",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF007AFF), // Màu xanh đậm
-                modifier = Modifier.padding(top = 8.dp, start = 16.dp)
-            )
+            PriceText(item.price, model)
 
             Text(
                 text = stringResource(R.string.SlectModel),
@@ -199,6 +196,18 @@ fun DetailScreen(item: ProductsModel,
 
     }
 
+}
+@Composable
+fun PriceText(price: Int, model: String) {
+    val formattedPrice = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(price) + " VND"
+
+    Text(
+        text = "$formattedPrice/ $model",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF007AFF), // Màu xanh đậm
+        modifier = Modifier.padding(top = 8.dp, start = 16.dp)
+    )
 }
 @Composable
 fun ProductInfoView(product: ProductsModel) {
@@ -224,15 +233,13 @@ fun ProductInfoView(product: ProductsModel) {
         Spacer(modifier = Modifier.height(8.dp))
 
         // Danh sách thông tin sản phẩm
-        ProductInfoItem(stringResource(R.string.categories), product.categoryItemName)
+        ProductInfoItem(stringResource(R.string.categories), product.element_names)
         ProductInfoItem(stringResource(R.string.dogam_from), product.preparation)
-        ProductInfoItem(stringResource(R.string.Specification), product.specification)
         ProductInfoItem(stringResource(R.string.origa), product.origin)
         ProductInfoItem(stringResource(R.string.Manufacturer), product.manufacturer)
-        ProductInfoItem(stringResource(R.string.product), product.production)
+        ProductInfoItem(stringResource(R.string.product), product.productiondate)
         ProductInfoItem(stringResource(R.string.Ingredient), product.ingredient)
         ProductInfoItem(stringResource(R.string.description), product.description)
-        ProductInfoItem(stringResource(R.string.Registrationnumber), product.register)
         SeeAllButton(onClick = { })
         SpacerProduct()
 

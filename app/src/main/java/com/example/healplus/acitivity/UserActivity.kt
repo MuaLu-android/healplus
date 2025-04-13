@@ -77,7 +77,9 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         bottomBar = {
             if (currentRoute != "detail/{itemsModel}" && currentRoute != "cart"
                 && currentRoute != "category/{categoryid}/{categorytitle}"
-                && currentRoute != "add" && currentRoute != "profile") { // Kiểm tra đăng nhập
+                && currentRoute != "add" && currentRoute != "profile"
+                && currentRoute != "order_screen/{selectedProducts}/{itemTotal}/{tax}/{quantity}"
+                && currentRoute != "address") { // Kiểm tra đăng nhập
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

@@ -238,6 +238,32 @@ class ApiCallViewModel: ViewModel() {
             }
         })
     }
+    fun loadElement() {
+        RetrofitClient.instance.getElement()
+            .enqueue(object : Callback<List<ElementsModel>> {
+                override fun onResponse(
+                    call: Call<List<ElementsModel>>,
+                    response: Response<List<ElementsModel>>
+                ) {
+                    Log.d("API_Category", "Nhận phản hồi từ API - Code: ${response.code()}")
+                    if (response.isSuccessful) {
+                        val categorys = response.body()?.toMutableList() ?: mutableListOf()
+                        _element.value = categorys
+                        Log.d("API_Category", "Số lượng sản phẩm nhận được: ${categorys.size}")
+                        categorys.forEachIndexed { index, item ->
+                            Log.d("API_Category", "Sản phẩm [$index]: $item")
+                        }
+                    } else {
+                        Log.e("API_ERROR", "Lỗi Response Code: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<ElementsModel>>, t: Throwable) {
+                    Log.e("API_ERROR", "Error: ${t.message}")
+                }
+            })
+
+    }
     fun loadCategory() {
         RetrofitClient.instance.getCategories()
             .enqueue(object : Callback<List<CategoryModel>> {
@@ -284,6 +310,55 @@ class ApiCallViewModel: ViewModel() {
             }
         })
     }
+    fun addIngredient(
+        title: String,
+        url: String,
+        idc: String,
+        onResult: (ApiResponse) -> Unit) {
+        Log.d("AddCategory", "Đang gửi request với title: $title")
+        val call = RetrofitClient.instance.addIngredient(title, url, idc)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response:Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        Log.d("AddCategory", "Phản hồi thành công: $it")
+                        onResult(it)
+                        Log.e("AddCategory", "Phản hồi rỗng!")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                Log.e("AddCategory", "Lỗi kết nối: ${t.message}")
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun addElment(
+        title: String,
+        url: String,
+        quantity: String,
+        iding: String,
+        onResult: (ApiResponse) -> Unit) {
+        Log.d("AddCategory", "Đang gửi request với title: $title")
+        val call = RetrofitClient.instance.addElement(title, url, quantity, iding)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response:Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        Log.d("AddCategory", "Phản hồi thành công: $it")
+                        onResult(it)
+                        Log.e("AddCategory", "Phản hồi rỗng!")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                Log.e("AddCategory", "Lỗi kết nối: ${t.message}")
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
     fun updateCategory(idc: String, title: String, onResult: (ApiResponse) -> Unit) {
         val call = RetrofitClient.instance.updateCategory(idc, title)
         call.enqueue(object : Callback<ApiResponse> {
@@ -300,4 +375,94 @@ class ApiCallViewModel: ViewModel() {
             }
         })
     }
+    fun updateElement(ide: String,
+                      title: String,
+                      url: String,
+                      quantity: String,
+                      iding: String,
+                      onResult: (ApiResponse) -> Unit) {
+        val call = RetrofitClient.instance.updateElement(ide, title, url, quantity, iding)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onResult(it)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun updateIngredient(iding: String,
+                       title: String,
+                       url: String,
+                       idc: String,
+                       onResult: (ApiResponse) -> Unit) {
+        val call = RetrofitClient.instance.updateIngredient(iding, title, url, idc)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onResult(it)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun deleteCategory(idc: String, onResult: (ApiResponse) -> Unit) {
+        val call = RetrofitClient.instance.deleteCategory(idc)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onResult(it)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun deleteIngredient(iding: String, onResult: (ApiResponse) -> Unit) {
+        val call = RetrofitClient.instance.deleteIngnredient(iding)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onResult(it)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun deleteElement(ide: String, onResult: (ApiResponse) -> Unit) {
+        val call = RetrofitClient.instance.deleteElement(ide)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onResult(it)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+
 }

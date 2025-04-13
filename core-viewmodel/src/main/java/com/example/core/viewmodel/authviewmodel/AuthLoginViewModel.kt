@@ -140,6 +140,27 @@ class AuthViewModel: ViewModel() {
     fun getUserId(): String? {
         return auth.currentUser?.uid
     }
+    fun getUserFullName(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("fullName")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
+    }
+    fun getUserPhone(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("phoneNumber")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
+    }
+    fun getEmail(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("email")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
+    }
 
 }
 sealed class AuthSate{

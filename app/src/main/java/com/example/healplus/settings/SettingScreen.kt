@@ -1,8 +1,10 @@
 package com.example.healplus.settings
 import android.content.Intent
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,7 +24,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -30,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
@@ -54,6 +59,37 @@ fun SettingScreen(modifier: Modifier = Modifier,
          contentPadding = PaddingValues(bottom = 184.dp) // Thêm padding dưới cùng
          ) {
              // Personal Section
+             item {
+                 Row(
+                     modifier = Modifier.fillMaxWidth(),
+                     horizontalArrangement = Arrangement.SpaceBetween,
+                     verticalAlignment = Alignment.CenterVertically
+                 ) {
+                     Text(
+                         text = "Đơn của tôi",
+                         fontSize = 16.sp,
+                         fontWeight = FontWeight.Bold
+                     )
+                     Text(
+                         text = "Xem tất cả",
+                         fontSize = 14.sp,
+                         color = Color(0xFF007BFF)
+                     )
+                 }
+                 Spacer(modifier = Modifier.height(8.dp))
+                 Row(
+                     modifier = Modifier
+                         .fillMaxWidth()
+                         .background(Color.White, shape = RoundedCornerShape(8.dp))
+                         .padding(8.dp),
+                     horizontalArrangement = Arrangement.SpaceAround
+                 ) {
+                     OrderStatusItem(icon = R.drawable.on_delivery, label = "Đang xử lý")
+                     OrderStatusItem(icon = R.drawable.on_delivery, label = "Đang giao")
+                     OrderStatusItem(icon = R.drawable.on_delivery, label = "Đã giao")
+                     OrderStatusItem(icon = R.drawable.on_delivery, label = "Đổi/Trả")
+                 }
+             }
              item { SectionTitle(title = R.string.personal) }
              item { SettingsItem(title = R.string.profile,
                  onClick = {
@@ -194,5 +230,16 @@ fun SpacerProduct(){
                 .height(3.dp)
                 .background(Color.Gray)
         )
+    }
+}
+@Composable
+fun OrderStatusItem(icon: Int, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = label,
+            modifier = Modifier.size(40.dp)
+        )
+        Text(text = label, fontSize = 12.sp, color = Color.Black)
     }
 }

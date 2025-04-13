@@ -42,6 +42,8 @@ import com.example.healplus.ui.theme.onTertiaryLightHighContrast
 import com.example.healplus.ui.theme.primaryDark
 import com.example.healplus.ui.theme.surfaceBrightLight
 import com.google.gson.Gson
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.random.Random
 
 @Composable
@@ -94,6 +96,7 @@ fun RecommendedList(items: List<ProductsModel>, row: Int, navController: NavCont
         inverseOnSurfaceLightMediumContrast, onTertiaryLightHighContrast, inversePrimaryLightHighContrast,
         primaryDark, errorDarkHighContrast)
     val backgroundColor1 = colors[Random.nextInt(colors.size)]
+    val formattedPrice = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(items[row].price) + " VND"
     Column (modifier = Modifier
         .padding(8.dp)
         .height(280.dp)
@@ -143,7 +146,7 @@ fun RecommendedList(items: List<ProductsModel>, row: Int, navController: NavCont
                 )
             }
             Text(
-                text = "${items[row].price}00 VND",
+                text = formattedPrice,
                 color = colorResource(R.color.purple_200),
                 maxLines = 1,
                 fontSize = 15.sp,

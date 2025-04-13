@@ -65,6 +65,7 @@ import kotlin.random.Random
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.healplus.ui.theme.errorDarkHighContrast
 import com.example.healplus.ui.theme.inverseOnSurfaceLight
 import com.example.healplus.ui.theme.inverseOnSurfaceLightMediumContrast
@@ -88,7 +89,7 @@ fun CategoryScreen(
     val ingredients by viewModel.ingredient.observeAsState(emptyList())
     val element by viewModel.element.observeAsState(emptyList())
     val product by viewModel.recommended.observeAsState(emptyList())
-    var isLoading by remember { mutableStateOf(false) }
+    val isLoading by remember { mutableStateOf(false) }
     var showCategoryLoading by remember { mutableStateOf(false) }
     var titlec by remember { mutableStateOf(title) }
     var titleing by remember { mutableStateOf(title) }
@@ -139,9 +140,7 @@ fun CategoryScreen(
                                   verticalAlignment = Alignment.CenterVertically
                               ) {
                                   IconButton(
-                                      onClick = {
-                                          backDispatcher?.onBackPressed()
-                                      }
+                                      onClick = {}
                                   ) {
                                       Icon(
                                           imageVector = Icons.Default.ArrowBack,
@@ -204,7 +203,6 @@ fun CategoryScreen(
                                   }
                               }
                           }
-                      // Hiển thị danh sách Product
                       item {
                           Text(
                               text = "Products Lists",

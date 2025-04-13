@@ -75,7 +75,11 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (currentRoute != "detail/{itemsModel}" && currentRoute != "cart"
-                && currentRoute != "category/{categoryid}/{categorytitle}" && currentRoute != "add") { // Kiểm tra đăng nhập
+                && currentRoute != "category/{categoryid}/{categorytitle}" && currentRoute != "add"
+                && currentRoute != "update_delete_category"&& currentRoute != "Products"
+                && currentRoute != "Insert_Category" && currentRoute != "Category"
+                && currentRoute != "Ingredient" && currentRoute != "Insert_Ingredient"
+                && currentRoute != "edit_category/{idc}/{title}") { // Kiểm tra đăng nhập
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

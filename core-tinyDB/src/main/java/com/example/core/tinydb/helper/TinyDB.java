@@ -31,6 +31,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.core.model.address.AddressModel;
 import com.example.core.model.products.ProductsModel;
 import com.google.gson.Gson;
 import java.io.File;
@@ -380,7 +381,42 @@ public class TinyDB {
         return playerList;
 
     }
+    public ArrayList<AddressModel> getListAddressOder(String key) {
+        Gson gson = new Gson();
+        ArrayList<String> objStrings = getListString(key);
+        ArrayList<AddressModel> addressList = new ArrayList<>();
 
+        for (String jObjString : objStrings) {
+            try {
+                AddressModel address = gson.fromJson(jObjString, AddressModel.class);
+                if (address.isDefault()) { // Chỉ thêm nếu isDefault == true
+                    addressList.add(address);
+                    break;
+                }
+                Log.d("ManagmentCart", "✅ Chuyển đổi thành công: " + address.toString());
+            } catch (Exception e) {
+                Log.e("ManagmentCart", "❌ Lỗi chuyển đổi JSON: " + jObjString, e);
+            }
+        }
+        return addressList;
+    }
+    public ArrayList<AddressModel> getListAddress(String key) {
+        Gson gson = new Gson();
+        ArrayList<String> objStrings = getListString(key);
+        ArrayList<AddressModel> playerList = new ArrayList<AddressModel>();
+
+        for (String jObjString : objStrings) {
+            try {
+                AddressModel player = gson.fromJson(jObjString, AddressModel.class);
+                playerList.add(player);
+                Log.d("ManagmentCart", "✅ Chuyển đổi thành công: " + player.toString());
+            } catch (Exception e) {
+                Log.e("ManagmentCart", "❌ Lỗi chuyển đổi JSON: " + jObjString, e);
+            }
+        }
+        return playerList;
+
+    }
     public <T> T getObject(String key, Class<T> classOfT) {
 
         String json = getString(key);
@@ -522,7 +558,15 @@ public class TinyDB {
         }
         putListString(key, objStrings);
     }
-
+    public void putListAddress(String key, ArrayList<AddressModel> playerList) {
+        checkForNullKey(key);
+        Gson gson = new Gson();
+        ArrayList<String> objStrings = new ArrayList<String>();
+        for (AddressModel player : playerList) {
+            objStrings.add(gson.toJson(player));
+        }
+        putListString(key, objStrings);
+    }
     /**
      * Remove SharedPreferences item with 'key'
      *
