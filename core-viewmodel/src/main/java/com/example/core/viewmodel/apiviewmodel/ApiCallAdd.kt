@@ -12,7 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class ApiCallAdd : ViewModel() {
+class ApiCallAdd: ViewModel() {
     fun addOrder(
         name: String,
         phone: String,
@@ -21,23 +21,11 @@ class ApiCallAdd : ViewModel() {
         address: String,
         quantity: String,
         sumMoney: String,
-        datetime: String,
-        status: String,
+        bonusPoint: String,
         detail: List<ProductsModel>
     ) {
         val gson = Gson()
-        val call = RetrofitClient.instance.addOder(
-            name,
-            phone,
-            email,
-            userId,
-            address,
-            quantity,
-            sumMoney,
-            datetime,
-            status,
-            gson.toJson(detail)
-        )
+        val call = RetrofitClient.instance.addOder(name, phone, email, userId, address, quantity, sumMoney, bonusPoint, gson.toJson(detail))
         call.enqueue(object : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 if (response.isSuccessful) {
@@ -46,13 +34,11 @@ class ApiCallAdd : ViewModel() {
                     Log.e("AddOrder", "Phản hồi thất bại với mã lỗi: ${response.code()}")
                 }
             }
-
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
                 Log.e("AddOrder", "Lỗi kết nối: ${t.message}")
             }
         })
     }
-
     fun addProduct(
         name: String,
         trademark: String,
@@ -111,7 +97,6 @@ class ApiCallAdd : ViewModel() {
                     Log.e("AddOrder", "Phản hồi thất bại với mã lỗi: ${response.code()}")
                 }
             }
-
             override fun onFailure(call: Call<ApiResponse?>, t: Throwable) {
                 Log.e("AddOrder", "Lỗi kết nối: ${t.message}")
             }
