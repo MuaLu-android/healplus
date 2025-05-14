@@ -74,8 +74,8 @@ fun ProfileScreen(viewModel: AuthViewModel, navController: NavController) {
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)
-                            .border(2.dp, Color.Gray, CircleShape)
-                            .padding(bottom = 30.dp)
+                            .border(2.dp, Color.Gray),
+                        contentScale = ContentScale.Crop
                     )
                 }
                 InfoRow(label = "Họ và tên", value = userData.name)

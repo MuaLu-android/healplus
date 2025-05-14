@@ -84,6 +84,7 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         "Insert_Ingredient",
         "edit_category/{idc}/{title}",
         "oderscreen",
+        "profile",
         "editProfile/{userData}")
     LaunchedEffect(navController.currentBackStackEntry) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route

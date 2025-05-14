@@ -68,20 +68,24 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val routesToHideBottomBar = listOf(
+        "detail/{itemsModel}",
+        "cart",
+        "category/{categoryid}/{categorytitle}",
+        "add",
+        "profile",
+        "order_screen/{selectedProducts}/{itemTotal}/{tax}/{quantity}",
+        "address",
+        "editProfile/{userData}"
+    )
     LaunchedEffect(navController.currentBackStackEntry) {
         val currentRoute1 = navController.currentBackStackEntry?.destination?.route
-        Log.d("Navigation", "Màn hình hiện tại: $currentRoute1")
         selectedIndex = navItemList.indexOfFirst { it.route == currentRoute1 }
-        Log.d("Navigation", "selectedIndex cập nhật: $selectedIndex")
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (currentRoute != "detail/{itemsModel}" && currentRoute != "cart"
-                && currentRoute != "category/{categoryid}/{categorytitle}"
-                && currentRoute != "add" && currentRoute != "profile"
-                && currentRoute != "order_screen/{selectedProducts}/{itemTotal}/{tax}/{quantity}"
-                && currentRoute != "address") { // Kiểm tra đăng nhập
+            if (currentRoute !in routesToHideBottomBar) { // Kiểm tra đăng nhập
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

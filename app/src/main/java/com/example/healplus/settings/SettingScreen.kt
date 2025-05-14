@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -159,13 +161,13 @@ fun SettingsItem(@StringRes title: Int, value: String? = null, onClick: () -> Un
                     modifier = Modifier.padding(end = 8.dp)
                 )
             }
-            Icon(imageVector = Icons.Default.ArrowForward,
+            Icon(imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Arrow",
                 modifier = Modifier
                     .clickable { onClick() }
                 )
         }
-        Spacer()
+        Divider()
     }
 }
 @Composable
@@ -199,17 +201,6 @@ fun LogOut(authViewModel: AuthViewModel) {
             .padding(top = 24.dp),
         textAlign = TextAlign.Center
     )
-}
-@Composable
-fun Spacer(){
-    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.Gray)
-        )
-    }
 }
 @Composable
 fun SpacerProduct(){

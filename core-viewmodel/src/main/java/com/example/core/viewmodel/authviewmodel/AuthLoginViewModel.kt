@@ -309,7 +309,15 @@ class AuthViewModel : ViewModel() {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
                         val userModel =
-                            UserAuthModel(idauth = userId, name = name, email = email, phone = phoneNumber, url = uploadedImageUrls, role = role)
+                            UserAuthModel(
+                                idauth = userId,
+                                name = name,
+                                email = email,
+                                password = password,
+                                phone = phoneNumber,
+                                url = uploadedImageUrls,
+                                role = role
+                            )
                         FirebaseFirestore.getInstance().collection("users")
                             .document(userId)
                             .set(userModel)
@@ -352,6 +360,7 @@ class AuthViewModel : ViewModel() {
                 _user.value = null
             }
     }
+
     fun updateUserAccount(
         name: String? = null,
         email: String? = null,
@@ -404,6 +413,7 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+
     fun signOut() {
         auth.signOut()
         _authState.value = AuthSate.Unauthenticated

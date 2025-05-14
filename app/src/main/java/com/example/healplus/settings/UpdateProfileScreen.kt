@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,7 +70,7 @@ fun UpdateProfileScreen(
     var fullName by remember { mutableStateOf(item.name) }
     var email by remember { mutableStateOf(item.email) }
     var gender by remember { mutableStateOf(item.gender) }
-    val phoneNumber by remember { mutableStateOf(item.phone) }// Trường không cho chỉnh sửa
+    val phoneNumber by remember { mutableStateOf(item.phone) }
     var urlimg by remember { mutableStateOf(item.url) }
     var birthDate by remember { mutableStateOf(item.dateBirth) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -117,28 +118,32 @@ fun UpdateProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(top = 32.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Ảnh đại diện
             Box(contentAlignment = Alignment.Center) {
-                Image(
-                    painter = rememberAsyncImagePainter(urlimg),
-                    contentDescription = "Avatar",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, Color.Gray, CircleShape)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Thay đổi",
-                    color = Color.Blue,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .clickable { imagePickerLauncher.launch("image/*") }
-                )
+                Column(
+                    modifier = Modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(urlimg),
+                        contentDescription = "Avatar",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, Color.Gray),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Thay đổi",
+                        color = Color.Blue,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .clickable { imagePickerLauncher.launch("image/*") }
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
@@ -211,19 +216,26 @@ fun UpdateProfileScreen(
                         phone = phoneNumber,
                         uploadedImageUrl = urlimg,
                         dateBirth = birthDate,
-                        onComplete = { success, message -> // Sử dụng callback onComplete
+                        onComplete = { success, message ->
                             if (success) {
-                                Toast.makeText(context, "Cập nhật tài khoản thành công!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Cập nhật tài khoản thành công!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             } else {
-                                Toast.makeText(context, "Lỗi cập nhật: $message", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Lỗi cập nhật: $message",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     )
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .height(50.dp)
-                    .padding(paddingValues),
+                    .padding(horizontal = 16.dp),
                 colors = ButtonDefaults.buttonColors(Color.Blue)
             ) {
                 Icon(
