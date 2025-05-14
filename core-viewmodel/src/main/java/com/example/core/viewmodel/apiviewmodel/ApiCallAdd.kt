@@ -20,12 +20,13 @@ class ApiCallAdd: ViewModel() {
         userId: String,
         address: String,
         quantity: String,
+        datetime: String,
         sumMoney: String,
-        bonusPoint: String,
-        detail: List<ProductsModel>
+        status: String, // Trạng thái đơn hàng
+        items: List<ProductsModel>
     ) {
         val gson = Gson()
-        val call = RetrofitClient.instance.addOder(name, phone, email, userId, address, quantity, sumMoney, bonusPoint, gson.toJson(detail))
+        val call = RetrofitClient.instance.addOder(name, phone, email, userId, address, quantity, sumMoney, datetime,status, gson.toJson(items))
         call.enqueue(object : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 if (response.isSuccessful) {

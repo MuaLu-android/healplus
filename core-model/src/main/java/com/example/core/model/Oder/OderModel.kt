@@ -11,6 +11,6 @@ data class Order(
     val phone: String,
     val datetime: String ?= null,
     val sumMoney: Int,
-    val status: String, // Trạng thái đơn hàng
+    val status: String,
     val items: List<ProductsModel>
 )

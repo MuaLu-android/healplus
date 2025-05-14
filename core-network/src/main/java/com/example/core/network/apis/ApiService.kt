@@ -53,7 +53,21 @@ interface ApiService {
     fun addCategory(
         @Field("title") title: String
     ): Call<ApiResponse>
-
+    @FormUrlEncoded
+    @POST("add_ingrident.php")
+    fun addIngredient(
+        @Field("title") title: String,
+        @Field("url") url: String,
+        @Field("idc") idc: String
+    ): Call<ApiResponse>
+    @FormUrlEncoded
+    @POST("add_element.php")
+    fun addElement(
+        @Field("title") title: String,
+        @Field("url") url: String,
+        @Field("quantity") quantity: String,
+        @Field("iding") iding: String
+    ): Call<ApiResponse>
     @FormUrlEncoded
     @POST("update_category.php")
     fun updateCategory(

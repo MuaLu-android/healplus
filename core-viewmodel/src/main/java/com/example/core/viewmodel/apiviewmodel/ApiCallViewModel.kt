@@ -33,8 +33,8 @@ class ApiCallViewModel: ViewModel() {
     val recommended: LiveData<MutableList<ProductsModel>> = _recommended
     val element: LiveData<MutableList<ElementsModel>> = _element
     private var currentCall: Call<List<ProductsModel>>? = null
-    private val _orders = MutableLiveData<List<Order>>()
-    val orders: LiveData<List<Order>> = _orders
+    private val _orders = MutableLiveData<MutableList<Order>>()
+    val orders: LiveData<MutableList<Order>> = _orders
     private val _revenueWeek = MutableLiveData<List<RevenueData>>(emptyList())
     val revenueWeek: LiveData<List<RevenueData>> = _revenueWeek
     private val _revenueMonth = MutableLiveData<List<RevenueData>>(emptyList())
@@ -135,22 +135,20 @@ class ApiCallViewModel: ViewModel() {
         })
     }
     fun loadOder() {
+        Log.d("API_ORDER_REQUEST", "Gửi yêu cầu API để lấy danh sách đơn hàng...")
         RetrofitClient.instance.getOder().enqueue(object : Callback<List<Order>> {
             override fun onResponse(
                 call: Call<List<Order>>,
                 response: Response<List<Order>>
             ) {
+                Log.d("API_ORDER_RESPONSE", "Nhận phản hồi từ API - Code: ${response.code()}")
                 if (response.isSuccessful) {
-                    val orderList = response.body()
-                    if (orderList != null && orderList.isNotEmpty()) {
+                    val orderList = response.body()?.toMutableList() ?: mutableListOf()
                         _orders.value = orderList
-                    }
-                } else {
-                    _orders.value = emptyList()
+                        Log.d("API_ORDER_RESPONSE", "Đã tải thành công ${orderList.size} đơn hàng.")
                 }
             }
             override fun onFailure(call: Call<List<Order>>, t: Throwable) {
-                _orders.value = emptyList()
             }
         })
     }
@@ -161,16 +159,11 @@ class ApiCallViewModel: ViewModel() {
                 response: Response<List<Order>>
             ) {
                 if (response.isSuccessful) {
-                    val orderList = response.body()
-                    if (orderList != null && orderList.isNotEmpty()) {
+                    val orderList = response.body()?.toMutableList()?: mutableListOf()
                         _orders.value = orderList
-                    }
-                } else {
-                    _orders.value = emptyList()
                 }
             }
             override fun onFailure(call: Call<List<Order>>, t: Throwable) {
-                _orders.value = emptyList()
             }
         })
     }
@@ -181,16 +174,11 @@ class ApiCallViewModel: ViewModel() {
                 response: Response<List<Order>>
             ) {
                 if (response.isSuccessful) {
-                    val orderList = response.body()
-                    if (orderList != null && orderList.isNotEmpty()) {
-                        _orders.value = orderList
-                    }
-                } else {
-                    _orders.value = emptyList()
+                    val orderList = response.body()?.toMutableList() ?: mutableListOf()
+                    _orders.value = orderList
                 }
             }
             override fun onFailure(call: Call<List<Order>>, t: Throwable) {
-                _orders.value = emptyList()
             }
         })
     }
@@ -203,32 +191,17 @@ class ApiCallViewModel: ViewModel() {
             ) {
                 Log.d("API_ORDER_RESPONSE1", "Nhận phản hồi từ API - Code: ${response.code()}")
                 if (response.isSuccessful) {
-                    val orderList = response.body()
-                    if (orderList != null && orderList.isNotEmpty()) {
+                    val orderList = response.body()?.toMutableList() ?: mutableListOf()
                         _orders.value = orderList
                         Log.d("API_ORDER_RESPONSE1", "Đã tải thành công ${orderList.size} đơn hàng.")
                         // Log chi tiết về danh sách items
-                        orderList.forEachIndexed { index, order ->
-                            Log.d("API_ORDER_DATA", "Order [$index]: ID=${order.id}, Address=${order.address}")
-                            if (order.items != null) {
-                                Log.d("API_ORDER_DATA", "  Order [$index] items count: ${order.items.size}")
-                                order.items.forEachIndexed { itemIndex, item ->
-                                    Log.d("API_ORDER_DATA", "    Item [$itemIndex]: Name=${item.name}, Price=${item.price}, Quantity=${item.quantity}")
-                                }
-                            } else {
-                                Log.d("API_ORDER_DATA", "  Order [$index] items is null.")
-                            }
-                        }
-                    }
                 } else {
                     // Xử lý lỗi HTTP (ví dụ: 404, 500)
                     Log.e("API_ORDER_ERROR", "Lỗi Response Code: ${response.code()} - ${response.errorBody()?.string()}")
-                    _orders.value = emptyList()
                 }
             }
             override fun onFailure(call: Call<List<Order>>, t: Throwable) {
                 Log.e("API_ORDER_ERROR", "Lỗi khi gọi API đơn hàng: ${t.message}")
-                _orders.value = emptyList()
             }
         })
     }
@@ -239,7 +212,7 @@ class ApiCallViewModel: ViewModel() {
                     val apiResponse = response.body()
                     if (apiResponse != null) {
                         Log.d("API_UPDATE_STATUS_RESPONSE", "Cập nhật trạng thái thành công: ${apiResponse.message}")
-                        val currentOrders = _orders.value?.toMutableList()
+                        val currentOrders = _orders.value?.toMutableList()?: mutableListOf()
                         val updatedOrderIndex = currentOrders?.indexOfFirst { it.id == orderId }
                         if (updatedOrderIndex != null && updatedOrderIndex != -1) {
                             val updatedOrder = currentOrders[updatedOrderIndex].copy(status = status)
@@ -268,7 +241,6 @@ class ApiCallViewModel: ViewModel() {
         Log.d("API_DEBUG", "Thời gian gửi request: ${System.currentTimeMillis()}")
         // Hủy request cũ nếu có
         currentCall?.cancel()
-
         // Tạo request mới
         currentCall = RetrofitClient.instance.getSearchProduct(search)
         currentCall?.enqueue(object : Callback<List<ProductsModel>> {

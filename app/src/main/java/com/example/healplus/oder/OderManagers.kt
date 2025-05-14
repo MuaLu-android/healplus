@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.model.Oder.Order
@@ -66,8 +67,8 @@ import com.google.gson.Gson
 import java.text.DecimalFormat
 
 @Composable
-fun OderManagers(navController: NavController) {
-    val apiCallViewModel = ApiCallViewModel()
+fun OderManagers(navController: NavController,
+                 apiCallViewModel: ApiCallViewModel = viewModel()) {
     apiCallViewModel.loadOder()
     val allOrders by apiCallViewModel.orders.observeAsState(initial = emptyList())
     var selectedStatus by remember { mutableStateOf<String?>(null) }

@@ -41,15 +41,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.core.model.Oder.Order
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 @Composable
-fun UsersOder(navController: NavController){
-    val apiCallViewModel = ApiCallViewModel()
-    val authViewModel = AuthViewModel()
+fun UsersOder(navController: NavController,
+              apiCallViewModel: ApiCallViewModel = viewModel(),
+              authViewModel: AuthViewModel = viewModel()){
     val userId = authViewModel.getUserId().toString()
     apiCallViewModel.getOderByUser(userId)
     val allOrders by apiCallViewModel.orders.observeAsState(initial = emptyList())
