@@ -6,37 +6,41 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.model.chat.Message
-import com.example.core.model.users.UserModel
+import com.example.core.model.users.UserAuthModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class AuthViewModel: ViewModel() {
+class AuthViewModel : ViewModel() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val _authState = MutableLiveData<AuthSate>()
-    private val _user = MutableLiveData<UserModel?>()
+    private val _user = MutableLiveData<UserAuthModel?>()
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val authSate: LiveData<AuthSate> = _authState
-    val user: LiveData<UserModel?> = _user
+    val user: LiveData<UserAuthModel?> = _user
     val messages: StateFlow<List<Message>> = _messages
     private val _adminChatRoomsLiveData = MutableLiveData<List<String>>()
     val adminChatRoomsLiveData: LiveData<List<String>> = _adminChatRoomsLiveData
     private var chatRoomId: String? = null
     private val adminId = "HshH2bedEKUGuQEkHkvH00G2frf2"
     private var adminChatRooms: List<String> = emptyList()
+
     init {
         checkAuthSate()
     }
+
     init {
         viewModelScope.launch {
             getOrCreateChatRoom()
             loadMessages()
         }
     }
+
     suspend fun getOrCreateChatRoom() {
         val userId = auth.currentUser?.uid ?: return
         val userDoc = db.collection("users").document(userId).get().await()
@@ -145,6 +149,7 @@ class AuthViewModel: ViewModel() {
             }
         }
     }
+
     fun sendMessage(text: String) {
         val userId = auth.currentUser?.uid ?: return
         viewModelScope.launch {
@@ -184,6 +189,7 @@ class AuthViewModel: ViewModel() {
             }
         }
     }
+
     fun sendMessage1(roomId: String, text: String) {
         val userId = auth.currentUser?.uid
         if (userId == null || text.isBlank()) {
@@ -218,11 +224,13 @@ class AuthViewModel: ViewModel() {
             }
         }
     }
+
     fun selectChatRoom(roomId: String) {
         chatRoomId = roomId
         loadMessages()
     }
-    fun checkAuthSate(){
+
+    fun checkAuthSate() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             _authState.value = AuthSate.Unauthenticated
@@ -244,16 +252,16 @@ class AuthViewModel: ViewModel() {
                 }
         }
     }
-    fun loginAuthState(email: String, password: String){
-        if (email.isEmpty() || password.isEmpty()){
+
+    fun loginAuthState(email: String, password: String) {
+        if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthSate.Error("Email or password can't be empty")
             return
         }
         _authState.value = AuthSate.Loading
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener{
-                task ->
-                if (task.isSuccessful){
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
                         db.collection("users").document(userId)
@@ -271,18 +279,23 @@ class AuthViewModel: ViewModel() {
                                 }
                             }
                             .addOnFailureListener { e ->
-                                _authState.value = AuthSate.Error(e.message ?: "Failed to fetch user role")
+                                _authState.value =
+                                    AuthSate.Error(e.message ?: "Failed to fetch user role")
                             }
                     } else {
                         _authState.value = AuthSate.Error("User ID is null")
                     }
-                }else{
-                    _authState.value = AuthSate.Error(task.exception?.message?:"Something went wrong")
+                } else {
+                    _authState.value =
+                        AuthSate.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
-    fun signupAuthState(email: String, password: String, name: String,
-                        phoneNumber: String, localImageUrl: String, role: String){
+
+    fun signupAuthState(
+        name: String, email: String, password: String,
+        phoneNumber: String, uploadedImageUrls: String, role: String
+    ) {
         if (email.isEmpty() || password.isEmpty() || phoneNumber.isEmpty()) {
             _authState.value = AuthSate.Error("Email, password, or phone number can't be empty")
             return
@@ -295,25 +308,28 @@ class AuthViewModel: ViewModel() {
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
-                        val userModel = UserModel(userId, email, name, phoneNumber, localImageUrl, role)
-
+                        val userModel =
+                            UserAuthModel(idauth = userId, name = name, email = email, phone = phoneNumber, url = uploadedImageUrls, role = role)
                         FirebaseFirestore.getInstance().collection("users")
                             .document(userId)
                             .set(userModel)
                             .addOnSuccessListener {
-                                checkAuthSate() // Cập nhật trạng thái sau khi đăng ký
+                                checkAuthSate()
                             }
                             .addOnFailureListener { e ->
-                                _authState.value = AuthSate.Error(e.message ?: "Failed to save user data")
+                                _authState.value =
+                                    AuthSate.Error(e.message ?: "Failed to save user data")
                             }
                     } else {
                         _authState.value = AuthSate.Error("User ID is null")
                     }
                 } else {
-                    _authState.value = AuthSate.Error(task.exception?.message ?: "Something went wrong")
+                    _authState.value =
+                        AuthSate.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
     }
+
     fun getCurrentUser() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -326,23 +342,77 @@ class AuthViewModel: ViewModel() {
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    val userData = document.toObject(UserModel::class.java)
+                    val userData = document.toObject(UserAuthModel::class.java)
                     _user.value = userData
                 } else {
                     _user.value = null
                 }
             }
-            .addOnFailureListener {exception ->
+            .addOnFailureListener { exception ->
                 _user.value = null
             }
     }
-    fun signOut(){
+    fun updateUserAccount(
+        name: String? = null,
+        email: String? = null,
+        gender: String? = null,
+        phone: String? = null,
+        dateBirth: String? = null,
+        uploadedImageUrl: String? = null,
+        role: String? = null,
+        onComplete: (Boolean, String) -> Unit
+    ) {
+        val user = auth.currentUser
+        if (user == null) {
+            _authState.value = AuthSate.Unauthenticated
+            return
+        }
+        _authState.value = AuthSate.Loading
+        viewModelScope.launch {
+            try {
+                if (email != null && email != user.email) {
+                    user.updateEmail(email).await()
+                }
+                if (name != null) {
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+                    user.updateProfile(profileUpdates).await()
+                    Log.d("AuthViewModel", "Đã cập nhật profile Auth thành công.")
+                }
+                val updates = mutableMapOf<String, Any>()
+                if (name != null) updates["name"] = name
+                if (gender != null) updates["gender"] = gender
+                if (phone != null) updates["phone"] = phone
+                if (dateBirth != null) updates["dateBirth"] = dateBirth
+                if (uploadedImageUrl != null) updates["url"] = uploadedImageUrl
+                if (role != null) updates["role"] = role
+
+                if (updates.isNotEmpty()) {
+                    db.collection("users").document(user.uid)
+                        .update(updates)
+                        .await()
+                    Log.d("AuthViewModel", "Đã cập nhật dữ liệu Firestore thành công.")
+                }
+                _authState.value = AuthSate.User
+                getCurrentUser()
+                onComplete(true, "Cập nhật tài khoản thành công.")
+
+            } catch (e: Exception) {
+                _authState.value = AuthSate.Error(e.message ?: "Lỗi không xác định khi cập nhật.")
+                onComplete(false, e.message ?: "Lỗi không xác định khi cập nhật.")
+            }
+        }
+    }
+    fun signOut() {
         auth.signOut()
         _authState.value = AuthSate.Unauthenticated
     }
+
     fun getUserId(): String? {
         return auth.currentUser?.uid
     }
+
     fun getUserFullName(onResult: (String?) -> Unit) {
         auth.currentUser?.uid?.let { userId ->
             db.collection("users").document(userId).get()
@@ -350,6 +420,7 @@ class AuthViewModel: ViewModel() {
                 .addOnFailureListener { onResult(null) }
         } ?: onResult(null)
     }
+
     fun getUserPhone(onResult: (String?) -> Unit) {
         auth.currentUser?.uid?.let { userId ->
             db.collection("users").document(userId).get()
@@ -357,6 +428,7 @@ class AuthViewModel: ViewModel() {
                 .addOnFailureListener { onResult(null) }
         } ?: onResult(null)
     }
+
     fun getEmail(onResult: (String?) -> Unit) {
         auth.currentUser?.uid?.let { userId ->
             db.collection("users").document(userId).get()
@@ -366,10 +438,11 @@ class AuthViewModel: ViewModel() {
     }
 
 }
-sealed class AuthSate{
-    object Unauthenticated: AuthSate()
-    object Loading: AuthSate()
-    object Admin: AuthSate()
-    object User: AuthSate()
-    data class Error(var message: String): AuthSate()
+
+sealed class AuthSate {
+    object Unauthenticated : AuthSate()
+    object Loading : AuthSate()
+    object Admin : AuthSate()
+    object User : AuthSate()
+    data class Error(var message: String) : AuthSate()
 }

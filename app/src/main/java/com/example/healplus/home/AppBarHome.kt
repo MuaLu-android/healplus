@@ -215,8 +215,8 @@ fun UserView(viewModel: AuthViewModel, navController: NavController) {
         },
         verticalAlignment = Alignment.CenterVertically) {
         user?.let { userData ->
-            val imageUri = userData.localImageUrl?.let { Uri.parse(it) }
-            Log.d("UserProfileScreen", "localImageUrl: ${userData.localImageUrl}")
+            val imageUri = userData.url?.let { Uri.parse(it) }
+            Log.d("UserProfileScreen", "localImageUrl: ${userData.url}")
             Log.d("UserProfileScreen", "Parsed imageUri: $imageUri")
             GlideImage(
                 imageModel = { imageUri }, // Glide hỗ trợ content://
@@ -230,8 +230,8 @@ fun UserView(viewModel: AuthViewModel, navController: NavController) {
             modifier = Modifier
                 .padding(horizontal = 10.dp)
         ){
-            InfoRow(value = userData.fullName)
-            InfoRow(value = userData.phoneNumber)
+            InfoRow(value = userData.name)
+            InfoRow(value = userData.phone)
             }
         }
     }

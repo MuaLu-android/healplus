@@ -1,6 +1,11 @@
 package com.example.healplus.settings
 
 import android.app.DatePickerDialog
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,11 +29,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,19 +47,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.example.core.model.users.UserAuthModel
+import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
+import com.example.healplus.add.uploadImageToServer
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 
 @Composable
-@Preview
-fun UpdateProfileScreen(){
-    var fullName by remember { mutableStateOf("Lu200312") }
-    var gender by remember { mutableStateOf("Nam") }
-    val phoneNumber = "0355 761 327" // Trường không cho chỉnh sửa
-    var birthDate by remember { mutableStateOf("09/07/2003") }
+fun UpdateProfileScreen(
+    item: UserAuthModel,
+    navController: NavController,
+    authViewModel: AuthViewModel = viewModel(),
+    apiCallAdd: ApiCallAdd = viewModel()
+) {
+    var fullName by remember { mutableStateOf(item.name) }
+    var email by remember { mutableStateOf(item.email) }
+    var gender by remember { mutableStateOf(item.gender) }
+    val phoneNumber by remember { mutableStateOf(item.phone) }// Trường không cho chỉnh sửa
+    var urlimg by remember { mutableStateOf(item.url) }
+    var birthDate by remember { mutableStateOf(item.dateBirth) }
     var showDatePicker by remember { mutableStateOf(false) }
-
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     val datePicker = remember {
@@ -64,109 +87,155 @@ fun UpdateProfileScreen(){
             calendar.get(Calendar.DAY_OF_MONTH)
         )
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Ảnh đại diện
-        Box(contentAlignment = Alignment.Center) {
-            Image(
-                painter = painterResource(id = R.drawable.intro_logo), // Thay bằng ảnh của bạn
-                contentDescription = "Avatar",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, Color.Gray, CircleShape)
-            )
-            Text(
-                text = "Thay đổi",
-                color = Color.Blue,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .clickable { /* Mở thư viện ảnh */ }
-            )
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            coroutineScope.launch {
+                val url = uploadImageToServer(uri, context)
+                if (url != null) {
+                    urlimg = url
+                }
+            }
+        } else {
+            Log.d("AddProductScreen", "No image selected (user cancelled).")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Họ và tên
-        OutlinedTextField(
-            value = fullName,
-            onValueChange = { fullName = it },
-            label = { Text("Họ và tên") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Giới tính
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Giới tính")
-            Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(
-                selected = gender == "Nam",
-                onClick = { gender = "Nam" }
-            )
-            Text("Nam")
-            Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(
-                selected = gender == "Nữ",
-                onClick = { gender = "Nữ" }
-            )
-            Text("Nữ")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Số điện thoại (chỉ hiển thị, không chỉnh sửa)
-        OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = {},
-            label = { Text("Số điện thoại") },
-            readOnly = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Ngày sinh
-        OutlinedTextField(
-            value = birthDate,
-            onValueChange = {},
-            label = { Text("Ngày sinh") },
-            trailingIcon = {
+    }
+    Scaffold(
+        topBar = {
+            IconButton(
+                onClick = { navController.popBackStack() }
+            ) {
                 Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Chọn ngày",
-                    modifier = Modifier.clickable { showDatePicker = true }
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = "Back",
+                    tint = Color.Black
                 )
-            },
-            readOnly = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Nút cập nhật thông tin
-        Button(
-            onClick = { /* Xử lý cập nhật thông tin */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(Color.Blue)
-        ) {
-            Text("Cập nhật thông tin", color = Color.White)
+            }
         }
-        // Hiển thị DatePicker khi người dùng chọn ngày
-        if (showDatePicker) {
-            datePicker.show()
-            showDatePicker = false
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Ảnh đại diện
+            Box(contentAlignment = Alignment.Center) {
+                Image(
+                    painter = rememberAsyncImagePainter(urlimg),
+                    contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, Color.Gray, CircleShape)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Thay đổi",
+                    color = Color.Blue,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .clickable { imagePickerLauncher.launch("image/*") }
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = fullName,
+                onValueChange = { fullName = it },
+                label = { Text("Họ và tên") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Giới tính")
+                Spacer(modifier = Modifier.width(16.dp))
+                RadioButton(
+                    selected = gender == "Nam",
+                    onClick = { gender = "Nam" }
+                )
+                Text("Nam")
+                Spacer(modifier = Modifier.width(16.dp))
+                RadioButton(
+                    selected = gender == "Nữ",
+                    onClick = { gender = "Nữ" }
+                )
+                Text("Nữ")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = email,
+                onValueChange = {},
+                label = { Text("Email: ") },
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = phoneNumber,
+                onValueChange = {},
+                label = { Text("Số điện thoại") },
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // Ngày sinh
+            OutlinedTextField(
+                value = birthDate,
+                onValueChange = {},
+                label = { Text("Ngày sinh") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Chọn ngày",
+                        modifier = Modifier.clickable { showDatePicker = true }
+                    )
+                },
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = {
+                    authViewModel.updateUserAccount(
+                        name = fullName,
+                        email = email,
+                        gender = gender,
+                        phone = phoneNumber,
+                        uploadedImageUrl = urlimg,
+                        dateBirth = birthDate,
+                        onComplete = { success, message -> // Sử dụng callback onComplete
+                            if (success) {
+                                Toast.makeText(context, "Cập nhật tài khoản thành công!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Lỗi cập nhật: $message", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(paddingValues),
+                colors = ButtonDefaults.buttonColors(Color.Blue)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.save_24px),
+                    contentDescription = "Save",
+                    tint = Color.White
+                )
+            }
+            if (showDatePicker) {
+                datePicker.show()
+                showDatePicker = false
+            }
         }
     }
 }

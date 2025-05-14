@@ -71,6 +71,20 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val routesToHideBottomBar = listOf(
+        "detail/{itemsModel}",
+        "oder",
+        "category/{categoryid}/{categorytitle}",
+        "add",
+        "update_delete_category",
+        "Products",
+        "Insert_Category",
+        "Category",
+        "Ingredient",
+        "Insert_Ingredient",
+        "edit_category/{idc}/{title}",
+        "oderscreen",
+        "editProfile/{userData}")
     LaunchedEffect(navController.currentBackStackEntry) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
         selectedIndex = navItemList.indexOfFirst { it.route == currentRoute }
@@ -78,12 +92,7 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (currentRoute != "detail/{itemsModel}" && currentRoute != "oder"
-                && currentRoute != "category/{categoryid}/{categorytitle}" && currentRoute != "add"
-                && currentRoute != "update_delete_category"&& currentRoute != "Products"
-                && currentRoute != "Insert_Category" && currentRoute != "Category"
-                && currentRoute != "Ingredient" && currentRoute != "Insert_Ingredient"
-                && currentRoute != "edit_category/{idc}/{title}" && currentRoute != "oderscreen") { // Kiểm tra đăng nhập
+            if (currentRoute !in routesToHideBottomBar) { // Kiểm tra đăng nhập
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

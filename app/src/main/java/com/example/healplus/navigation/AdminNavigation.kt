@@ -28,6 +28,7 @@ import com.example.healplus.chat.AdminChatScreen
 import com.example.healplus.chat.ChatDetailScreen
 import com.example.healplus.home.DetailScreen
 import com.example.healplus.home.MainActivityScreen
+import com.example.healplus.home.ProductDetailScreen
 import com.example.healplus.oder.OderManagers
 import com.example.healplus.search.SearchScreen
 import com.example.healplus.settings.ProfileScreen
@@ -102,7 +103,18 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 navController = navController
             )
         }
-        composable("add"){
+        composable("productDetail/{product}") {
+                backStackEntry ->
+            val jsonItem = backStackEntry.arguments?.getString("product")
+
+            val item = Gson().fromJson(jsonItem, ProductsModel::class.java)
+            Log.d("ProductDetailScreen", "Received item: $item")
+            ProductDetailScreen(
+                item = item,
+                navController = navController
+            )
+        }
+        composable("chat"){
             AdminChatScreen(navController = navController)
         }
         composable("chat_detail/{roomId}") { backStackEntry ->

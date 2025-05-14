@@ -48,6 +48,17 @@ interface ApiService {
     fun getSearchProduct(@Query("search") search: String): Call<List<ProductsModel>>
     @GET("get_oder.php")
     fun getOder(): Call<List<Order>>
+    //POST
+    @FormUrlEncoded
+    @POST("add_user.php")
+    fun addUser(
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Field("phone") phone: String,
+        @Field("url") url: String,
+        @Field("role") role: String
+    ): Call<ApiResponse>
     @FormUrlEncoded
     @POST("add_category.php")
     fun addCategory(

@@ -168,7 +168,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 trailingIcon = {
                     IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                         Icon(
-                            imageVector = if (isPasswordVisible) Icons.Filled.Face else Icons.Filled.Person,
+                            painter = if (isPasswordVisible) painterResource(R.drawable.visibility_24px) else painterResource(R.drawable.visibility_off_24px),
                             contentDescription = "Toggle Password Visibility"
                         )
                     }

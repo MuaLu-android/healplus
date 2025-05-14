@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.core.model.products.ProductsModel
+import com.example.core.model.users.UserAuthModel
 import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
@@ -127,8 +128,12 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 navController
             )
         }
-        composable("updateProfile"){
-            UpdateProfileScreen()
+        composable("editProfile/{userData}"){
+                backStackEntry ->
+            val jsonItem = backStackEntry.arguments?.getString("userData")
+
+            val item = Gson().fromJson(jsonItem, UserAuthModel::class.java)
+            UpdateProfileScreen(item, navController)
         }
 //        composable(route = "cartScreen"){
 //            CartScreen(

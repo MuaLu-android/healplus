@@ -19,6 +19,7 @@ data class ProductsModel(
     val showRecommended: Int = 0,
     val ide: String = "",
     val productiondate: String = "",
+    val expiry: String = "",
     val specification: String = "",
     val ingredient: String = "",
     var quantity: Int = 0, // Thay đổi kiểu dữ liệu thành String?
@@ -47,6 +48,7 @@ data class ProductsModel(
         showRecommended = parcel.readInt(),
         ide = parcel.readString() ?: "",
         productiondate = parcel.readString() ?: "",
+        expiry = parcel.readString()?: "",
         specification = parcel.readString() ?: "",
         ingredient = parcel.readString() ?: "",
         quantity = parcel.readInt(),
@@ -75,6 +77,7 @@ data class ProductsModel(
         parcel.writeInt(showRecommended)
         parcel.writeString(ide)
         parcel.writeString(productiondate)
+        parcel.writeString(expiry)
         parcel.writeString(specification)
         parcel.writeString(ingredient)
         parcel.writeInt(quantity)

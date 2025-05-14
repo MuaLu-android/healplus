@@ -1,5 +1,6 @@
 package com.example.healplus.home
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.model.products.ProductsModel
 import com.example.core.tinydb.helper.ManagmentCart
@@ -63,6 +66,7 @@ import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import com.example.healplus.R.string.product
 import com.example.healplus.settings.SpacerProduct
+import com.google.gson.Gson
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -72,18 +76,18 @@ fun ProductTopAppBar(navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "Thông tin chi tiết sản phẩm",
+                text = "Thông tin sản phẩm",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
         },
         navigationIcon = {
-            IconButton(onClick = {navController.popBackStack() }) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = null)
             }
         },
         actions = {
-            IconButton(onClick = {navController.navigate("cart")}) {
+            IconButton(onClick = { navController.navigate("cart") }) {
                 Icon(imageVector = Icons.Filled.ShoppingCart, contentDescription = null)
             }
         }
@@ -91,10 +95,11 @@ fun ProductTopAppBar(navController: NavController) {
 }
 
 @Composable
-fun DetailScreen(item: ProductsModel,
-                 navController: NavController,
-                 authViewModel: AuthViewModel = viewModel()
-                 ) {
+fun DetailScreen(
+    item: ProductsModel,
+    navController: NavController,
+    authViewModel: AuthViewModel = viewModel()
+) {
     var selectedImageUrl by remember { mutableStateOf(item.product_images.first()) }
     var selectedModelIndex by remember { mutableStateOf(-1) }
     var model by remember { mutableStateOf(item.unit_names.first()) }
@@ -105,11 +110,9 @@ fun DetailScreen(item: ProductsModel,
         },
         bottomBar = {
             BottomAppBarView(onAddCartClick = {
-                Log.d("DetailScreen", "Nút thêm vào giỏ hàng được nhấn với sản phẩm: $item")
                 item.quantity = 1
-                Log.d("DetailScreen", "${item.quantity}")
                 managmentCart.insertFood(item)
-            })
+            }, navController)
         })
     { paddingValues ->
         Column(
@@ -139,16 +142,6 @@ fun DetailScreen(item: ProductsModel,
                     )
                 }
             }
-            // Thương hiệu (clickable)
-            Text(
-                text = stringResource(R.string.trademark)+ " ${item.trademark}",
-                color = Color(0xFF007AFF), // Màu xanh dương
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .clickable { /* Xử lý sự kiện */ }
-            )
-
             // Tên sản phẩm
             Text(
                 text = item.name,
@@ -156,26 +149,35 @@ fun DetailScreen(item: ProductsModel,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(top = 4.dp, start = 16.dp)
             )
-
+            Text(
+                text = stringResource(R.string.trademark) + " ${item.trademark}",
+                color = Color(0xFF007AFF), // Màu xanh dương
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .clickable { /* Xử lý sự kiện */ }
+            )
             // Đánh giá & bình luận
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(top = 8.dp, start = 16.dp)
             ) {
-                Text(text = item.idp)
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "⭐ ${item.rating}", fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "${item.review} "+ stringResource(R.string.review), color = Color.Gray)
+                Text(text = "${item.review} " + stringResource(R.string.review), color = Color.Gray)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "${item.comment} "+ stringResource(R.string.comment), color = Color.Gray)
+                Text(
+                    text = "${item.comment} " + stringResource(R.string.comment),
+                    color = Color.Gray
+                )
             }
 
             // Giá sản phẩm
             PriceText(item.price, model)
 
             Text(
-                text = stringResource(R.string.SlectModel),
+                text = "+ ${item.price / 1000} diem thuong",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(top = 10.dp, bottom = 4.dp, start = 16.dp)
@@ -183,19 +185,20 @@ fun DetailScreen(item: ProductsModel,
             ModelSelector(
                 item.unit_names,
                 selectedModelIndex,
-                onModelSelected = {it ->
+                onModelSelected = { it ->
                     model = it
                 }
             )
 
             SpacerProduct()
-            ProductInfoView(item)
+            ProductInfoView(item, navController)
             Spacer(modifier = Modifier.padding(bottom = 100.dp))
         }
 
     }
 
 }
+
 @Composable
 fun PriceText(price: Int, model: String) {
     val formattedPrice = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(price) + " VND"
@@ -208,8 +211,9 @@ fun PriceText(price: Int, model: String) {
         modifier = Modifier.padding(top = 8.dp, start = 16.dp)
     )
 }
+
 @Composable
-fun ProductInfoView(product: ProductsModel) {
+fun ProductInfoView(product: ProductsModel, navController: NavController) {
     Column(modifier = Modifier.padding(16.dp)) {
         // Tiêu đề "Thông tin sản phẩm"
         Row(
@@ -225,7 +229,10 @@ fun ProductInfoView(product: ProductsModel) {
                 text = stringResource(R.string.see_all),
                 color = Color(0xFF007AFF), // Màu xanh dương
                 fontSize = 14.sp,
-                modifier = Modifier.clickable { /* Xử lý sự kiện */ }
+                modifier = Modifier.clickable {
+                    navController.navigate("productDetail/${Uri.encode(Gson().toJson(product))}")
+                    Log.d("ProductInfoView", "Đã điều hướng đến: ${Uri.encode(Gson().toJson(product))}")
+                }
             )
         }
 
@@ -237,18 +244,23 @@ fun ProductInfoView(product: ProductsModel) {
         ProductInfoItem(stringResource(R.string.origa), product.origin)
         ProductInfoItem(stringResource(R.string.Manufacturer), product.manufacturer)
         ProductInfoItem(stringResource(R.string.product), product.productiondate)
+        ProductInfoItem(stringResource(R.string.expiry), product.expiry)
         ProductInfoItem(stringResource(R.string.Ingredient), product.ingredient)
         ProductInfoItem(stringResource(R.string.description), product.description)
-        SeeAllButton(onClick = { })
+        SeeAllButton(product, navController)
         SpacerProduct()
 
     }
 }
+
 @Composable
-fun SeeAllButton(onClick: () -> Unit) {
+fun SeeAllButton(item: ProductsModel, navController: NavController) {
     Row(
         modifier = Modifier
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                navController.navigate("productDetail/${Uri.encode(Gson().toJson(item))}")
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -262,11 +274,12 @@ fun SeeAllButton(onClick: () -> Unit) {
             contentDescription = "Arrow",
             tint = Color(0xFF007AFF),
             modifier = Modifier
-                .clickable { onClick() }
                 .size(16.dp)
+                .padding(horizontal = 16.dp)
         )
     }
 }
+
 @Composable
 fun ProductInfoItem(label: String, value: String) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
@@ -283,9 +296,12 @@ fun ProductInfoItem(label: String, value: String) {
         )
     }
 }
+
 @Composable
 fun BottomAppBarView(
-    onAddCartClick: () -> Unit) {
+    onAddCartClick: () -> Unit,
+    navController: NavController
+) {
     BottomAppBar(
         modifier = Modifier.fillMaxWidth(),
         containerColor = Color.White
@@ -297,10 +313,15 @@ fun BottomAppBarView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
-                onClick = { /* Xử lý tìm nhà thuốc */ },
+                onClick = { navController.navigate("chat") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007AFF))
             ) {
-                Text(stringResource(R.string.buynow), color = Color.White)
+                Icon(
+                    painter = painterResource(id = R.drawable.comment_24px), // icon tai nghe/chat
+                    contentDescription = null,
+                    tint = Color(0xFF0066CC),
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
             Button(
@@ -314,40 +335,41 @@ fun BottomAppBarView(
         }
     }
 }
+
 @Composable
 fun ModelSelector(
     models: List<String>,
     selectedModelIndex: Int,
-    onModelSelected: (String) -> Unit){
-    LazyRow (
+    onModelSelected: (String) -> Unit
+) {
+    LazyRow(
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 16.dp)
-    ){
-        itemsIndexed(models){
-            index, model ->
+    ) {
+        itemsIndexed(models) { index, model ->
             Box(modifier = Modifier
                 .padding(end = 8.dp)
-                .height(48.dp)
+                .height(38.dp)
                 .then(
-                    if(index == selectedModelIndex){
+                    if (index == selectedModelIndex) {
                         Modifier.border(1.dp, colorResource(R.color.purple_700))
-                    }else{
+                    } else {
                         Modifier
                     }
                 )
                 .background(
-                    if (index == selectedModelIndex) colorResource(R.color.purple_500)else
-                    colorResource(R.color.grey)
+                    if (index == selectedModelIndex) colorResource(R.color.purple_500) else
+                        colorResource(R.color.grey)
                 )
                 .clickable { onModelSelected(model) }
                 .padding(horizontal = 16.dp)
-            ){
+            ) {
                 Text(
                     text = model,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     color = if (index == selectedModelIndex) colorResource(R.color.white) else
-                    colorResource(R.color.black),
+                        colorResource(R.color.black),
                     modifier = Modifier
                         .align(Alignment.Center)
                 )
@@ -355,11 +377,12 @@ fun ModelSelector(
         }
     }
 }
+
 @Composable
 fun ImageThumbnail(
     imageUrl: String,
     isSelected: Boolean,
-    onClick: ()->Unit
+    onClick: () -> Unit
 ) {
     var backColor = if (isSelected) colorResource(R.color.purple_700) else
         colorResource(R.color.grey)

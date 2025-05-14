@@ -2,6 +2,7 @@ package com.example.healplus.settings
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,26 +35,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.skydoves.landscapist.glide.GlideImage
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
+import com.example.healplus.R
+import com.google.gson.Gson
 
 @Composable
 fun ProfileScreen(viewModel: AuthViewModel, navController: NavController) {
     val user by viewModel.user.observeAsState()
-
-    // Gọi hàm lấy dữ liệu khi màn hình mở
     LaunchedEffect(Unit) {
         viewModel.getCurrentUser()
     }
     Scaffold(
         topBar = {
-            ProfileTopAppBar("Thông tin cá nhân", navController)
+            ProfileTopAppBar("Thông tin tài khoản", navController)
         }
 
     ) {paddingValues ->
@@ -64,12 +68,9 @@ fun ProfileScreen(viewModel: AuthViewModel, navController: NavController) {
                     .fillMaxWidth()
                     .padding(vertical = 40.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
-                    val imageUri = userData.localImageUrl?.let { Uri.parse(it) }
-                    Log.d("UserProfileScreen", "localImageUrl: ${userData.localImageUrl}")
-                    Log.d("UserProfileScreen", "Parsed imageUri: $imageUri")
-
-                    GlideImage(
-                        imageModel = { imageUri }, // Glide hỗ trợ content://
+                    Image(
+                        painter = rememberAsyncImagePainter(userData.url),
+                        contentDescription = null,
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)
@@ -77,41 +78,34 @@ fun ProfileScreen(viewModel: AuthViewModel, navController: NavController) {
                             .padding(bottom = 30.dp)
                     )
                 }
-
-                InfoRow(label = "Họ và tên", value = userData.fullName)
-                InfoRow(label = "Số điện thoại", value = userData.phoneNumber)
+                InfoRow(label = "Họ và tên", value = userData.name)
+                InfoRow(label = "Số điện thoại", value = userData.phone)
                 InfoRow(label = "Giới tính", value = userData.gender)
-                InfoRow(label = "Ngày sinh", value = userData.birthDate)
+                InfoRow(label = "Ngày sinh", value = userData.dateBirth)
                 Spacer(modifier = Modifier.weight(1f))
-                ProfileBottomAppBar("Chỉnh sửa thông tin", navController)
+                ProfileBottomAppBar(onClick = {
+                    navController.navigate("editProfile/${Uri.encode(Gson().toJson(userData))}")
+                })
             } ?: Text(text = "Không có dữ liệu người dùng")
         }
     }
 }
 
 @Composable
-fun ProfileBottomAppBar(title: String, navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-    ) {
-       Button(
-           onClick = {
-               navController.navigate("updateProfile")
-           },
-           modifier = Modifier
-               .padding(top = 16.dp)
-               .height(56.dp)
-               .fillMaxWidth()
-       ) {
-           Text(
-               text = title,
-               fontSize = 24.sp
-           )
-       }
-    }
-
+fun ProfileBottomAppBar(onClick: () -> Unit) {
+        IconButton(
+            onClick = {
+                onClick()
+            },
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .height(56.dp),
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.edit_24px),
+                contentDescription = null
+            )
+        }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -73,4 +73,9 @@
     <string name="managerappbar">Quản lí sản phẩm</string>
     <string name="userodermanages">Đơn hàng của tôi</string>
     <string name="revenue">Doanh thu và các khoảng thanh toán khác</string>
+    <string name="expiry">Hạn su dụng</string>
+    <string name="cachdung">Cách dùng</string>
+    <string name="congdung">Công dụng</string>
+    <string name="tacdungphu">Tác dụng phụ</string>
+    <string name="baoquan">Bảo quản</string>
 </resources>

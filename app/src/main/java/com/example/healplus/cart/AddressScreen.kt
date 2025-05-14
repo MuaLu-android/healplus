@@ -82,14 +82,14 @@ fun AddressScreen(navController: NavController,
 
 
                 OutlinedTextField(
-                    value = user.fullName,
+                    value = user.name,
                     onValueChange = { },
                     label = { Text("Họ và tên") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
-                    value = user.phoneNumber,
+                    value = user.phone,
                     onValueChange = { },
                     label = { Text("Số điện thoại") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -156,8 +156,8 @@ fun AddressScreen(navController: NavController,
                 Button(
                     onClick = {
                         val newAddress = AddressModel(
-                            user.fullName,
-                            user.phoneNumber,
+                            user.name,
+                            user.phone,
                             user.email,
                             province,
                             addressDetail,
