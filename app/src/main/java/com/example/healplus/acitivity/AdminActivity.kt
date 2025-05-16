@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -60,11 +61,11 @@ class AdminActivity : BaseActivity() {
 fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     val navController = rememberNavController()
     val navItemList = listOf(
-        NavItemModel(route = "home", label = stringResource(id = R.string.home), icon = Icons.Default.Home, badgeCount = 0),
-        NavItemModel(route = "point", label = stringResource(id = R.string.manager), icon = Icons.Default.List, badgeCount = 0),
-        NavItemModel(route = "add", label = stringResource(id =R.string.add), icon = Icons.Default.Email, badgeCount = 0),
-        NavItemModel(route = "oder", label = stringResource(R.string.oder), icon = Icons.Default.ExitToApp, badgeCount = 0),
-        NavItemModel(route = "settings", label = stringResource(R.string.settings), icon = Icons.Default.Settings, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "home", label = stringResource(id = R.string.home), R.drawable.home_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "point", label = stringResource(id = R.string.manager), R.drawable.shopping_bag_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "add", label = stringResource(R.string.add), R.drawable.mail_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "oder", label = stringResource(R.string.oder), R.drawable.orders_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "settings", label = stringResource(R.string.settings), R.drawable.settings_24px, badgeCount = 0),
     )
     var selectedIndex by remember {
         mutableIntStateOf(0)
@@ -111,7 +112,10 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
                                     if (navItem.badgeCount > 0)
                                         Badge { Text(text = navItem.badgeCount.toString()) }
                                 }) {
-                                    Icon(imageVector = navItem.icon, contentDescription = navItem.label)
+                                    Icon(
+                                            painter = painterResource(id = navItem.iconResId),
+                                            contentDescription = navItem.label
+                                        )
                                 }
                             },
                             label = { Text(text = navItem.label)

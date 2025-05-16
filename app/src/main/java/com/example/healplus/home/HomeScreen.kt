@@ -1,7 +1,9 @@
 package com.example.healplus.home
+
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -25,7 +27,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,9 +50,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +62,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -70,9 +82,12 @@ import com.example.healplus.ui.theme.tertiaryDarkHighContrast
 import kotlinx.coroutines.delay
 
 @Composable
-fun MainActivityScreen(navController: NavController, authViewModel: AuthViewModel){
-    val viewModel = ApiCallViewModel()
-    val banners = remember  { mutableStateListOf<BannersModel>() }
+fun MainActivityScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel = viewModel(),
+    viewModel: ApiCallViewModel = viewModel()
+) {
+    val banners = remember { mutableStateListOf<BannersModel>() }
     val categories = remember { mutableStateListOf<CategoryModel>() }
     val ingredient = remember { mutableStateListOf<IngredientsModel>() }
     val recommended = remember { mutableStateListOf<ProductsModel>() }
@@ -83,14 +98,12 @@ fun MainActivityScreen(navController: NavController, authViewModel: AuthViewMode
     val authSate = authViewModel.authSate.observeAsState()
 
     LaunchedEffect(authSate.value) {
-        when(authSate.value){
+        when (authSate.value) {
             is AuthSate.Unauthenticated -> navController.navigate("login")
             else -> Unit
         }
     }
-    //Banners
     LaunchedEffect(Unit) {
-        Log.d("BANNER_LOG", "Bắt đầu loadBanners()")
         viewModel.loadBanners()
         viewModel.banners.observeForever {
             banners.clear()
@@ -99,44 +112,39 @@ fun MainActivityScreen(navController: NavController, authViewModel: AuthViewMode
         }
 
     }
-    //Categories
     LaunchedEffect(Unit) {
         viewModel.loadCategory()
-        viewModel.categories.observeForever{
+        viewModel.categories.observeForever {
             categories.clear()
             categories.addAll(it)
-            Log.d("LaunchedEffect", "item Categories nhân đc:${categories.size}")
             showCategoryLoading = false
         }
     }
-    //prominent category
     LaunchedEffect(Unit) {
-        viewModel.loadIngredients()
-        viewModel.ingredient.observeForever{
+        viewModel.loadIngredientCount()
+        viewModel.ingredient.observeForever {
             ingredient.clear()
             ingredient.addAll(it)
             showIngredient = false
         }
     }
-    //Recommended
     LaunchedEffect(Unit) {
         viewModel.loadRecommended()
-        viewModel.recommended.observeForever{
+        viewModel.recommended.observeForever {
             recommended.clear()
             recommended.addAll(it)
-            Log.d("LaunchedEffect", "item Categories nhân đc:${recommended.size}")
             showRecommendedLoading = false
         }
     }
-    Scaffold (
+    Scaffold(
         topBar = { MediumTopAppBar(navController, categories, showCategoryLoading, authViewModel) }
-    ){paddingValues ->
+    ) { paddingValues ->
         ConstraintLayout(
             modifier = Modifier
                 .padding(paddingValues)
         ) {
             val (scrollList, bottomMenu) = createRefs()
-            LazyColumn (
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .constrainAs(scrollList) {
@@ -145,70 +153,72 @@ fun MainActivityScreen(navController: NavController, authViewModel: AuthViewMode
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                     }
-            ){
-                //banners
+            ) {
                 item {
-                    if (showBannerLoading){
+                    if (showBannerLoading) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .height(200.dp),
                             contentAlignment = Alignment.Center
-                        ){
-                            CircularProgressIndicator(
-
-                            )
+                        ) {
+                            CircularProgressIndicator()
                         }
-                    }else{
+                    } else {
                         Banners(banners)
                     }
                 }
-                //category
                 item {
-                    SectionTitle(R.string.categories, R.string.see_all)
-                }
-                item {
-                    if (showCategoryLoading){
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
+                    if (showCategoryLoading) {
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
                             contentAlignment = Alignment.Center
-                        ){
+                        ) {
                         }
-                    }else{
-                        CategoryList(categories, navController)
+                    } else {
+                        Column {
+                            SectionTitle(R.string.categories, R.string.see_all)
+                            CategoryList(categories, navController)
+                        }
                     }
                 }
-                //Ingredients
                 item {
-                    UnSectionTitle(R.string.prominment_category)
-                }
-                item {
-                    if (showCategoryLoading){
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
+                    if (showCategoryLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
                             contentAlignment = Alignment.Center
-                        ){
+                        ) {
                         }
-                    }else{
-                        IngredientScreen (ingredient, navController)
+                    } else {
+                        Column {
+                            UnSectionTitle(R.string.prominment_category)
+                            IngredientScreen(ingredient, navController)
+                        }
                     }
                 }
-                //recommended
                 item {
-                    SectionTitle(R.string.recommended, R.string.see_all)
+                    if (showRecommendedLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                        }
+                    } else {
+                        Column {
+                            SectionTitle(R.string.recommended, R.string.see_all)
+                            ListItems(recommended, navController)
+                        }
+                    }
                 }
                 item {
-                    if (showRecommendedLoading){
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                            contentAlignment = Alignment.Center){
-                        }
-                    }else{
-                        ListItems(recommended, navController)
-                    }
+                    DrugStoreInfoScreen()
                 }
                 item {
                     Spacer(
@@ -217,14 +227,6 @@ fun MainActivityScreen(navController: NavController, authViewModel: AuthViewMode
                     )
                 }
             }
-//            BottomMenu(modifier = Modifier
-//                .fillMaxWidth()
-//                .constrainAs(bottomMenu) {
-//                    bottom.linkTo(parent.bottom)
-//                },
-//                onItemClick = onCartClick,
-//                authViewModel
-//            )
         }
 
     }
@@ -235,23 +237,24 @@ fun MainActivityScreen(navController: NavController, authViewModel: AuthViewMode
 @Composable
 fun IngredientScreen(
     categoriesItems: List<IngredientsModel>,
-    navController: NavController) {
+    navController: NavController
+) {
     var selectedIndex by remember { mutableStateOf(-1) }
-    Log.d("ProminentCategory", "Danh sách có ${categoriesItems.size} phần tử")
     Box(
         modifier = Modifier
             .height(424.dp)
             .fillMaxWidth()
     ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier // Đảm bảo không bị lỗi kích thước
+                modifier = Modifier
             ) {
                 items(categoriesItems.size) { index ->
                     val item = categoriesItems[index]
@@ -270,42 +273,117 @@ fun IngredientScreen(
 
 }
 @Composable
-fun CategoryList(categories: List<CategoryModel>,  navController: NavController) {
+fun DrugStoreInfoScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+
+        // 4 Icon Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            InfoItem(icon = Icons.Default.Email, title = "Thuốc chính hãng", subtitle = "đa dạng và chuyên sâu")
+            InfoItem(icon = Icons.Default.Build, title = "Đổi trả trong 30 ngày", subtitle = "kể từ ngày mua hàng")
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            InfoItem(icon = Icons.Default.Settings, title = "Cam kết 100%", subtitle = "chất lượng sản phẩm")
+            InfoItem(icon = Icons.Default.ShoppingCart, title = "Miễn phí vận chuyển", subtitle = "theo chính sách giao hàng")
+        }
+
+        // Thông tin công ty
+        Text(
+            text = "© 2007 - 2024 Công ty Cổ Phần Dược Phẩm\n" +
+                    "FPT Long Châu Số ĐKKD 0315275368 cấp ngày 17/09/2018 tại Sở Kế hoạch Đầu tư TPHCM",
+            style = MaterialTheme.typography.bodySmall
+        )
+
+        Text(
+            text = "Địa chỉ: 379-381 Hai Bà Trưng, P. Võ Thị Sáu, Q.3, TP. HCM.",
+            style = MaterialTheme.typography.bodySmall
+        )
+
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            ContactInfo(label = "Số điện thoại", content = "(028)73023456")
+            ContactInfo(label = "Email", content = "sale@nhathuoclongchau.com.vn")
+            ContactInfo(label = "Người quản lý nội dung", content = "Nguyễn Bạch Điệp")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Biểu tượng xác nhận
+        Image(
+            painter = painterResource(id = R.drawable.icon_manager_der), // cần thêm hình icon xác nhận BCT vào resource
+            contentDescription = null,
+            modifier = Modifier
+                .height(40.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+@Composable
+fun InfoItem(icon: ImageVector, title: String, subtitle: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(icon, contentDescription = null, tint = Color(0xFF2196F3), modifier = Modifier.size(32.dp))
+        Text(text = title, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
+        Text(text = subtitle, fontSize = 11.sp, color = Color.Gray, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun ContactInfo(label: String, content: String) {
+    Row {
+        Text(text = "• $label: ", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+        Text(text = content, fontSize = 13.sp, color = Color.Blue)
+    }
+}
+@Composable
+fun CategoryList(categories: List<CategoryModel>, navController: NavController) {
     var selectedIndex by remember { mutableStateOf(-1) }
-//    val context = LocalContext.current
-    LazyRow (
+    LazyRow(
         modifier = Modifier
             .height(60.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp)
-    ){
-        items(categories.size) { index -> CategoryItem(
-            item = categories[index],
-            iSelected = selectedIndex == index,
-            onItemClick = {
-                selectedIndex = index
-//                oPenElements(categories[index].idc, categories[index].title)
-                navController.navigate("category/${categories[index].idc}/${categories[index].title}")
-//                navController.navigate("home")
-            }
-           )
+    ) {
+        items(categories.size) { index ->
+            CategoryItem(
+                item = categories[index],
+                iSelected = selectedIndex == index,
+                onItemClick = {
+                    selectedIndex = index
+                    navController.navigate("category/${categories[index].idc}/${categories[index].title}")
+                }
+            )
         }
     }
 }
+
 @Composable
 fun CategoryItem(
     item: CategoryModel,
     iSelected: Boolean,
-    onItemClick: () -> Unit) {
-    Row (modifier = Modifier
-        .fillMaxHeight()
-        .clickable(onClick = onItemClick)
-        .background(
-            color = if (iSelected) inversePrimaryDark else tertiaryDarkHighContrast,
-            shape = RoundedCornerShape(8.dp)
-        ),
-        verticalAlignment = Alignment.CenterVertically){
+    onItemClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxHeight()
+            .clickable(onClick = onItemClick)
+            .background(
+                color = if (iSelected) inversePrimaryDark else tertiaryDarkHighContrast,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = item.title,
             fontSize = 16.sp,
@@ -315,20 +393,24 @@ fun CategoryItem(
         )
     }
 }
+
 @Composable
 fun CategoryItem1(
     item: IngredientsModel,
     iSelected: Boolean,
-    onItemClick: () -> Unit) {
-    Row (modifier = Modifier
-        .clickable(onClick = onItemClick)
-        .background(
-            color = if (iSelected) errorContainerLight else inversePrimaryDark,
-            shape = RoundedCornerShape(8.dp)
-        )
-        .padding(vertical = 4.dp, horizontal = 8.dp)
-        .height(60.dp),
-        verticalAlignment = Alignment.CenterVertically){
+    onItemClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .clickable(onClick = onItemClick)
+            .background(
+                color = if (iSelected) errorContainerLight else inversePrimaryDark,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(vertical = 4.dp, horizontal = 8.dp)
+            .height(60.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         AsyncImage(
             model = item.url,
             contentDescription = null,
@@ -341,31 +423,35 @@ fun CategoryItem1(
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(start = 8.dp),
-            textAlign = TextAlign.Start        )
+            textAlign = TextAlign.Start
+        )
     }
 }
+
 @Composable
 fun Banners(banners: List<BannersModel>) {
     AutoSlidingCarousel(banners = banners)
 }
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
-fun AutoSlidingCarousel(modifier: Modifier = Modifier,
-                        banners: List<BannersModel>){
-    val paperState = rememberPagerState ( pageCount = { banners.size } )
+fun AutoSlidingCarousel(
+    modifier: Modifier = Modifier,
+    banners: List<BannersModel>
+) {
+    val paperState = rememberPagerState(pageCount = { banners.size })
     val isDragged by paperState.interactionSource.collectIsDraggedAsState()
-    // Auto-scroll khi không bị kéo
     LaunchedEffect(isDragged) {
         while (!isDragged) {
-            delay(6000) // Chuyển trang sau mỗi 3 giây
+            delay(6000)
             val nextPage = (paperState.currentPage + 1) % banners.size
             paperState.animateScrollToPage(nextPage)
         }
     }
-    Column(modifier = Modifier
-        .fillMaxWidth()) {
-        HorizontalPager(state = paperState) {
-                page ->
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        HorizontalPager(state = paperState) { page ->
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(banners[page].url)
@@ -395,6 +481,7 @@ fun AutoSlidingCarousel(modifier: Modifier = Modifier,
         )
     }
 }
+
 @Composable
 fun DotIndicator(
     modifier: Modifier = Modifier,
@@ -406,7 +493,7 @@ fun DotIndicator(
     dotWidthOff: Dp,
     dotWidth: Dp,
     dotShape: Shape = RoundedCornerShape(50)
-){
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -418,10 +505,11 @@ fun DotIndicator(
                 width = if (index == selectedIndex) dotWidth else dotWidthOff,
                 shape = dotShape
             )
-            Spacer(modifier = Modifier.width(4.dp)) // Khoảng cách giữa các dot
+            Spacer(modifier = Modifier.width(4.dp))
         }
     }
 }
+
 @Composable
 fun IndicatorDot(
     modifier: Modifier = Modifier,
@@ -438,12 +526,13 @@ fun IndicatorDot(
             .background(color = color)
     )
 }
+
 @Composable
 fun SectionTitle(
     @StringRes title: Int,
     @StringRes actionText: Int
-){
-    Row (
+) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
@@ -452,7 +541,7 @@ fun SectionTitle(
                 top = 16.dp
             ),
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Text(
             text = stringResource(id = title),
             fontSize = 16.sp,
@@ -463,10 +552,11 @@ fun SectionTitle(
         )
     }
 }
+
 @Composable
 fun UnSectionTitle(
     @StringRes title: Int
-){
+) {
     Text(
         modifier = Modifier
             .fillMaxWidth()

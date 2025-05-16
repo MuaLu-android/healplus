@@ -64,6 +64,7 @@ import com.google.accompanist.flowlayout.FlowRow
 import kotlin.random.Random
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.healplus.ui.theme.errorDarkHighContrast
@@ -76,6 +77,8 @@ import com.example.healplus.ui.theme.onTertiaryLightHighContrast
 import com.example.healplus.ui.theme.primaryDark
 import com.example.healplus.ui.theme.surfaceBrightLight
 import com.google.gson.Gson
+import java.text.NumberFormat
+import java.util.Locale
 
 
 @Composable
@@ -90,20 +93,32 @@ fun CategoryScreen(
     val element by viewModel.element.observeAsState(emptyList())
     val product by viewModel.recommended.observeAsState(emptyList())
     val isLoading by remember { mutableStateOf(false) }
-    var showCategoryLoading by remember { mutableStateOf(false) }
+    var currentDisplayState by rememberSaveable { mutableStateOf(DisplayState.INGREDIENTS_FOR_CATEGORY) }
     var titlec by remember { mutableStateOf(title) }
     var titleing by remember { mutableStateOf(title) }
+    var titlelm by remember { mutableStateOf(title) }
     var idc by remember { mutableStateOf(id) }
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    var iding by remember { mutableStateOf(id) }
+    var idcelm by remember { mutableStateOf(id) }
     LaunchedEffect(idc) {
         viewModel.loadIngredientByCategory(idc)
-        viewModel.loadElementByIngredient(idc)
         viewModel.loadProductByCategory(idc)
-        viewModel.loadProductByIngredient(idc)
-        viewModel.loadProductByElement(idc)
+        viewModel.loadElementByIngredient(idc)
+        currentDisplayState = DisplayState.INGREDIENTS_FOR_CATEGORY
+        titlec = category.find { it.idc == idc }?.title ?: title
+    }
+    LaunchedEffect(iding) {
+        viewModel.loadElementByIngredient(iding)
+        viewModel.loadProductByIngredient(iding)
+        currentDisplayState = DisplayState.ELEMENTS_FOR_INGREDIENT
+    }
+    LaunchedEffect(idcelm) {
+        viewModel.loadProductByElement(idcelm)
+        currentDisplayState = DisplayState.PRODUCT_FOR_ELEMENT
     }
     LaunchedEffect(Unit) {
         viewModel.loadCategory()
+        currentDisplayState = DisplayState.INGREDIENTS_FOR_CATEGORY
     }
     Scaffold (
         topBar = {TopAppBarCategory(titlec, navController)}
@@ -120,42 +135,46 @@ fun CategoryScreen(
                   modifier = Modifier
                       .fillMaxSize()
               ) {
-                  CategoryTabs(category, idc) { idc1, title, show ->
-                      idc = idc1
-                      titlec = title
-                      showCategoryLoading = show
+                  CategoryTabs(category, idc) { selectedIdc, selectedTitle, _ ->
+                          idc = selectedIdc
+                          titlec = selectedTitle
+                          currentDisplayState = DisplayState.INGREDIENTS_FOR_CATEGORY
                   }
 
                   LazyColumn(
                       modifier = Modifier
                           .weight(1f)
                   ) {
-                      if (showCategoryLoading){
+                      if (currentDisplayState == DisplayState.ELEMENTS_FOR_INGREDIENT ||
+                          (currentDisplayState == DisplayState.PRODUCT_FOR_ELEMENT)){
                           item {
-                              Row(
-                                  modifier = Modifier
-                                      .fillMaxWidth()
-                                      .background(Color.White)
-                                      .padding(horizontal = 8.dp),
-                                  verticalAlignment = Alignment.CenterVertically
-                              ) {
-                                  IconButton(
-                                      onClick = {}
-                                  ) {
-                                      Icon(
-                                          imageVector = Icons.Default.ArrowBack,
-                                          contentDescription = null,
-                                          modifier = Modifier
-                                              .padding(end = 8.dp)
-                                      )
+                              val currentTitle = when (currentDisplayState) {
+                                  DisplayState.ELEMENTS_FOR_INGREDIENT -> ingredients.find { it.iding == iding }?.title ?: "Element" // Cần trường id và name trong IngredientsModel
+                                  DisplayState.INGREDIENTS_FOR_CATEGORY -> category.find { it.idc == idc }?.title ?: "Thành phần"
+                                  DisplayState.PRODUCT_FOR_ELEMENT -> element.find { it.ide == idcelm }?.title ?: "Sản phẩm"
+                              }
+                              ShowTitleIngrendinet(currentTitle){
+                                  when (currentDisplayState) {
+                                      DisplayState.ELEMENTS_FOR_INGREDIENT -> {
+                                          currentDisplayState =
+                                              DisplayState.INGREDIENTS_FOR_CATEGORY
+                                          idc = category.find { it.idc == idc }?.idc ?: idc
+                                          iding = ingredients.find { it.iding == iding }?.iding ?: iding
+                                          titlec = category.find { it.idc == idc }?.title ?: title
+                                      }
+                                      DisplayState.INGREDIENTS_FOR_CATEGORY -> {
+                                      }
+                                      DisplayState.PRODUCT_FOR_ELEMENT -> {
+                                          currentDisplayState =
+                                              DisplayState.ELEMENTS_FOR_INGREDIENT
+                                          idcelm = element.find { it.ide == idcelm }?.ide ?: ""
+                                          titlec = category.find { it.idc == idc }?.title ?: title
+                                      }
                                   }
-                                  Text(
-                                      text = titleing,
-                                      style = MaterialTheme.typography.titleLarge
-                                  )
                               }
                           }
-                      }else {
+                      }
+                      if (currentDisplayState == DisplayState.INGREDIENTS_FOR_CATEGORY && ingredients.isNotEmpty()) {
                           item {
                               FlowRow(
                                   modifier = Modifier
@@ -171,16 +190,15 @@ fun CategoryScreen(
                                               .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp) // Chia đôi màn hình
                                       ) {
                                           CategoryItem12(ingredients2) { id, title ->
-                                              idc = id
+                                              iding = id
                                               titleing = title
-                                              showCategoryLoading = true
+                                              currentDisplayState = DisplayState.ELEMENTS_FOR_INGREDIENT
                                           }
                                       }
                                   }
                               }
                           }
-                      }
-                          // Hiển thị danh sách Element
+                      }else if (currentDisplayState == DisplayState.ELEMENTS_FOR_INGREDIENT) {
                           item {
                               FlowRow(
                                   modifier = Modifier
@@ -190,22 +208,23 @@ fun CategoryScreen(
                                   mainAxisSpacing = 8.dp,
                                   crossAxisSpacing = 8.dp
                               ) {
-                                  element.forEach { elments ->
+                                  element.forEach { elementItem ->
                                       Box(
                                           modifier = Modifier
-                                              .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp) // Chia đôi màn hình
+                                              .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp)
                                       ) {
-                                          CategoryItem123(elments) { id, title ->
-                                              idc = id
-                                              titleing = title
+                                          CategoryItem123(elementItem) { selectedElementId, selectedElementTitle ->
+                                              idcelm = selectedElementId
+                                              titlelm = selectedElementTitle
                                           }
                                       }
                                   }
                               }
                           }
+                      }
                       item {
                           Text(
-                              text = "Products Lists",
+                              text = "Danh sách sản phẩm",
                               style = MaterialTheme.typography.titleLarge,
                               modifier = Modifier.padding(8.dp)
                           )
@@ -234,12 +253,38 @@ fun CategoryScreen(
 }
 
 @Composable
-fun CategoryTabs(categories: List<CategoryModel>, idc: String,
+fun ShowTitleIngrendinet(titleing: String, onBackClicked: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = {onBackClicked()}
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+            )
+        }
+        Text(
+            text = titleing,
+            style = MaterialTheme.typography.titleLarge
+        )
+    }
+}
+
+@Composable
+fun CategoryTabs(categories: List<CategoryModel>, selectedIdc: String,
                  onCategorySelected: (String, String, Boolean) -> Unit) {
-    var selectedIndex by remember { mutableStateOf(0) }
-    val showLoadingIngredient by remember { mutableStateOf(false) }
-    LaunchedEffect(idc) {
-        selectedIndex = categories.indexOfFirst { it.idc == idc }.takeIf { it >= 0 } ?: 0
+    var selectedIndex by rememberSaveable  { mutableStateOf(0) }
+    val showLoadingIngredient by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(selectedIdc) {
+        selectedIndex = categories.indexOfFirst { it.idc == selectedIdc }.takeIf { it >= 0 } ?: 0
     }
     LazyRow (
         modifier = Modifier
@@ -285,11 +330,11 @@ fun CategoryItem12(categories: CategoryModel,
                 text = categories.title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center, // Căn giữa nội dung
-                maxLines = 2, // Giới hạn tối đa 2 dòng
+                textAlign = TextAlign.Center,
+                maxLines = 2,
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 4.dp)
-                    .fillMaxWidth() // Giúp căn giữa nội dung trong Box
+                    .fillMaxWidth()
             )
         }
     }
@@ -412,7 +457,6 @@ fun RecommendedList1(items: ProductsModel, navController: NavController) {
                 .height(180.dp)
                 .padding(top = 16.dp, end = 16.dp, start = 16.dp)
                 .clickable {
-//                 openProduct(items[row])
                     navController.navigate("detail/${Uri.encode(Gson().toJson(items))}")
                 },
             contentScale = ContentScale.Crop
@@ -448,7 +492,7 @@ fun RecommendedList1(items: ProductsModel, navController: NavController) {
                 )
             }
             Text(
-                text = "${items.price}00 VND",
+                text = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(items.price).toString(),
                 color = colorResource(R.color.purple_200),
                 maxLines = 1,
                 fontSize = 15.sp,
@@ -456,4 +500,9 @@ fun RecommendedList1(items: ProductsModel, navController: NavController) {
             )
         }
     }
+}
+enum class DisplayState {
+    INGREDIENTS_FOR_CATEGORY, // Hiển thị ingredients của category đã chọn
+    ELEMENTS_FOR_INGREDIENT, // Hiển thị elements của ingredient đã chọn
+    PRODUCT_FOR_ELEMENT,
 }

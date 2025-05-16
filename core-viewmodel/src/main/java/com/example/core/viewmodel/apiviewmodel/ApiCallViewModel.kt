@@ -66,9 +66,7 @@ class ApiCallViewModel: ViewModel() {
                     if (revenueList != null) {
                         _revenueYear.value = revenueList.revenue ?: emptyList()
                         _historyYear.value = revenueList.detaily_orders ?: emptyList()
-                        Log.d("ApiCallViewModel", "revenueYear: _historyYear.value updated successfully. Size: ${_historyYear.value?.size}")
                         _historyYear.value?.forEachIndexed { index, order ->
-                            Log.d("ApiCallViewModel", "revenueYear: Order[$index] - ID: ${order.id}, DateTime: ${order.datetime}, SumMoney: ${order.sumMoney}")
                         }
                         _isDataEmptyAfterLoad.value = revenueList.revenue.isNotEmpty()
                     }
@@ -237,23 +235,13 @@ class ApiCallViewModel: ViewModel() {
         })
     }
     fun loadProductBySearch(search: String) {
-        Log.d("API_REQUEST1", "Gửi yêu cầu API để lấy sản phẩm của danh mục $search")
-        Log.d("API_DEBUG", "Thời gian gửi request: ${System.currentTimeMillis()}")
-        // Hủy request cũ nếu có
         currentCall?.cancel()
-        // Tạo request mới
         currentCall = RetrofitClient.instance.getSearchProduct(search)
         currentCall?.enqueue(object : Callback<List<ProductsModel>> {
             override fun onResponse(call: Call<List<ProductsModel>>, response: Response<List<ProductsModel>>) {
-                Log.d("API_RESPONSE1", "Nhận phản hồi từ API - Code: ${response.code()}")
-
                 if (response.isSuccessful) {
                     val productList = response.body()?.toMutableList() ?: mutableListOf()
                     _recommended.value = productList
-                    Log.d("API_RESPONSE1", "Số lượng sản phẩm nhận được: ${productList.size}")
-                    productList.forEachIndexed { index, item ->
-                        Log.d("API_RESPONSE1", "Sản phẩm [$index]: $item")
-                    }
                 } else {
                     Log.e("API_ERROR1", "Lỗi Response Code: ${response.code()} - ${response.errorBody()?.string()}")
                 }
@@ -264,17 +252,11 @@ class ApiCallViewModel: ViewModel() {
         })
     }
     fun loadProductByCategory(idc: String) {
-        Log.d("API_REQUEST", "Gửi yêu cầu API để lấy sản phẩm của danh mục $idc...")
         RetrofitClient.instance.getProductsByCategory(idc).enqueue(object : Callback<List<ProductsModel>> {
             override fun onResponse(call: Call<List<ProductsModel>>, response: Response<List<ProductsModel>>) {
-                Log.d("API_RESPONSE", "Nhận phản hồi từ API - Code: ${response.code()}")
                 if (response.isSuccessful) {
                     val productList = response.body()?.toMutableList() ?: mutableListOf()
                     _recommended.value = productList
-                    Log.d("API_RESPONSE", "Số lượng sản phẩm nhận được: ${productList.size}")
-                    productList.forEachIndexed { index, item ->
-                        Log.d("API_RESPONSE", "Sản phẩm [$index]: $item")
-                    }
                 } else {
                     Log.e("API_ERROR", "Lỗi Response Code: ${response.code()}")
                 }
@@ -294,16 +276,12 @@ class ApiCallViewModel: ViewModel() {
                 if (response.isSuccessful){
                     val productsList = response.body()?.toMutableList() ?: mutableListOf()
                     _recommended.value = productsList
-                    Log.d("API_Ingredient", "Số lượng sản phẩm nhận được: ${productsList.size}")
-                    productsList.forEachIndexed { index, item ->
-                        Log.d("API_Ingredient", "Sản phẩm [$index]: $item")
-                    }
 
                 }else {
                     Log.e("API_ERROR", "Lỗi Response Code: ${response.code()}")
             }}
             override fun onFailure(call: Call<List<ProductsModel>>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e("API_ERROR", "Yêu cầu mạng thất bại: ${t.message}", t)
             }
         })
     }
@@ -323,7 +301,7 @@ class ApiCallViewModel: ViewModel() {
             }
 
             override fun onFailure(call: Call<List<IngredientsModel>>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e("API_ERROR", "Lỗi khi gọi API: ${t.message}")
             }
         })
     }
@@ -342,7 +320,7 @@ class ApiCallViewModel: ViewModel() {
             }
 
             override fun onFailure(call: Call<List<ElementsModel>>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e("API_ERROR", "Lỗi khi gọi API: ${t.message}")
             }
 
         })
@@ -362,7 +340,7 @@ class ApiCallViewModel: ViewModel() {
             }
 
             override fun onFailure(call: Call<List<ProductsModel>>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e("API_ERROR", "Lỗi khi gọi API: ${t.message}")
             }
 
         })
@@ -382,6 +360,27 @@ class ApiCallViewModel: ViewModel() {
                         categorys.forEachIndexed { index, item ->
                             Log.d("API_Category", "Sản phẩm [$index]: $item")
                         }
+                    } else {
+                        Log.e("API_ERROR", "Lỗi Response Code: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<IngredientsModel>>, t: Throwable) {
+                    Log.e("API_ERROR", "Error: ${t.message}")
+                }
+            })
+
+    }
+    fun loadIngredientCount() {
+        RetrofitClient.instance.getIngredientCount()
+            .enqueue(object : Callback<List<IngredientsModel>> {
+                override fun onResponse(
+                    call: Call<List<IngredientsModel>>,
+                    response: Response<List<IngredientsModel>>
+                ) {
+                    if (response.isSuccessful) {
+                        val categorys = response.body()?.toMutableList() ?: mutableListOf()
+                        _ingredient.value = categorys
                     } else {
                         Log.e("API_ERROR", "Lỗi Response Code: ${response.code()}")
                     }
@@ -660,6 +659,20 @@ class ApiCallViewModel: ViewModel() {
 
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
                 onResult(ApiResponse(false, "Lỗi kết nối!"))
+            }
+        })
+    }
+    fun upDateReview(idp: String) {
+        val call = RetrofitClient.instance.updateReview(idp)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("AddCategory", "Thanh cong")
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                Log.e("AddCategory", "Lỗi kết nối: ${t.message}")
             }
         })
     }

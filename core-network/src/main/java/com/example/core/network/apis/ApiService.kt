@@ -17,6 +17,9 @@ import retrofit2.http.Query
 import java.sql.Time
 
 interface ApiService {
+    //GET
+    @GET("get_ingredient_count.php")
+    fun getIngredientCount(): Call<List<IngredientsModel>>
     @GET("getbanner.php")
     fun getBanners(): Call<List<BannersModel>>
 
@@ -85,7 +88,11 @@ interface ApiService {
         @Field("idc") idc: String,
         @Field("title") title: String
     ): Call<ApiResponse>
-
+    @FormUrlEncoded
+    @POST("update_review.php")
+    fun updateReview(
+        @Field("idp") idc: String,
+    ): Call<ApiResponse>
     @FormUrlEncoded
     @POST("update_ingredient.php")
     fun updateIngredient(

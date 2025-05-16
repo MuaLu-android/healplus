@@ -23,6 +23,7 @@ import com.example.healplus.category.CategoryScreen
 import com.example.healplus.chat.UserChatScreen
 import com.example.healplus.home.DetailScreen
 import com.example.healplus.home.MainActivityScreen
+import com.example.healplus.home.ProductDetailScreen
 import com.example.healplus.oder.UsersOder
 import com.example.healplus.search.SearchScreen
 import com.example.healplus.settings.ProfileScreen
@@ -31,16 +32,13 @@ import com.example.healplus.settings.UpdateProfileScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.net.URLDecoder
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             MainActivityScreen(
-                navController = navController,
-                authViewModel = authViewModel
+                navController = navController
             )
         }
         composable(route = "point"){
@@ -62,7 +60,17 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 navController = navController
             )
         }
+        composable("productDetail/{product}") {
+                backStackEntry ->
+            val jsonItem = backStackEntry.arguments?.getString("product")
 
+            val item = Gson().fromJson(jsonItem, ProductsModel::class.java)
+            Log.d("ProductDetailScreen", "Received item: $item")
+            ProductDetailScreen(
+                item = item,
+                navController = navController
+            )
+        }
         composable("cart") {
             CartScreen(
             navController
@@ -102,7 +110,7 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 val categoryid = argument.getString("categoryid")
                 val categorytitle = argument.getString("categorytitle")
                 if (categoryid.isNullOrBlank() || categorytitle.isNullOrBlank()) {
-                    Log.e("Navigation", "Error: Missing categoryid or categorytitle")
+                    Log.e("Navigation123", "Error: Missing categoryid or categorytitle")
                     return@composable
                 }
                 val viewModel: ApiCallViewModel = viewModel()
@@ -135,29 +143,5 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             val item = Gson().fromJson(jsonItem, UserAuthModel::class.java)
             UpdateProfileScreen(item, navController)
         }
-//        composable(route = "cartScreen"){
-//            CartScreen(
-//                onBackClick = {
-//                    navController.popBackStack()
-//                }
-//            )
-//        }
-//        composable("detail/{itemsModel}") {
-//                backStackEntry ->
-//            val jsonItem = backStackEntry.arguments?.getString("itemsModel")
-//            val item = Gson().fromJson(jsonItem, ItemsModel::class.java)
-//            val context = LocalContext.current
-//
-//            DetailScreen(
-//                item = item,
-//                onBackClick = { navController.popBackStack() },
-//                context = context,
-//                onAddToCartClick = {},
-//                onCartClick = {
-//                    navController.navigate("cartScreen")
-//                }
-//            )
-//        }
-//    })
     }
 }

@@ -43,8 +43,7 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             MainActivityScreen(
-                navController = navController,
-                authViewModel = authViewModel
+                navController = navController
             )
         }
         composable("oder"){
