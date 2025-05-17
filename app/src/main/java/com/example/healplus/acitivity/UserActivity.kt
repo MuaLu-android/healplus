@@ -95,7 +95,10 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         "profile",
         "order_screen/{selectedProducts}/{itemTotal}/{tax}/{quantity}",
         "address",
-        "editProfile/{userData}"
+        "editProfile/{userData}",
+        "writeReview/{productId}",
+        "allReviews/{productName}/{reviewItems}",
+        "productDetail/{product}",
     )
     LaunchedEffect(navController.currentBackStackEntry) {
         val currentRoute1 = navController.currentBackStackEntry?.destination?.route

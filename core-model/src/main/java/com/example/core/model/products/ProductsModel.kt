@@ -3,14 +3,13 @@ package com.example.core.model.products
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.Gson
-
 data class ProductsModel(
     val idp: String = "",
     val name: String = "",
     val trademark: String = "",
     var rating: Double = 0.0,
     var review: Int = 0,
-    var comment: Int = 0,
+    var sold: Int = 0,
     var price: Int = 0,
     val preparation: String = "",
     val origin: String = "",
@@ -22,15 +21,16 @@ data class ProductsModel(
     val expiry: String = "",
     val specification: String = "",
     val ingredient: String = "",
-    var quantity: Int = 0, // Thay đổi kiểu dữ liệu thành String?
+    var quantity: Int = 0,
     val congdung: String = "",
     val cachdung: String = "",
     val tacdungphu: String = "",
     val baoquan: String = "",
     var product_images: ArrayList<String> = ArrayList(),
     var unit_names: ArrayList<String> = ArrayList(),
-    var element_names: String = "", // Thêm trường element_names
-    var ingredients: ArrayList<IngredientDetail> = ArrayList() // Thêm trường ingredients
+    var element_names: String = "",
+    var ingredients: ArrayList<IngredientDetail> = ArrayList(),
+    var reviewitems: ArrayList<ReviewItem> = ArrayList(),
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -39,7 +39,7 @@ data class ProductsModel(
         trademark = parcel.readString() ?: "",
         rating = parcel.readDouble(),
         review = parcel.readInt(),
-        comment = parcel.readInt(),
+        sold = parcel.readInt(),
         price = parcel.readInt(),
         preparation = parcel.readString() ?: "",
         origin = parcel.readString() ?: "",
@@ -59,7 +59,8 @@ data class ProductsModel(
         product_images = parcel.createStringArrayList() ?: arrayListOf(),
         unit_names = parcel.createStringArrayList() ?: arrayListOf(),
         element_names = parcel.readString() ?: "",
-        ingredients = parcel.createTypedArrayList(IngredientDetail) ?: arrayListOf()
+        ingredients = parcel.createTypedArrayList(IngredientDetail) ?: arrayListOf(),
+        reviewitems = parcel.createTypedArrayList(ReviewItem) ?: arrayListOf()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -68,7 +69,7 @@ data class ProductsModel(
         parcel.writeString(trademark)
         parcel.writeDouble(rating)
         parcel.writeInt(review)
-        parcel.writeInt(comment)
+        parcel.writeInt(sold)
         parcel.writeInt(price)
         parcel.writeString(preparation)
         parcel.writeString(origin)
@@ -89,6 +90,7 @@ data class ProductsModel(
         parcel.writeStringList(unit_names)
         parcel.writeString(element_names)
         parcel.writeTypedList(ingredients)
+        parcel.writeTypedList(reviewitems)
     }
 
     override fun describeContents(): Int {

@@ -29,58 +29,72 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WriteReviewScreen(
     navController: NavController,
     productId: String, // ID sản phẩm cần đánh giá
-    apiCallViewModel: ApiCallViewModel = viewModel()
+    apiCallAdd: ApiCallAdd = viewModel(),
+    authViewModel: AuthViewModel = viewModel(),
 ) {
-    var rating by remember { mutableStateOf(0) } // 0 sao ban đầu
-    var reviewTitle by remember { mutableStateOf("") } // Tiêu đề đánh giá (tùy chọn)
+    var rating by remember { mutableStateOf(0) }
+    var reviewTitle by remember { mutableStateOf("") }
     var reviewComment by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    // Trạng thái từ ViewModel (ví dụ: sau khi gửi thành công)
-    // val submitStatus by apiCallViewModel.submitReviewStatus.collectAsStateWithLifecycle()
-    // LaunchedEffect(submitStatus) {
-    //     if (submitStatus == true) { // Giả sử true là thành công
-    //         Toast.makeText(context, "Đánh giá của bạn đã được gửi!", Toast.LENGTH_SHORT).show()
-    //         navController.popBackStack()
-    //         apiCallViewModel.resetSubmitReviewStatus() // Reset lại trạng thái
-    //     } else if (submitStatus == false) { // Giả sử false là thất bại
-    //          Toast.makeText(context, "Gửi đánh giá thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show()
-    //          isLoading = false
-    //          apiCallViewModel.resetSubmitReviewStatus()
-    //     }
-    // }
+    val submitStatus by apiCallAdd.submitReviewStatus.collectAsStateWithLifecycle()
+    LaunchedEffect(submitStatus) {
+        if (submitStatus == true) {
+            Toast.makeText(context, "Đánh giá của bạn đã được gửi!", Toast.LENGTH_SHORT).show()
+            navController.popBackStack()
+            apiCallAdd.resetSubmitReviewStatus()
+        } else if (submitStatus == false) {
+            Toast.makeText(context, "Gửi đánh giá thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT)
+                .show()
+            isLoading = false
+            apiCallAdd.resetSubmitReviewStatus()
+        }
+    }
 
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.write_your_review_title)) }, // "Viết đánh giá của bạn"
+                title = { Text(stringResource(R.string.write_your_review_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_desc))
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back_button_desc)
+                        )
                     }
                 }
             )
@@ -91,7 +105,7 @@ fun WriteReviewScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-                .imePadding(), // Để nội dung không bị che bởi bàn phím
+                .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -99,15 +113,11 @@ fun WriteReviewScreen(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-
-            // Chọn sao đánh giá
             RatingInput(
                 currentRating = rating,
                 onRatingChange = { newRating -> rating = newRating },
                 modifier = Modifier.padding(bottom = 24.dp)
             )
-
-            // Tiêu đề đánh giá (tùy chọn)
             OutlinedTextField(
                 value = reviewTitle,
                 onValueChange = { reviewTitle = it },
@@ -128,7 +138,10 @@ fun WriteReviewScreen(
                 placeholder = { Text(stringResource(R.string.share_your_thoughts_placeholder)) } // "Chia sẻ cảm nghĩ của bạn về sản phẩm..."
             )
             Text(
-                text = stringResource(R.string.min_characters_required, 20), // "*Tối thiểu 20 ký tự"
+                text = stringResource(
+                    R.string.min_characters_required,
+                    20
+                ), // "*Tối thiểu 20 ký tự"
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.Start)
@@ -139,24 +152,56 @@ fun WriteReviewScreen(
             Button(
                 onClick = {
                     if (rating == 0) {
-                        Toast.makeText(context, context.getString(R.string.please_select_rating_toast), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.please_select_rating_toast),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return@Button
                     }
                     if (reviewComment.length < 20) {
-                        Toast.makeText(context, context.getString(R.string.comment_too_short_toast, 20), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.comment_too_short_toast, 20),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return@Button
                     }
-                    isLoading = true
-                    // Gọi ViewModel để gửi đánh giá
-                    // apiCallViewModel.submitProductReview(productId, rating, reviewTitle, reviewComment)
-                    Log.d("WriteReview", "Submit: $productId, $rating, $reviewTitle, $reviewComment")
-                    // Giả lập thành công sau 2 giây
-                    kotlinx.coroutines.GlobalScope.launch { // Sử dụng coroutine scope phù hợp
-                        kotlinx.coroutines.delay(2000)
-                        isLoading = false
-                        // Giả sử thành công
-                        Toast.makeText(context, "Đánh giá đã được gửi (mô phỏng)!", Toast.LENGTH_LONG).show()
-                        navController.popBackStack()
+                    coroutineScope.launch {
+                        isLoading = true // Bắt đầu loading
+                        try {
+                            val fetchedUsername = authViewModel.getSuspendingUserFullName()
+                            val reviewerNameToSubmit = fetchedUsername ?: "Người dùng ẩn danh"
+
+                            val fetchedImageUrl = authViewModel.getSuspendingUrl()
+                            val imageUrlToSubmit = fetchedImageUrl ?: ""
+
+                            val sdf = SimpleDateFormat(
+                                "dd/MM/yyyy",
+                                Locale.getDefault()
+                            )
+                            val currentDateAndTime = sdf.format(Date())
+
+                            apiCallAdd.addReview(
+                                reviewerName = reviewerNameToSubmit,
+                                rating = rating.toFloat(),
+                                comment = reviewComment, // Nên thêm reviewTitle nếu có
+                                date = currentDateAndTime,
+                                profileImageUrl = imageUrlToSubmit,
+                                idp = productId
+                            )
+                            // Không cần xử lý thành công/thất bại ở đây nữa vì LaunchedEffect sẽ làm điều đó
+                            // isLoading sẽ được đặt thành false trong LaunchedEffect khi submitStatus thay đổi
+                        } catch (e: Exception) {
+                            // Xử lý lỗi nếu getSuspendingUserFullName hoặc getSuspendingUrl thất bại
+                            Log.e("WriteReviewScreen", "Error fetching user data: ${e.message}", e)
+                            Toast.makeText(
+                                context,
+                                "Lỗi lấy thông tin người dùng. Vui lòng thử lại.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            isLoading = false
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -191,8 +236,10 @@ fun RatingInput(
     ) {
         for (i in 1..starCount) {
             Icon(
-                imageVector = if (i <= currentRating) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                contentDescription = stringResource(R.string.rate_star_desc, i), // "Đánh giá %d sao"
+                painter = if (i <= currentRating) painterResource(R.drawable.star) else painterResource(
+                    R.drawable.star_24px
+                ),
+                contentDescription = stringResource(R.string.rate_star_desc, i),
                 tint = if (i <= currentRating) selectedColor else defaultColor,
                 modifier = Modifier
                     .size(starSize)

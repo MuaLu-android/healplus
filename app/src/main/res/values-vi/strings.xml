@@ -29,8 +29,8 @@
     <string name="seach">Tìm kiếm</string>
     <string name="intro_app_welcom">Chào mừng bạn đến với HealPlus\nsức khỏe trọn vẹn, cuộc sống an lành! 🌿💙</string>
     <string name="trademark">Thương hiệu:</string>
-    <string name="review">lượt xem</string>
-    <string name="comment">bình luận</string>
+    <string name="review">đánh giá</string>
+    <string name="comment">đã bán</string>
     <string name="SlectModel">Chọn mô hình</string>
     <string name="yourcart">Giỏ hàng</string>
     <string name="settings">Cài đặt</string>
@@ -52,8 +52,8 @@
     <string name="poit">Thưởng</string>
     <string name="notification">Thông báo</string>
     <string name="inpomation">Thông tin sản phẩm</string>
-    <string name="buynow">🏥 Mua ngay</string>
-    <string name="addcart">🛒 Thêm vào cart</string>
+    <string name="buynow">Mua ngay</string>
+    <string name="addcart">Thêm vào giỏ hàng</string>
     <string name="Ingredient">Nguyên liệu</string>
     <string name="description">"Mô tả ngắn"</string>
     <string name="Registrationnumber">Số ăng kí</string>

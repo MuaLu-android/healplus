@@ -144,7 +144,16 @@ interface ApiService {
         @Field("status") status: String,
         @Field("detail") detail: String
     ): Call<ApiResponse>
-
+    @FormUrlEncoded
+    @POST("add_review.php")
+    fun addReview(
+        @Field("reviewerName") reviewerName: String,
+        @Field("rating") rating: Float,
+        @Field("comment") comment: String,
+        @Field("date") date: String,
+        @Field("profileImageUrl") profileImageUrl: String,
+        @Field("idp") idp: String
+    ): Call<ApiResponse>
     @FormUrlEncoded
     @POST("add_product.php")
     fun addProduct(

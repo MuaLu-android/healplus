@@ -73,6 +73,8 @@ import com.example.healplus.R
 import com.example.healplus.R.string.product
 import com.example.healplus.settings.SpacerProduct
 import com.google.gson.Gson
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -86,12 +88,6 @@ fun DetailScreen(
     var selectedImageUrl by remember { mutableStateOf(item.product_images.first()) }
     var model by remember { mutableStateOf(item.unit_names.first()) }
     val managmentCart = ManagmentCart(LocalContext.current, authViewModel.getUserId().toString())
-    val sampleReviews = listOf(
-        ReviewItem("Nguyễn Văn A", 5f, "Sản phẩm tuyệt vời, chất lượng tốt, giao hàng nhanh!", "12/12/2023", "https://i.pravatar.cc/150?img=1"),
-        ReviewItem("Trần Thị B", 4.5f, "Khá hài lòng với sản phẩm. Sẽ ủng hộ shop lần sau.", "10/12/2023", "https://i.pravatar.cc/150?img=2"),
-        ReviewItem("Lê Văn C", 3f, "Chất lượng tạm ổn so với giá tiền.", "09/12/2023")
-    )
-    val individualReviews = remember { mutableStateOf(sampleReviews) }
     Scaffold(
         topBar = {
             ProductTopAppBar(navController)
@@ -136,6 +132,7 @@ fun DetailScreen(
                 fontSize = 18.sp,
                 modifier = Modifier.padding(top = 4.dp, start = 16.dp)
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.trademark) + " ${item.trademark}",
                 color = Color(0xFF007AFF),
@@ -149,8 +146,12 @@ fun DetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(top = 8.dp, start = 16.dp)
             ) {
-                Icon(Icons.Filled.Star, contentDescription = "Rating", tint = Color(0xFFFFC107), modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = "Rating",
+                    tint = Color(0xFFFFC107),
+                    modifier = Modifier.size(18.dp)
+                )
                 Text(
                     text = String.format(Locale.getDefault(), "%.1f", item.rating),
                     style = MaterialTheme.typography.bodyMedium,
@@ -160,7 +161,7 @@ fun DetailScreen(
                 Text(text = "${item.review} " + stringResource(R.string.review), color = Color.Gray)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "${item.comment} " + stringResource(R.string.comment),
+                    text = "${item.sold} " + stringResource(R.string.comment),
                     color = Color.Gray
                 )
             }
@@ -178,9 +179,8 @@ fun DetailScreen(
                     painter = painterResource(R.drawable.rewarded_ads_24px),
                     contentDescription = null
                 )
-                Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = "+ ${item.price / 1000} điểm thưởng",
+                    text ="+ ${item.price / 1000} điểm thưởng",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(top = 10.dp, bottom = 4.dp, start = 16.dp)
@@ -191,12 +191,20 @@ fun DetailScreen(
             ProductInfoView(item, navController, apiCallViewModel)
             ProductReviewsSection(
                 averageRating = item.rating.toFloat(),
-                totalReviews = item.review, // Giả sử item.review là tổng số đánh giá
-                individualReviews = individualReviews.value, // Lấy từ state hoặc item.individualReviews
+                totalReviews = item.review,
+                individualReviews = item.reviewitems,
                 onSeeAllReviewsClick = {
-                    // TODO: Điều hướng đến màn hình xem tất cả đánh giá
-                    // navController.navigate("allReviews/${item.idp}")
-                    Log.d("DetailScreen", "Navigate to all reviews for ${item.idp}")
+                    navController.navigate(
+                        "allReviews/${item.name}/${
+                            URLEncoder.encode(
+                                Gson().toJson(item.reviewitems),
+                                StandardCharsets.UTF_8.toString()
+                            )
+                        }"
+                    )
+                },
+                onWriteReviewClick = {
+                    navController.navigate("writeReview/${item.idp}")
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -209,7 +217,8 @@ fun DetailScreen(
 
 @Composable
 fun PriceText(price: Int, model: String) {
-    val formattedPrice = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(price).toString()
+    val formattedPrice =
+        NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(price).toString()
     Text(
         text = "$formattedPrice/$model",
         fontSize = 20.sp,
@@ -296,12 +305,10 @@ fun ProductInfoItem(label: String, value: String) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             text = label,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontWeight = FontWeight.Bold
         )
         Text(
             text = value,
-            fontSize = 14.sp,
             color = Color.Gray,
             textAlign = TextAlign.Justify
         )
@@ -328,7 +335,7 @@ fun BottomAppBarView(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007AFF))
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.comment_24px), // icon tai nghe/chat
+                    painter = painterResource(id = R.drawable.comment_24px),
                     contentDescription = null,
                     tint = Color(0xFF0066CC),
                     modifier = Modifier.size(20.dp)
@@ -408,12 +415,14 @@ fun ProductTopAppBar(navController: NavController) {
         }
     )
 }
+
 @Composable
 fun ProductReviewsSection(
     averageRating: Float,
     totalReviews: Int,
     individualReviews: List<ReviewItem>, // Danh sách các đánh giá chi tiết
     onSeeAllReviewsClick: () -> Unit,
+    onWriteReviewClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(vertical = 16.dp)) {
@@ -441,19 +450,27 @@ fun ProductReviewsSection(
             )
             Spacer(modifier = Modifier.height(8.dp))
             individualReviews.take(3).forEach { review -> // Lấy 3 đánh giá đầu tiên
-                ReviewCard(review = review, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+                ReviewCard(
+                    review = review,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
 
             // Nút xem tất cả đánh giá
             if (totalReviews > 3) { // Chỉ hiển thị nếu có nhiều hơn 3 đánh giá
                 TextButton(
-                    onClick = onSeeAllReviewsClick,
+                    onClick = { onSeeAllReviewsClick() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Text(stringResource(R.string.see_all_reviews, totalReviews)) // "Xem tất cả (X) đánh giá"
+                    Text(
+                        stringResource(
+                            R.string.see_all_reviews,
+                            totalReviews
+                        )
+                    ) // "Xem tất cả (X) đánh giá"
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
                         contentDescription = null,
@@ -472,7 +489,9 @@ fun ProductReviewsSection(
         Spacer(modifier = Modifier.height(8.dp))
         // Cân nhắc thêm nút "Viết đánh giá" ở đây
         OutlinedButton(
-            onClick = { /* TODO: Điều hướng đến màn hình viết đánh giá */ },
+            onClick = {
+                onWriteReviewClick()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -495,19 +514,18 @@ fun ReviewSummary(
     ) {
         Column {
             Text(
-                text = String.format(Locale.getDefault(), "%.1f", averageRating), // Định dạng 1 chữ số thập phân
+                text = String.format(Locale.getDefault(), "%.1f", averageRating),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
-            RatingBar(rating = averageRating, starSize = 20.dp) // Composable RatingBar (xem bên dưới)
+            RatingBar(rating = averageRating, starSize = 20.dp)
         }
         Text(
-            text = stringResource(R.string.based_on_reviews, totalReviews), // "Dựa trên (X) đánh giá"
+            text = stringResource(R.string.based_on_reviews, totalReviews),
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray
         )
     }
-    // TODO: Cân nhắc thêm biểu đồ phân phối đánh giá (5 sao, 4 sao,...) nếu có dữ liệu
 }
 
 @Composable
@@ -527,7 +545,11 @@ fun ReviewCard(review: ReviewItem, modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(8.dp))
             }
             Column {
-                Text(text = review.reviewerName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    text = review.reviewerName,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 RatingBar(rating = review.rating, starSize = 16.dp)
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -537,12 +559,12 @@ fun ReviewCard(review: ReviewItem, modifier: Modifier = Modifier) {
         Text(
             text = review.comment,
             style = MaterialTheme.typography.bodyMedium,
-            maxLines = 3, // Giới hạn số dòng hiển thị ban đầu
-            overflow = TextOverflow.Ellipsis // Thêm dấu "..." nếu dài quá
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
         )
-        // TODO: Thêm nút "Đọc thêm" nếu comment quá dài
     }
 }
+
 @Composable
 fun RatingBar(
     rating: Float,

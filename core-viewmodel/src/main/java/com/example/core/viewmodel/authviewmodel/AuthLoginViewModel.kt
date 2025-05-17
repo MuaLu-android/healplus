@@ -423,12 +423,25 @@ class AuthViewModel : ViewModel() {
         return auth.currentUser?.uid
     }
 
-    fun getUserFullName(onResult: (String?) -> Unit) {
-        auth.currentUser?.uid?.let { userId ->
-            db.collection("users").document(userId).get()
-                .addOnSuccessListener { onResult(it.getString("fullName")) }
-                .addOnFailureListener { onResult(null) }
-        } ?: onResult(null)
+    suspend fun getSuspendingUserFullName(): String? {
+        // Logic để lấy fullName bằng coroutines, ví dụ với await() từ Firebase Task
+        return try {
+            val userId = auth.currentUser?.uid ?: return null
+            val document = db.collection("users").document(userId).get().await()
+            document.getString("name")
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun getSuspendingUrl(): String? {
+        return try {
+            val userId = auth.currentUser?.uid ?: return null
+            val document = db.collection("users").document(userId).get().await()
+            document.getString("url")
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun getUserPhone(onResult: (String?) -> Unit) {
@@ -443,6 +456,13 @@ class AuthViewModel : ViewModel() {
         auth.currentUser?.uid?.let { userId ->
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { onResult(it.getString("email")) }
+                .addOnFailureListener { onResult(null) }
+        } ?: onResult(null)
+    }
+    fun getUrl(onResult: (String?) -> Unit) {
+        auth.currentUser?.uid?.let { userId ->
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { onResult(it.getString("url")) }
                 .addOnFailureListener { onResult(null) }
         } ?: onResult(null)
     }

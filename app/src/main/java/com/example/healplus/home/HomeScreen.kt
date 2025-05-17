@@ -218,12 +218,22 @@ fun MainActivityScreen(
                     }
                 }
                 item {
-                    DrugStoreInfoScreen()
+                    if (showRecommendedLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                        }
+                    }else {
+                        DrugStoreInfoScreen()
+                    }
                 }
                 item {
                     Spacer(
                         modifier = Modifier
-                            .height(100.dp)
+                            .padding(paddingValues)
                     )
                 }
             }
@@ -318,9 +328,8 @@ fun DrugStoreInfoScreen() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Biểu tượng xác nhận
         Image(
-            painter = painterResource(id = R.drawable.icon_manager_der), // cần thêm hình icon xác nhận BCT vào resource
+            painter = painterResource(id = R.drawable.logo_app), // cần thêm hình icon xác nhận BCT vào resource
             contentDescription = null,
             modifier = Modifier
                 .height(40.dp)
@@ -334,7 +343,7 @@ fun InfoItem(icon: ImageVector, title: String, subtitle: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(icon, contentDescription = null, tint = Color(0xFF2196F3), modifier = Modifier.size(32.dp))
         Text(text = title, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
-        Text(text = subtitle, fontSize = 11.sp, color = Color.Gray, textAlign = TextAlign.Center)
+        Text(text = subtitle, color = Color.Gray, textAlign = TextAlign.Center)
     }
 }
 
@@ -342,7 +351,7 @@ fun InfoItem(icon: ImageVector, title: String, subtitle: String) {
 fun ContactInfo(label: String, content: String) {
     Row {
         Text(text = "• $label: ", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-        Text(text = content, fontSize = 13.sp, color = Color.Blue)
+        Text(text = content,  color = Color.Blue)
     }
 }
 @Composable

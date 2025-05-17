@@ -7,12 +7,45 @@ import com.example.core.model.products.ProductsModel
 import com.example.core.model.products.Thanhphan
 import com.example.core.network.retrofitclients.RetrofitClient
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
 class ApiCallAdd : ViewModel() {
+    private val _submitReviewStatus = MutableStateFlow<Boolean?>(null)
+    val submitReviewStatus: StateFlow<Boolean?> = _submitReviewStatus
+    fun addReview(
+        reviewerName: String,
+        rating: Float,
+        comment: String,
+        date: String,
+        profileImageUrl: String,
+        idp: String
+    ) {
+        val call =
+            RetrofitClient.instance.addReview(reviewerName, rating, comment, date, profileImageUrl, idp)
+        call.enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("AddOrder", "Phản hồi từ server: ${response.body()}")
+                    _submitReviewStatus.value = true
+                } else {
+                    Log.e("AddOrder", "Phản hồi thất bại với mã lỗi: ${response.code()}")
+                    _submitReviewStatus.value = false
+                }
+            }
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                Log.e("AddOrder", "Lỗi kết nối: ${t.message}")
+                _submitReviewStatus.value = false
+            }
+        })
+    }
+    fun resetSubmitReviewStatus() {
+        _submitReviewStatus.value = null
+    }
     fun addUser(
         name: String,
         email: String,

@@ -3,6 +3,7 @@ import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -11,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.core.model.products.ProductsModel
+import com.example.core.model.products.ReviewItem
 import com.example.core.model.users.UserAuthModel
 import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
@@ -21,9 +23,11 @@ import com.example.healplus.cart.CartScreen
 import com.example.healplus.cart.CheckOutScreen
 import com.example.healplus.category.CategoryScreen
 import com.example.healplus.chat.UserChatScreen
+import com.example.healplus.home.AllReviewsScreen
 import com.example.healplus.home.DetailScreen
 import com.example.healplus.home.MainActivityScreen
 import com.example.healplus.home.ProductDetailScreen
+import com.example.healplus.home.WriteReviewScreen
 import com.example.healplus.oder.UsersOder
 import com.example.healplus.search.SearchScreen
 import com.example.healplus.settings.ProfileScreen
@@ -32,6 +36,8 @@ import com.example.healplus.settings.UpdateProfileScreen
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+
 @Composable
 fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
 
@@ -65,11 +71,22 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             val jsonItem = backStackEntry.arguments?.getString("product")
 
             val item = Gson().fromJson(jsonItem, ProductsModel::class.java)
-            Log.d("ProductDetailScreen", "Received item: $item")
             ProductDetailScreen(
                 item = item,
                 navController = navController
             )
+        }
+        composable("allReviews/{productName}/{reviewItems}") { backStackEntry ->
+            val productName = backStackEntry.arguments?.getString("productName")?: ""
+            val encodedJsonReviews = backStackEntry.arguments?.getString("reviewItems")
+            val jsonReviews = URLDecoder.decode(encodedJsonReviews, StandardCharsets.UTF_8.toString())
+            val typeToken = object : TypeToken<List<ReviewItem>>() {}.type
+            val reviewList: List<ReviewItem> = Gson().fromJson(jsonReviews, typeToken)
+            AllReviewsScreen(navController, productName, reviewList)
+        }
+        composable("writeReview/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            WriteReviewScreen(navController, productId)
         }
         composable("cart") {
             CartScreen(
