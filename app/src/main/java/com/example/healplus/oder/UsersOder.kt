@@ -1,4 +1,5 @@
 package com.example.healplus.oder
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,27 +48,23 @@ import com.example.core.model.Oder.Order
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
+import java.text.NumberFormat
+import java.util.Locale
+
 @Composable
 fun UsersOder(navController: NavController,
-              apiCallViewModel: ApiCallViewModel = viewModel(),
               authViewModel: AuthViewModel = viewModel()){
+    val apiCallViewModel = remember { ApiCallViewModel() }
     val userId = authViewModel.getUserId().toString()
-    apiCallViewModel.getOderByUser(userId)
     val allOrders by apiCallViewModel.orders.observeAsState(initial = emptyList())
-    var selectedStatus by remember { mutableStateOf<String?>(null) }
-    val filteredOrders = remember(allOrders, selectedStatus) {
-        if (selectedStatus == null) {
-            allOrders
-        } else {
-            val filtered = allOrders.filter { it.status == selectedStatus.toString() }
-            filtered
-        }
-    }
+    var selectedStatus by remember { mutableStateOf<String?>("Tất cả") }
+    Log.d("UsersOderDebug", "Initial userId: $userId")
     LaunchedEffect(selectedStatus) {
-        if (selectedStatus != null){
-            apiCallViewModel.getOderByUserStatus(userId, selectedStatus.toString())
-        }else{
+        Log.d("UsersOderDebug", "LaunchedEffect triggered: userId = $userId, selectedStatus = $selectedStatus")
+        if (selectedStatus == "Tất cả"){
             apiCallViewModel.getOderByUser(userId)
+        }else{
+            apiCallViewModel.getOderByUserStatus(userId, selectedStatus.toString())
         }
     }
     Scaffold(
@@ -91,14 +88,14 @@ fun UsersOder(navController: NavController,
                 items(statusesToFilter) { status ->
                     StatusFilterChip(
                         status = status,
-                        isSelected = selectedStatus == status || (selectedStatus == null && status == "Tất cả"),
+                        isSelected = selectedStatus == status,
                         onStatusSelected = { selected ->
-                            selectedStatus = if (selected == "Tất cả") null else selected
+                            selectedStatus = selected
                         }
                     )
                 }
             }
-            if (filteredOrders.isEmpty()) {
+            if (allOrders.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -109,7 +106,7 @@ fun UsersOder(navController: NavController,
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(filteredOrders, key = { order -> order.id }) { order ->
+                    items(allOrders, key = { order -> order.id }) { order ->
                         UserOrderItemCard(navController, order)
                     }
                 }
@@ -119,7 +116,7 @@ fun UsersOder(navController: NavController,
 }
 @Composable
 fun UserOrderItemCard(navController: NavController, order: Order) {
-    var status1 by remember { mutableStateOf(order.status ?: "Đang chờ xử lí") }
+    val status1 by remember { mutableStateOf(order.status ?: "Đang chờ xử lí") }
     var showProducts by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
@@ -137,14 +134,9 @@ fun UserOrderItemCard(navController: NavController, order: Order) {
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Họ và tên: ${order.name}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Số điện thoại: ${order.phone}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Spacer(modifier = Modifier.height(4.dp))
             Text(text = "Địa chỉ giao hàng: ${order.address}", fontSize = 14.sp, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Tổng tiền: ${order.sumMoney} VND", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF4CAF50)) // Màu xanh lá cây
+            Text(text = "Tổng tiền: ${NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(order.sumMoney)}", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF4CAF50)) // Màu xanh lá cây
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = "Trạng thái: ${status1}", fontSize = 14.sp, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(8.dp))

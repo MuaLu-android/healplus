@@ -74,11 +74,11 @@ class ApiCallAdd : ViewModel() {
         name: String,
         phone: String,
         email: String,
-        userId: String,
+        idauth: String,
         address: String,
         quantity: String,
         datetime: String,
-        sumMoney: String,
+        sumMoney: Float,
         status: String, // Trạng thái đơn hàng
         items: List<ProductsModel>
     ) {
@@ -87,7 +87,7 @@ class ApiCallAdd : ViewModel() {
             name,
             phone,
             email,
-            userId,
+            idauth,
             address,
             quantity,
             sumMoney,

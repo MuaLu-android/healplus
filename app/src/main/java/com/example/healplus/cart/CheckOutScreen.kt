@@ -168,7 +168,7 @@ fun CheckOutScreen(navController: NavController,
                         try {
                             Log.d("PaymentSummary", "Email: ${item.email}")
                             apiCallOder.addOrder(item.fullName, item.phoneNumber, "item.email", userId,
-                                Address, quantity.toString(), "2025-05-10",totalSelected.toString(),"Đang chờ xử lý",
+                                Address, quantity.toString(), "2025-05-10",totalSelected.toFloat(),"Đang chờ xử lý",
                                 selectedProducts.toList())
                         } catch (e: Exception) {
                             Log.e("PaymentSummary", "Lỗi khi gọi API: ${e.localizedMessage}")

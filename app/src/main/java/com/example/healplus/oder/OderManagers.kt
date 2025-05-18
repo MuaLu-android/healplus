@@ -65,26 +65,21 @@ import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.healplus.R
 import com.google.gson.Gson
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
-fun OderManagers(navController: NavController,
-                 apiCallViewModel: ApiCallViewModel = viewModel()) {
-    apiCallViewModel.loadOder()
+fun OderManagers(
+    navController: NavController
+) {
+    val apiCallViewModel = remember { ApiCallViewModel() }
     val allOrders by apiCallViewModel.orders.observeAsState(initial = emptyList())
-    var selectedStatus by remember { mutableStateOf<String?>(null) }
-    val filteredOrders = remember(allOrders, selectedStatus) {
-        if (selectedStatus == null) {
-            allOrders
-        } else {
-            val filtered = allOrders.filter { it.status == selectedStatus.toString() }
-            filtered
-        }
-    }
+    var selectedStatus by remember { mutableStateOf<String?>("Tất cả") }
     LaunchedEffect(selectedStatus) {
-        if (selectedStatus != null) {
-            apiCallViewModel.loadOderStatus(selectedStatus.toString())
-        } else {
+        if (selectedStatus == "Tất cả" || selectedStatus == null) {
             apiCallViewModel.loadOder()
+        } else {
+            apiCallViewModel.loadOderStatus(selectedStatus.toString())
         }
     }
     Scaffold(
@@ -109,14 +104,14 @@ fun OderManagers(navController: NavController,
                 items(statusesToFilter) { status ->
                     StatusFilterChip(
                         status = status,
-                        isSelected = selectedStatus == status || (selectedStatus == null && status == "Tất cả"),
+                        isSelected = selectedStatus == status,
                         onStatusSelected = { selected ->
-                            selectedStatus = if (selected == "Tất cả") null else selected
+                            selectedStatus =  selected
                         }
                     )
                 }
             }
-            if (filteredOrders.isEmpty()) {
+            if (allOrders.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -127,7 +122,7 @@ fun OderManagers(navController: NavController,
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(filteredOrders, key = { order -> order.id }) { order ->
+                    items(allOrders, key = { order -> order.id }) { order ->
                         OrderItemCard(navController, order, apiCallViewModel)
                     }
                 }
@@ -214,7 +209,7 @@ fun OrderItemCard(
             Text(text = "Đ/c: ${order.address}", fontSize = 14.sp, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Tiền: ${DecimalFormat("#,###,###").format(order.sumMoney)} VNĐ",
+                text = "Tiền: ${NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(order.sumMoney)}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = Color.Blue,
@@ -313,7 +308,7 @@ fun ProductOrderItem(navController: NavController, item: ProductsModel) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = item.name, fontWeight = FontWeight.Medium, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = "Giá: ${item.price}", fontSize = 12.sp, color = Color.DarkGray)
+            Text(text = "Giá: ${NumberFormat.getNumberInstance(Locale("vi", "VN")).format(item.price)}", fontSize = 12.sp, color = Color.DarkGray)
         }
     }
 }

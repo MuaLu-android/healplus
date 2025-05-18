@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.model.users.UserAuthModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
+import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import com.example.healplus.add.uploadImageToServer
@@ -65,7 +66,7 @@ fun UpdateProfileScreen(
     item: UserAuthModel,
     navController: NavController,
     authViewModel: AuthViewModel = viewModel(),
-    apiCallAdd: ApiCallAdd = viewModel()
+    apiCallViewModel: ApiCallViewModel = viewModel()
 ) {
     var fullName by remember { mutableStateOf(item.name) }
     var email by remember { mutableStateOf(item.email) }
@@ -88,6 +89,7 @@ fun UpdateProfileScreen(
             calendar.get(Calendar.DAY_OF_MONTH)
         )
     }
+    val userid = authViewModel.getUserId()
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -209,6 +211,15 @@ fun UpdateProfileScreen(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
+                    apiCallViewModel.updateUser(
+                        name = fullName,
+                        email = email,
+                        gender = gender,
+                        phone = phoneNumber,
+                        url = urlimg,
+                        dateBirth = birthDate,
+                        idauth = userid.toString()
+                    )
                     authViewModel.updateUserAccount(
                         name = fullName,
                         email = email,

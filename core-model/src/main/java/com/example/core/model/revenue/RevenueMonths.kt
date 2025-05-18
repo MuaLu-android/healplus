@@ -6,7 +6,7 @@ data class RevenueData(
     val order_year: Int? = null,
     val order_month: Int? = null,
     val order_day: Int? = null,
-    val total_revenue: Double
+    val total_revenue: Float
 )
 data class DetailedOrder(
      val id: Int,

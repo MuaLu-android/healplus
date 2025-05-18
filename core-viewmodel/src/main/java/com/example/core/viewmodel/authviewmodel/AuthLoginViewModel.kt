@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.model.chat.Message
 import com.example.core.model.users.UserAuthModel
+import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,6 +30,7 @@ class AuthViewModel : ViewModel() {
     private var chatRoomId: String? = null
     private val adminId = "HshH2bedEKUGuQEkHkvH00G2frf2"
     private var adminChatRooms: List<String> = emptyList()
+    val apiCallViewModel: ApiCallViewModel = ApiCallViewModel()
 
     init {
         checkAuthSate()
@@ -210,16 +212,11 @@ class AuthViewModel : ViewModel() {
                     .collection("messages")
                     .add(message)
                     .addOnSuccessListener {
-                        // Tin nhắn đã được gửi thành công
-                        // Có thể thêm log hoặc xử lý thành công khác ở đây
                     }
                     .addOnFailureListener { e ->
-                        // Xử lý lỗi khi gửi tin nhắn
-                        // Ví dụ: Log lỗi, hiển thị thông báo cho người dùng
                         Log.e("AuthViewModel", "Error sending message to room $roomId", e)
                     }
             } catch (e: Exception) {
-                // Xử lý các lỗi khác có thể xảy ra trong coroutine
                 Log.e("AuthViewModel", "An unexpected error occurred while sending message", e)
             }
         }
@@ -300,14 +297,13 @@ class AuthViewModel : ViewModel() {
             _authState.value = AuthSate.Error("Email, password, or phone number can't be empty")
             return
         }
-
         _authState.value = AuthSate.Loading
-
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid
                     if (userId != null) {
+                        apiCallViewModel.updateIdAuth(email, userId)
                         val userModel =
                             UserAuthModel(
                                 idauth = userId,

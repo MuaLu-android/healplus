@@ -136,10 +136,10 @@ interface ApiService {
         @Field("name") name: String,
         @Field("phone") phone: String,
         @Field("email") email: String,
-        @Field("userId") userId: String,
+        @Field("idauth") idauth: String,
         @Field("address") address: String,
         @Field("quantity") quantity: String,
-        @Field("sumMoney") sumMoney: String,
+        @Field("sumMoney") sumMoney: Float,
         @Field("datetime") datetime: String,
         @Field("status") status: String,
         @Field("detail") detail: String
@@ -153,6 +153,23 @@ interface ApiService {
         @Field("date") date: String,
         @Field("profileImageUrl") profileImageUrl: String,
         @Field("idp") idp: String
+    ): Call<ApiResponse>
+    @FormUrlEncoded
+    @POST("update_user.php")
+    fun upDateUser(
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("gender") gender: String,
+        @Field("phone") phone: String,
+        @Field("url") url: String,
+        @Field("dateBirth") dateBirth: String,
+        @Field("idauth") idauth: String
+    ): Call<ApiResponse>
+    @FormUrlEncoded
+    @POST("update_idauth.php")
+    fun upDateIdAuth(
+        @Field("email") email: String,
+        @Field("idauth") idauth: String
     ): Call<ApiResponse>
     @FormUrlEncoded
     @POST("add_product.php")
@@ -196,13 +213,13 @@ interface ApiService {
     @FormUrlEncoded
     @POST("get_oder_by_user.php")
     fun getOderByUser(
-        @Field("userId") userId: String
+        @Field("idauth") idauth: String
     ): Call<List<Order>>
 
     @FormUrlEncoded
     @POST("get_oder_by_userstatus.php")
     fun getOderByUserStatus(
-        @Field("userId") userId: String,
+        @Field("idauth") idauth: String,
         @Field("status") status: String
     ): Call<List<Order>>
     //revenue

@@ -1,5 +1,6 @@
 package com.example.healplus.admin
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -84,6 +85,7 @@ fun MonthlyRevenueBarChart(navController: NavController) {
     val historyYear by apiCallViewModel.historyYear.observeAsState(initial = emptyList())
     val isDataEmptyAfterLoad by apiCallViewModel.isDataEmptyAfterLoad.observeAsState(initial = true)
     var showNoDataMessage by remember { mutableStateOf(false) }
+    Log.d("RevenueBarChart", "Recomposing RevenueBarChart : $currentWeekStartDate")
     LaunchedEffect(selectedFilter, currentMonthYear, currentWeekStartDate) {
         apiCallViewModel.clearRevenueData()
         showNoDataMessage = false
@@ -93,7 +95,6 @@ fun MonthlyRevenueBarChart(navController: NavController) {
                 currentMonthYear.monthValue,
                 currentMonthYear.year
             )
-
             "Doanh thu năm" -> apiCallViewModel.revenueYear(currentMonthYear.year)
         }
     }
@@ -275,7 +276,7 @@ fun WeekSelectorAndTotal(
     weeklyRevenueData: List<RevenueData>
 ) {
     val currentWeekEndDate = currentWeekStartDate.plusDays(6)
-    val totalRevenue = weeklyRevenueData.sumOf { it.total_revenue }
+    val totalRevenue = weeklyRevenueData.sumOf { it.total_revenue.toInt() }
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val weekRangeText =
         "${currentWeekStartDate.format(formatter)} - ${currentWeekEndDate.format(formatter)}"
@@ -321,7 +322,7 @@ fun YearSelectorAndTotal(
     onYearChange: (Int) -> Unit,
     yearlyRevenueData: List<RevenueData>
 ) {
-    val totalRevenue = yearlyRevenueData.sumOf { it.total_revenue }
+    val totalRevenue = yearlyRevenueData.sumOf { it.total_revenue.toInt() }
 
     Column(
         modifier = Modifier
@@ -493,7 +494,7 @@ fun MonthYearSelectorAndTotal(
     onMonthYearChange: (YearMonth) -> Unit,
     monthlyRevenueData: List<RevenueData>
 ) {
-    val totalRevenue = monthlyRevenueData.sumOf { it.total_revenue }
+    val totalRevenue = monthlyRevenueData.sumOf { it.total_revenue.toInt() }
 
     Column(
         modifier = Modifier
