@@ -1,5 +1,6 @@
 package com.example.healplus.login
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -176,10 +177,10 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             )
             Spacer(modifier = Modifier
                 .height(37.dp))
-            // Nút Done
             Button(
                 onClick = {
                     authViewModel.loginAuthState(email, password)
+                    Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                 },
                 enabled = authSate.value != AuthSate.Loading,
                 modifier = Modifier

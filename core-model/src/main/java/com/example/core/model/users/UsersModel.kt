@@ -11,6 +11,7 @@ data class UserAuthModel(
     var gender: String = "",
     var dateBirth: String = "",
     var url: String = "",
+    var bonuspoint: String = "",
     var token: String = "",
     val role: String = "user"
 )

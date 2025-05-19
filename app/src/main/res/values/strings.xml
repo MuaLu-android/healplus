@@ -26,7 +26,7 @@
     <string name="recommended">Recommended</string>
     <string name="prominment_category">Prominent category</string>
     <string name="seach">Seach</string>
-    <string name="intro_app_welcom">Welcome to Healplus\nfull health, peaceful life! 🌿💙</string>
+    <string name="intro_app_welcom">Welcome to Healplus\nfull health, peaceful life!</string>
     <string name="trademark">Trademark:</string>
     <string name="review">reviews</string>
     <string name="comment">comments</string>
@@ -73,7 +73,7 @@
     <string name="managerappbar">Quản lí sản phẩm</string>
     <string name="userodermanages">Đơn hàng của tôi</string>
     <string name="revenue">Doanh thu và các khoảng thanh toán khác</string>
-    <string name="expiry">Hạn su dụng</string>
+    <string name="expiry">Hạn sử dụng</string>
     <string name="cachdung">Cách dùng</string>
     <string name="congdung">Công dụng</string>
     <string name="tacdungphu">Tác dụng phụ</string>

@@ -1,6 +1,7 @@
 package com.example.healplus.cart
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,16 +28,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,6 +62,7 @@ import com.example.core.tinydb.helper.ChangeNumberItemsListener
 import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
+import com.example.healplus.ui.theme.backgroundDark
 import com.google.gson.Gson
 import java.text.NumberFormat
 import java.util.Locale
@@ -70,9 +76,11 @@ fun CartScreen(
     val context = LocalContext.current
     val managementCart = remember { ManagmentCart(context, userId) }
     val cartItems = remember { mutableStateOf(managementCart.getListCart() ?: arrayListOf()) }
-    val selectedItems = rememberSaveable { mutableStateOf(mutableSetOf<ProductsModel>()) }
+    val selectedItems = remember { mutableStateOf(mutableSetOf<ProductsModel>()) }
     val tax = remember { mutableStateOf(0.0) }
-    calculatorCart(selectedItems.value.toList(), tax)
+    LaunchedEffect(selectedItems.value) {
+        calculatorCart(selectedItems.value.toList(), tax)
+    }
     Scaffold(
         topBar = {
             CartTopAppBar(navController)
@@ -95,12 +103,8 @@ fun CartScreen(
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 20.dp
-                        ), // Chiếm toàn bộ không gian còn lại
-                    contentPadding = PaddingValues(bottom = 80.dp) // Tránh bị che bởi BottomAppBar
+                        .padding(16.dp),
+                    contentPadding = PaddingValues()
                 ) {
                     items(cartItems.value) { item ->
                         CartItems(
@@ -120,6 +124,10 @@ fun CartScreen(
                 quantity = selectedItems.value.sumOf { it.quantity },
                 tax = tax.value,
                 onClick = { itemTotal, tax, quantity ->
+                    if (itemTotal == 0) {
+                        Toast.makeText(context, "Vui lòng chọn sản phẩm", Toast.LENGTH_SHORT).show()
+                        return@CartSummary
+                    }
                     val selectedProductsJson = Uri.encode(Gson().toJson(selectedItems.value.toList()))
                     navController.navigate("order_screen/$selectedProductsJson/$itemTotal/$tax/$quantity")
                 }
@@ -151,17 +159,16 @@ fun CartTopAppBar(navController: NavController) {
 @Composable
 fun CartSummary(itemTotal: Int, tax: Double, quantity: Int, onClick: (Int, Double, Int) -> Unit) {
     val total = (1*tax)+itemTotal
-    val formattedTotal = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(total) + " VND"
-    val formattedItemTotal = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(itemTotal) + " VND"
-    val formattedTax = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(tax) + " VND"
+    val formattedTotal = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(total)
+    val formattedItemTotal = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(itemTotal)
+    val formattedTax = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(tax)
     Column (modifier = Modifier
         .fillMaxWidth()
-        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-
+        .padding(horizontal = 16.dp)
     ){
         Row (modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp)
+            .padding()
         ){
             Text(
                 text = stringResource(R.string.item_total),
@@ -189,13 +196,7 @@ fun CartSummary(itemTotal: Int, tax: Double, quantity: Int, onClick: (Int, Doubl
                 text = formattedTax
             )
         }
-        Box (
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(colorResource(R.color.grey))
-                .padding(vertical = 8.dp)
-        )
+        Divider()
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -249,8 +250,9 @@ fun CartItems(
 ) {
     val isSelected = remember { mutableStateOf(item in selectedItems) }
     val totalPrice = item.price * item.quantity
-    val formattedPrice = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(item.price)
-    val formattedTotalPrice = NumberFormat.getNumberInstance(Locale("vi", "VN")).format(totalPrice)
+    val formattedPrice = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(item.price)
+    val formattedTotalPrice = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(totalPrice)
+    val context = LocalContext.current
     Box(modifier = Modifier
         .padding(bottom = 16.dp)) {
         Column {
@@ -269,11 +271,10 @@ fun CartItems(
                     Text(
                         text = item.name,
                         modifier = Modifier
-
-                            .fillMaxWidth() // Đảm bảo text có thể mở rộng chiều ngang
-                            .wrapContentHeight(), // Cho phép text mở rộng theo nội dung
-                        maxLines = 4, // Cho phép tối đa 3 dòng, có thể thay đổi
-                        overflow = TextOverflow.Visible, // Nếu quá dài, hiển thị "..."
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Start
                     )
 
@@ -295,13 +296,13 @@ fun CartItems(
                             Spacer(modifier = Modifier.padding(4.dp))
                             Column {
                                 Text(
-                                    text = "${formattedPrice} VNĐ",
+                                    text = formattedPrice,
                                     color = colorResource(R.color.purple_200),
                                     modifier = Modifier
                                 )
                                 Spacer(modifier = Modifier.padding(2.dp))
                                 Text(
-                                    text = "${formattedTotalPrice} VNĐ",
+                                    text = formattedTotalPrice,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
@@ -416,26 +417,20 @@ fun CartItems(
                     }
                 )
             }
-            Row(modifier = Modifier
+            Column(modifier = Modifier
                 .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(1.dp)
-                        .background(colorResource(R.color.grey))
-                        .padding(top = 12.dp)
-                )
+                horizontalAlignment = Alignment.End) {
                 IconButton(
                     onClick = {
                         managementCart.removeItemByProduct(
                             item,
                             object : ChangeNumberItemsListener {
                                 override fun onChanged() {
-                                    Log.d("Cart", "Sản phẩm đã được xóa: ${item.name}")
+                                    Toast.makeText(context, "Đã xóa !", Toast.LENGTH_SHORT).show()
+
                                 }
                             })
+                        onItemChange()
                     },
                     modifier = Modifier
                         .size(24.dp)
@@ -447,6 +442,7 @@ fun CartItems(
                             .size(16.dp)
                     )
                 }
+                Divider(modifier = Modifier.fillMaxWidth())
             }
         }
     }

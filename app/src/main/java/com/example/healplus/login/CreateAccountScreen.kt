@@ -3,6 +3,7 @@ package com.example.healplus.login
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -298,6 +299,7 @@ fun CreateAccountScreen(
                         phone = phoneNumber,
                         uploadedImageUrls!!,
                         role.toString())
+                    Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
                 },
                 enabled = authSate.value != AuthSate.Loading,
                 modifier = Modifier

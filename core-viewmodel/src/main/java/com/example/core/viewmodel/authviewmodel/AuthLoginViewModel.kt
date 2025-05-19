@@ -28,7 +28,7 @@ class AuthViewModel : ViewModel() {
     private val _adminChatRoomsLiveData = MutableLiveData<List<String>>()
     val adminChatRoomsLiveData: LiveData<List<String>> = _adminChatRoomsLiveData
     private var chatRoomId: String? = null
-    private val adminId = "HshH2bedEKUGuQEkHkvH00G2frf2"
+    private val adminId = "Gg7Fu0RguISyjEy7POHO3aSn71F2"
     private var adminChatRooms: List<String> = emptyList()
     val apiCallViewModel: ApiCallViewModel = ApiCallViewModel()
 
@@ -98,7 +98,6 @@ class AuthViewModel : ViewModel() {
             val userRole = userDoc.getString("role")
 
             if (userRole == "admin") {
-                // Admin: Kiểm tra xem có phòng chat nào được chọn không
                 chatRoomId?.let { roomId ->
                     db.collection("chat_rooms")
                         .document(roomId)
@@ -231,7 +230,6 @@ class AuthViewModel : ViewModel() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             _authState.value = AuthSate.Unauthenticated
-            Log.d("AuthViewModel", "User is Unauthenticated")
         } else {
             db.collection("users").document(userId)
                 .get()
@@ -239,7 +237,6 @@ class AuthViewModel : ViewModel() {
                     if (document.exists()) {
                         val role = document.getString("role")
                         _authState.value = if (role == "admin") AuthSate.Admin else AuthSate.User
-                        Log.d("AuthViewModel", "User role: $role")
                     } else {
                         _authState.value = AuthSate.Error("User data not found")
                     }
@@ -435,6 +432,24 @@ class AuthViewModel : ViewModel() {
             val userId = auth.currentUser?.uid ?: return null
             val document = db.collection("users").document(userId).get().await()
             document.getString("url")
+        } catch (e: Exception) {
+            null
+        }
+    }
+    suspend fun getSuspendingPoint(): String? {
+        return try {
+            val userId = auth.currentUser?.uid ?: return null
+            val document = db.collection("users").document(userId).get().await()
+            document.getString("bonuspoint")
+        } catch (e: Exception) {
+            null
+        }
+    }
+    suspend fun getSuspendingEmail(): String? {
+        return try {
+            val userId = auth.currentUser?.uid ?: return null
+            val document = db.collection("users").document(userId).get().await()
+            document.getString("email")
         } catch (e: Exception) {
             null
         }

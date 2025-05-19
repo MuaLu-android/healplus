@@ -204,12 +204,12 @@ fun LogOut(authViewModel: AuthViewModel) {
 }
 @Composable
 fun SpacerProduct(){
-    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Box(modifier = Modifier.padding()) {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(3.dp)
-                .background(Color.Gray)
+                .height(4.dp)
+                .background(Color.White)
         )
     }
 }

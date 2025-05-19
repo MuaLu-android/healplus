@@ -156,7 +156,7 @@ fun UserOrderItemCard(navController: NavController, order: Order) {
                 )
             }
             if (showProducts) {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 order.items.forEach { item ->
                     ProductOrderItem(navController, item = item)
                     Spacer(modifier = Modifier.height(4.dp))

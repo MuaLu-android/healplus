@@ -1,7 +1,12 @@
 package com.example.healplus.home
-
 import android.net.Uri
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,9 +31,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,6 +55,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,7 +81,6 @@ import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
-import com.example.healplus.R.string.product
 import com.example.healplus.settings.SpacerProduct
 import com.google.gson.Gson
 import java.net.URLEncoder
@@ -88,9 +98,10 @@ fun DetailScreen(
     var selectedImageUrl by remember { mutableStateOf(item.product_images.first()) }
     var model by remember { mutableStateOf(item.unit_names.first()) }
     val managmentCart = ManagmentCart(LocalContext.current, authViewModel.getUserId().toString())
+    val itemCount by remember { mutableStateOf(managmentCart.getItemCount()) }
     Scaffold(
         topBar = {
-            ProductTopAppBar(navController)
+            ProductTopAppBar(navController, itemCount)
         },
         bottomBar = {
             BottomAppBarView(onAddCartClick = {
@@ -130,65 +141,62 @@ fun DetailScreen(
                 text = item.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                modifier = Modifier.padding(top = 4.dp, start = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.trademark) + " ${item.trademark}",
-                color = Color(0xFF007AFF),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .clickable { /* Xử lý sự kiện */ }
+                modifier = Modifier.padding(start = 16.dp)
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(top = 8.dp, start = 16.dp)
+                horizontalArrangement = Arrangement.spacedBy(50.dp),
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp)
             ) {
-                Icon(
-                    Icons.Filled.Star,
-                    contentDescription = "Rating",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(18.dp)
-                )
-                Text(
-                    text = String.format(Locale.getDefault(), "%.1f", item.rating),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+                Row ( verticalAlignment = Alignment.Bottom) {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = "Rating",
+                        tint = Color(0xFFFFC107),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = String.format(Locale.getDefault(), "%.1f", item.rating),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
                 Text(text = "${item.review} " + stringResource(R.string.review), color = Color.Gray)
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "${item.sold} " + stringResource(R.string.comment),
                     color = Color.Gray
                 )
             }
 
-            // Giá sản phẩm
             PriceText(item.price, model)
-
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.rewarded_ads_24px),
-                    contentDescription = null
-                )
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFE0E0E0)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.icon_point),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
                 Text(
-                    text ="+ ${item.price / 1000} điểm thưởng",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(top = 10.dp, bottom = 4.dp, start = 16.dp)
+                    text ="+ ${item.price / 1000} điểm",
+                    modifier = Modifier.padding(top = 10.dp, start = 2.dp)
                 )
             }
 
             SpacerProduct()
             ProductInfoView(item, navController, apiCallViewModel)
+            SpacerProduct()
             ProductReviewsSection(
                 averageRating = item.rating.toFloat(),
                 totalReviews = item.review,
@@ -234,6 +242,7 @@ fun ProductInfoView(
     navController: NavController,
     apiCallViewModel: ApiCallViewModel
 ) {
+    var showProducts by rememberSaveable  { mutableStateOf(false) }
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -255,19 +264,57 @@ fun ProductInfoView(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.trademark) + " ${product.trademark}",
+            color = Color(0xFF007AFF),
+            modifier = Modifier
+                .clickable { /* Xử lý sự kiện */ }
+        )
         ProductInfoItem(stringResource(R.string.categories), product.element_names)
-        ProductInfoItem(stringResource(R.string.dogam_from), product.preparation)
-        ProductInfoItem(stringResource(R.string.origa), product.origin)
-        ProductInfoItem(stringResource(R.string.Manufacturer), product.manufacturer)
-        ProductInfoItem(stringResource(R.string.product), product.productiondate)
-        ProductInfoItem(stringResource(R.string.expiry), product.expiry)
-        ProductInfoItem(stringResource(R.string.Ingredient), product.ingredient)
-        ProductInfoItem(stringResource(R.string.description), product.description)
-        SeeAllButton(product, navController, apiCallViewModel)
-        Divider()
+        AnimatedVisibility(visible = showProducts) {
+            Column {
+                ProductInfoItem(stringResource(R.string.dogam_from), product.preparation)
+                ProductInfoItem(stringResource(R.string.origa), product.origin)
+                ProductInfoItem(stringResource(R.string.Manufacturer), product.manufacturer)
+                ProductInfoItem(stringResource(R.string.product), product.productiondate)
+                ProductInfoItem(stringResource(R.string.expiry), product.expiry)
+                ProductInfoItem(stringResource(R.string.Ingredient), product.ingredient)
+                ProductInfoItem(stringResource(R.string.description), product.description)
+                SeeAllButton(product, navController, apiCallViewModel)
+            }
+        }
+        BouncingIconButton(showProducts = showProducts) {
+            showProducts = !showProducts
+        }
     }
 }
+@Composable
+fun BouncingIconButton(showProducts: Boolean, onToggle: () -> Unit) {
+    val infiniteTransition = rememberInfiniteTransition(label = "BouncingTransition")
 
+    val offsetY by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 600, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "OffsetY"
+    )
+
+    IconButton(
+        onClick = onToggle,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = if (showProducts) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+            contentDescription = if (showProducts) "Thu gọn" else "Mở rộng",
+            modifier = Modifier
+                .size(32.dp)
+                .offset(y = offsetY.dp)
+        )
+    }
+}
 @Composable
 fun SeeAllButton(
     item: ProductsModel,
@@ -295,7 +342,6 @@ fun SeeAllButton(
             tint = Color(0xFF007AFF),
             modifier = Modifier
                 .size(16.dp)
-                .padding(horizontal = 16.dp)
         )
     }
 }
@@ -331,7 +377,7 @@ fun BottomAppBarView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
-                onClick = { navController.navigate("chat") },
+                onClick = { navController.navigate("add") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007AFF))
             ) {
                 Icon(
@@ -394,7 +440,7 @@ fun ImageThumbnail(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductTopAppBar(navController: NavController) {
+fun ProductTopAppBar(navController: NavController, itemCount: Int) {
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -410,7 +456,18 @@ fun ProductTopAppBar(navController: NavController) {
         },
         actions = {
             IconButton(onClick = { navController.navigate("cart") }) {
-                Icon(imageVector = Icons.Filled.ShoppingCart, contentDescription = null)
+                BadgedBox(
+                    badge = {
+                        if (itemCount > 0) {
+                            Badge {
+                                Text(itemCount.toString())
+                            }
+                        }
+                    }
+                ){
+                    Icon(imageVector = Icons.Filled.ShoppingCart, contentDescription = null)
+
+                }
             }
         }
     )
@@ -420,28 +477,25 @@ fun ProductTopAppBar(navController: NavController) {
 fun ProductReviewsSection(
     averageRating: Float,
     totalReviews: Int,
-    individualReviews: List<ReviewItem>, // Danh sách các đánh giá chi tiết
+    individualReviews: List<ReviewItem>,
     onSeeAllReviewsClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(vertical = 16.dp)) {
+    Column(modifier = modifier.padding()) {
         Text(
-            text = stringResource(R.string.product_reviews_title), // "Đánh giá sản phẩm"
+            text = stringResource(R.string.product_reviews_title),
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Phần tóm tắt đánh giá
         ReviewSummary(
             averageRating = averageRating,
             totalReviews = totalReviews,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Hiển thị một vài đánh giá nổi bật (ví dụ: 2-3 đánh giá)
         if (individualReviews.isNotEmpty()) {
             Text(
                 text = stringResource(R.string.notable_reviews), // "Đánh giá nổi bật"

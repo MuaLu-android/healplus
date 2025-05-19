@@ -15,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 import java.sql.Time
+import java.time.LocalDate
 
 interface ApiService {
     //GET
@@ -138,9 +139,10 @@ interface ApiService {
         @Field("email") email: String,
         @Field("idauth") idauth: String,
         @Field("address") address: String,
-        @Field("quantity") quantity: String,
+        @Field("datetime") datetime: LocalDate,
+        @Field("note") note: String,
+        @Field("quantity") quantity: Int,
         @Field("sumMoney") sumMoney: Float,
-        @Field("datetime") datetime: String,
         @Field("status") status: String,
         @Field("detail") detail: String
     ): Call<ApiResponse>

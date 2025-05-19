@@ -109,7 +109,7 @@ fun WriteReviewScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.how_would_you_rate_product), // "Bạn đánh giá sản phẩm này thế nào?"
+                text = stringResource(R.string.how_would_you_rate_product),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -118,23 +118,14 @@ fun WriteReviewScreen(
                 onRatingChange = { newRating -> rating = newRating },
                 modifier = Modifier.padding(bottom = 24.dp)
             )
-            OutlinedTextField(
-                value = reviewTitle,
-                onValueChange = { reviewTitle = it },
-                label = { Text(stringResource(R.string.review_title_optional)) }, // "Tiêu đề (tùy chọn)"
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
             // Nội dung bình luận
             OutlinedTextField(
                 value = reviewComment,
                 onValueChange = { reviewComment = it },
-                label = { Text(stringResource(R.string.your_comment_label)) }, // "Bình luận của bạn*"
+                label = { Text(stringResource(R.string.your_comment_label)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 120.dp), // Chiều cao tối thiểu
+                    .heightIn(min = 120.dp),
                 placeholder = { Text(stringResource(R.string.share_your_thoughts_placeholder)) } // "Chia sẻ cảm nghĩ của bạn về sản phẩm..."
             )
             Text(
@@ -190,8 +181,6 @@ fun WriteReviewScreen(
                                 profileImageUrl = imageUrlToSubmit,
                                 idp = productId
                             )
-                            // Không cần xử lý thành công/thất bại ở đây nữa vì LaunchedEffect sẽ làm điều đó
-                            // isLoading sẽ được đặt thành false trong LaunchedEffect khi submitStatus thay đổi
                         } catch (e: Exception) {
                             // Xử lý lỗi nếu getSuspendingUserFullName hoặc getSuspendingUrl thất bại
                             Log.e("WriteReviewScreen", "Error fetching user data: ${e.message}", e)

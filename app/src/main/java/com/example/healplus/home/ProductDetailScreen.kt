@@ -30,9 +30,10 @@ fun ProductDetailScreen(
     authViewModel: AuthViewModel = viewModel()
 ) {
     val managmentCart = ManagmentCart(LocalContext.current, authViewModel.getUserId().toString())
+    val itemCount = managmentCart.getItemCount()
     Scaffold(
         topBar = {
-            ProductTopAppBar(navController)
+            ProductTopAppBar(navController, itemCount)
         },
         bottomBar = {
             BottomAppBarView(onAddCartClick = {
@@ -49,7 +50,7 @@ fun ProductDetailScreen(
         ) {
             item {
                 Text(
-                    text = "Dac diem noi bat:",
+                    text = "Đặc điểm nổi bật:",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )

@@ -39,21 +39,6 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun OnboardingScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
-    val context = LocalContext.current
-    val authSate = authViewModel.authSate.observeAsState()
-    LaunchedEffect(authSate.value) {
-        delay(3000)
-        if (authSate.value is AuthSate.Admin) {
-            // Chuyển sang MainActivity khi đã đăng nhập
-            val intent = Intent(context, AdminActivity::class.java)
-            context.startActivity(intent)
-        }
-        if (authSate.value is AuthSate.User) {
-            val intent1 = Intent(context, MainActivity::class.java)
-            context.startActivity(intent1)
-        }
-
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()

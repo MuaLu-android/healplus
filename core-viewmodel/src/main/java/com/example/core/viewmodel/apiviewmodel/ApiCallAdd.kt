@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
 
 
 class ApiCallAdd : ViewModel() {
@@ -76,10 +77,11 @@ class ApiCallAdd : ViewModel() {
         email: String,
         idauth: String,
         address: String,
-        quantity: String,
-        datetime: String,
+        datetime: LocalDate,
+        note: String,
+        quantity: Int,
         sumMoney: Float,
-        status: String, // Trạng thái đơn hàng
+        status: String,// Trạng thái đơn hàng
         items: List<ProductsModel>
     ) {
         val gson = Gson()
@@ -89,9 +91,10 @@ class ApiCallAdd : ViewModel() {
             email,
             idauth,
             address,
+            datetime,
+            note,
             quantity,
             sumMoney,
-            datetime,
             status,
             gson.toJson(items)
         )

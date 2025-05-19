@@ -265,7 +265,7 @@ fun OrderItemCard(
                 )
             }
             if (showProducts) {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 order.items.forEach { item ->
                     ProductOrderItem(navController, item = item)
                     Spacer(modifier = Modifier.height(4.dp))
@@ -308,7 +308,7 @@ fun ProductOrderItem(navController: NavController, item: ProductsModel) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = item.name, fontWeight = FontWeight.Medium, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = "Giá: ${NumberFormat.getNumberInstance(Locale("vi", "VN")).format(item.price)}", fontSize = 12.sp, color = Color.DarkGray)
+            Text(text = NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(item.price), fontSize = 12.sp, color = Color.DarkGray)
         }
     }
 }

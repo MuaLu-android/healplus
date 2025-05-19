@@ -114,7 +114,7 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 navController = navController
             )
         }
-        composable("chat"){
+        composable("add"){
             AdminChatScreen(navController = navController)
         }
         composable("chat_detail/{roomId}") { backStackEntry ->

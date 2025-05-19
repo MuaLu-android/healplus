@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.core.model.bottomapp.NavItemModel
+import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import com.example.healplus.navigation.MyAppNavigation
@@ -76,11 +78,14 @@ class MainActivity : BaseActivity() {
 @Composable
 fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     val navController = rememberNavController()
+    val userId = authViewModel.getUserId().toString()
+    val context = LocalContext.current
+    val managementCart = remember { ManagmentCart(context, userId) }
     val navItemList = listOf(
         NavItemModel.DrawableResItem(route = "home", label = stringResource(id = R.string.home), R.drawable.home_24px, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "point", label = stringResource(id = R.string.poit), R.drawable.rewarded_ads_24px, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "add", label = "Email", R.drawable.mail_24px, badgeCount = 0),
-        NavItemModel.DrawableResItem(route = "cart", label = stringResource(R.string.cart), R.drawable.shopping_cart_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "cart", label = stringResource(R.string.cart), R.drawable.shopping_cart_24px, badgeCount = managementCart.getItemCount()),
         NavItemModel.DrawableResItem(route = "settings", label = stringResource(R.string.settings), R.drawable.settings_24px, badgeCount = 0),
     )
     var selectedIndex by remember {

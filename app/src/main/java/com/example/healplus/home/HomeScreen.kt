@@ -180,7 +180,6 @@ fun MainActivityScreen(
                         }
                     } else {
                         Column {
-                            SectionTitle(R.string.categories, R.string.see_all)
                             CategoryList(categories, navController)
                         }
                     }

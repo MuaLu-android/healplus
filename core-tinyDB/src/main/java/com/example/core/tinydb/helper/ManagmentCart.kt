@@ -11,9 +11,7 @@ class ManagmentCart(val context: Context, userId: String) {
     private val tinyDB = TinyDB(context)
     val CartKey = "CartList-${userId}"
     fun insertFood(item: ProductsModel) {
-        Log.d("ManagmentCart", "Start inser:")
-        var listFood = getListCart()
-        Log.d("ManagmentCart", "Trước khi thêm: $listFood")
+        val listFood = getListCart()
         val existAlready = listFood.any { it.name == item.name }
         val index = listFood.indexOfFirst { it.name == item.name }
 
@@ -22,24 +20,18 @@ class ManagmentCart(val context: Context, userId: String) {
         } else {
             listFood.add(item)
         }
-        Log.d("ManagmentCart", "Dữ liệu trước khi lưu: ${Gson().toJson(listFood)}")
         tinyDB.putListObject(CartKey, listFood)
-        Log.d("ManagmentCart", "Dữ liệu đã lưu thành công")
-        Log.d("ManagmentCart", "Sau khi thêm: $listFood")
-        Toast.makeText(context, "Them vao gio hang", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
     }
 
     fun getListCart(): ArrayList<ProductsModel> {
-        Log.d("ManagmentCart", "Start getList")
-//        return tinyDB.getListObject("CartList") ?: arrayListOf()
         val listCart = tinyDB.getListObject(CartKey) ?: arrayListOf()
-        Log.d("ManagmentCart", "Danh sách sản phẩm trong giỏ hàng: $listCart")
         return listCart
     }
 
     fun minusItem(listFood: ArrayList<ProductsModel>, position: Int, listener: ChangeNumberItemsListener) {
         if (listFood[position].quantity == 1) {
-            removeItemByProduct(listFood[position], listener)
+            listFood[position].quantity
         } else {
             listFood[position].quantity--
         }
@@ -55,17 +47,21 @@ class ManagmentCart(val context: Context, userId: String) {
     }
     fun removeItemByProduct(item: ProductsModel, listener: ChangeNumberItemsListener) {
         val listFood = getListCart()
-        Log.d("ManagmentCart", "Sản phẩm cần xóa:${Gson().toJson(item)}")
-        Log.d("ManagmentCart", "Giỏ hàng trước khi xóa: ${Gson().toJson(listFood)}")
         val index = listFood.indexOfFirst { it.idp == item.idp }
 
         if (index != -1) {
             listFood.removeAt(index)
             tinyDB.putListObject(CartKey, listFood)
             listener.onChanged()
-            Log.d("ManagmentCart", "Đã xóa sản phẩm: ${item.name}")
         } else {
             Log.d("ManagmentCart", "Không tìm thấy sản phẩm để xóa: ${item.name}")
         }
+    }
+    fun resetCart() {
+        tinyDB.remove(CartKey)
+        Toast.makeText(context, "Đã xóa toàn bộ giỏ hàng", Toast.LENGTH_SHORT).show()
+    }
+    fun getItemCount(): Int {
+        return getListCart().size
     }
 }
