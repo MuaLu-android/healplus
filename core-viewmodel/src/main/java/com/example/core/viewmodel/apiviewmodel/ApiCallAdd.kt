@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.core.model.Api.ApiResponse
 import com.example.core.model.products.ProductsModel
 import com.example.core.model.products.Thanhphan
+import com.example.core.model.products.UnitInfo
 import com.example.core.network.retrofitclients.RetrofitClient
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -119,6 +120,7 @@ class ApiCallAdd : ViewModel() {
         rating: String,
         review: String,
         comment: String,
+        expiry: String,
         price: String,
         preparation: String,
         specification: String,
@@ -127,7 +129,6 @@ class ApiCallAdd : ViewModel() {
         ingredient: String,
         description: String,
         quantity: String,
-        showRecommended: String,
         productiondate: String,
         congdung: String,
         cachdung: String,
@@ -136,7 +137,8 @@ class ApiCallAdd : ViewModel() {
         baoquan: String,
         thanhphan: List<Thanhphan>,
         productImages: List<String>,
-        unitNames: List<String>,
+        unitNames: List<UnitInfo>,
+        onResponse: (ApiResponse) -> Unit
     ) {
         val gson = Gson()
         RetrofitClient.instance.addProduct(
@@ -144,7 +146,8 @@ class ApiCallAdd : ViewModel() {
             trademark = trademark,
             rating = rating,
             review = review,
-            comment = comment,
+            sold = comment,
+            expiry = expiry,
             price = price,
             preparation = preparation,
             specification = specification,
@@ -153,28 +156,31 @@ class ApiCallAdd : ViewModel() {
             ingredient = ingredient,
             description = description,
             quantity = quantity,
-            showRecommended = showRecommended,
             ide = ide,
             productiondate = productiondate,
             congdung = congdung,
             cachdung = cachdung,
-            tacdungphu = tacdungphu, // Truyền giá trị tacdungphu
+            tacdungphu = tacdungphu,
             baoquan = baoquan,
             productImages = gson.toJson(productImages),
             thanhphan = gson.toJson(thanhphan),
-            unitNames = gson.toJson(unitNames) // Truyền giá trị unitNames
+            unitNames = gson.toJson(unitNames)
         ).enqueue(object : Callback<ApiResponse?> {
             override fun onResponse(call: Call<ApiResponse?>, response: Response<ApiResponse?>) {
                 if (response.isSuccessful) {
-                    Log.d("AddOrder", "Phản hồi từ server: ${response.body()}")
+                    response.body()?.let {
+                        onResponse(it)
+                    }
                 } else {
-                    Log.e("AddOrder", "Phản hồi thất bại với mã lỗi: ${response.code()}")
+                    response.body()?.let {
+                        onResponse(it)
+                    }
                 }
             }
-
             override fun onFailure(call: Call<ApiResponse?>, t: Throwable) {
                 Log.e("AddOrder", "Lỗi kết nối: ${t.message}")
             }
         })
     }
 }
+
