@@ -78,7 +78,7 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         "category/{categoryid}/{categorytitle}",
         "add",
         "update_delete_category",
-        "Products",
+        "Sản phẩm",
         "Insert_Category",
         "Category",
         "Ingredient",

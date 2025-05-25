@@ -15,14 +15,14 @@ import com.example.core.model.users.UserAuthModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
-import com.example.healplus.add.AddCategoryScreen
-import com.example.healplus.add.AddIngredientsScreen
-import com.example.healplus.add.AddProductScreen
-import com.example.healplus.add.AddScreen
-import com.example.healplus.add.EditCategoryScreen
-import com.example.healplus.add.EditIngredientScreen
-import com.example.healplus.add.UpdateDeleteCategory
-import com.example.healplus.add.UpdateDeleteIngredient
+import com.example.healplus.managers.AddCategoryScreen
+import com.example.healplus.managers.AddIngredientsScreen
+import com.example.healplus.managers.AddProductScreen
+import com.example.healplus.managers.AddScreen
+import com.example.healplus.managers.EditCategoryScreen
+import com.example.healplus.managers.EditIngredientScreen
+import com.example.healplus.managers.UpdateDeleteCategory
+import com.example.healplus.managers.UpdateDeleteIngredient
 import com.example.healplus.admin.MonthlyRevenueBarChart
 import com.example.healplus.category.CategoryScreen
 import com.example.healplus.chat.AdminChatScreen
@@ -62,7 +62,7 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
         composable(route = "Insert_Category"){
             AddCategoryScreen(navController, viewModel)
         }
-        composable(route = "Category"){
+        composable(route = "Danh mục chính"){
             UpdateDeleteCategory(navController, viewModel)
         }
         composable("edit_category/{idc}/{title}") { backStackEntry ->
@@ -70,7 +70,7 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             val title = backStackEntry.arguments?.getString("title") ?: ""
             EditCategoryScreen(navController, viewModel, idc, title)
         }
-        composable(route = "Ingredient"){
+        composable(route = "Danh mục phụ"){
             UpdateDeleteIngredient(navController, viewModel)
         }
         composable(route = "Insert_Ingredient"){
@@ -87,7 +87,7 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 item = item
             )
         }
-        composable("Products"){
+        composable("Sản phẩm"){
 
             AddProductScreen(navController = navController,
                 viewModel = viewModel,

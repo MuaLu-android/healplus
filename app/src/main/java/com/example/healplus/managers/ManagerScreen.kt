@@ -1,4 +1,4 @@
-package com.example.healplus.add
+package com.example.healplus.managers
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ fun AddScreen(modifier: Modifier = Modifier, navController: NavController){
         }
     ) { paddingValues ->
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2), // Chia thành 2 cột
+            columns = GridCells.Fixed(2),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
@@ -52,7 +52,7 @@ fun AddScreen(modifier: Modifier = Modifier, navController: NavController){
         ) {
             items(menuItems) { menuItem ->
                 MenuItemCard(menuItem) {
-                    navController.navigate(menuItem.title.lowercase()) // Điều hướng khi nhấn vào mục
+                    navController.navigate(menuItem.title.lowercase())
                 }
             }
         }
@@ -72,10 +72,10 @@ fun ManagersAppBarr(navController: NavController) {
 
         },
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) { // Sử dụng IconButton cho navigationIcon
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowLeft,
-                    contentDescription = "Quay lại" // Thêm contentDescription cho khả năng tiếp cận
+                    contentDescription = "Quay lại"
                 )
             }
         }
@@ -102,7 +102,7 @@ fun MenuItemCard(menuItem: MenuItems, onClick: () -> Unit) {
                 painter = rememberAsyncImagePainter(model = menuItem.url),
                 contentDescription = menuItem.title,
                 modifier = Modifier
-                    .size(80.dp) // Kích thước ảnh
+                    .size(80.dp)
                     .clip(RoundedCornerShape(8.dp))
             )
             Spacer(modifier = Modifier.height(8.dp))

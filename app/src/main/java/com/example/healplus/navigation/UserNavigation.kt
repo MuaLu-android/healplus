@@ -1,10 +1,7 @@
 package com.example.healplus.navigation
 import android.util.Log
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,10 +11,8 @@ import androidx.navigation.navArgument
 import com.example.core.model.products.ProductsModel
 import com.example.core.model.products.ReviewItem
 import com.example.core.model.users.UserAuthModel
-import com.example.core.tinydb.helper.ManagmentCart
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
-import com.example.healplus.add.AddProductScreen
 import com.example.healplus.cart.AddressScreen
 import com.example.healplus.cart.CartScreen
 import com.example.healplus.cart.CheckOutScreen

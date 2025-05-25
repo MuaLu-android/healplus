@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,8 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
 import com.example.core.viewmodel.authviewmodel.AuthSate
@@ -67,7 +63,7 @@ import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.acitivity.AdminActivity
 import com.example.healplus.acitivity.MainActivity
 import com.example.healplus.R
-import com.example.healplus.add.uploadImageToServer
+import com.example.healplus.managers.uploadImageToServer
 import kotlinx.coroutines.launch
 
 @Composable

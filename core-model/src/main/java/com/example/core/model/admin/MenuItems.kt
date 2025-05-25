@@ -6,9 +6,9 @@ data class MenuItems(
 )
 
 val menuItems = listOf(
-    MenuItems("Category", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/360_F_1033027173_zBOOOm47Vfg07gzhC4fdjhmAItou1ng3_hn8ttw.jpg"),
-    MenuItems("Ingredient", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/Food-List-Ingredients-icon_kgd7vv.png"),
-    MenuItems("Element", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/55120-200_vkryvq.png"),
-    MenuItems("Products", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/4863042_pgcrm2.webp")
+    MenuItems("Danh mục chính", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/360_F_1033027173_zBOOOm47Vfg07gzhC4fdjhmAItou1ng3_hn8ttw.jpg"),
+    MenuItems("Danh mục phụ", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/Food-List-Ingredients-icon_kgd7vv.png"),
+    MenuItems("Danh mục chi tiết", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/55120-200_vkryvq.png"),
+    MenuItems("Sản phẩm", "https://res.cloudinary.com/dhl2sbjo5/image/upload/v1743531642/4863042_pgcrm2.webp")
 
 )

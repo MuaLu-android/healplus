@@ -1,4 +1,4 @@
-package com.example.healplus.add
+package com.example.healplus.managers
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +44,7 @@ fun AddCategoryScreen(navController: NavController, apiCallViewModel: ApiCallVie
         },
         snackbarHost = { SnackbarHost(snackbarHostState,
             modifier = Modifier
-                .fillMaxSize()  // Đảm bảo SnackbarHost chiếm toàn bộ chiều rộng
+                .fillMaxSize()
                 .wrapContentSize(Alignment.Center)
         ){data ->
             Snackbar(
@@ -54,7 +54,7 @@ fun AddCategoryScreen(navController: NavController, apiCallViewModel: ApiCallVie
                 actionColor = MaterialTheme.colorScheme.primary, // Màu nút
                 shape = MaterialTheme.shapes.medium,
             )
-        } } // Thêm SnackbarHost
+        } }
     ) { paddingValues ->
         Box(modifier = Modifier
             .fillMaxSize()

@@ -1,4 +1,4 @@
-package com.example.healplus.add
+package com.example.healplus.managers
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

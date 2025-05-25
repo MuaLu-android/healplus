@@ -33,6 +33,8 @@ material = "1.12.0"
 constraintlayout = "2.2.1"
 firebaseCommonKtx = "21.0.0"
 zalopaySdk = "2.2.4"
+uiTextAndroid = "1.6.0"
+protoliteWellKnownTypes = "18.0.0"
 
 [libraries]
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
@@ -72,6 +74,8 @@ squareup-retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "c
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 zalopay-sdk = { module = "vn.zalopay.sdk:zalopay-sdk", version.ref = "zalopaySdk" }
+androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
+protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
