@@ -43,7 +43,7 @@ android {
 dependencies {
     implementation(project(":core-viewmodel"))
     implementation(project(":core-model"))
-    implementation(project(":core-tinyDB"))
+    implementation(project(":core-Room"))
     implementation(libs.androidx.core.ktx)
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.google.accompanist:accompanist-flowlayout:0.31.1-alpha")
