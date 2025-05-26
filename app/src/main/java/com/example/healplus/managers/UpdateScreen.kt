@@ -80,26 +80,26 @@ fun UpdateDeleteCategory(
                 title = { Text("Danh sách danh mục") }
             )
         },
-        floatingActionButton = { // Thêm FloatingActionButton
+        floatingActionButton = {
             FloatingActionButton(onClick = {
-                navController.navigate("Insert_Category") // Điều hướng đến màn hình thêm mới
+                navController.navigate("Insert_Category") 
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Thêm mới danh mục")
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState,
             modifier = Modifier
-                .fillMaxSize()  // Đảm bảo SnackbarHost chiếm toàn bộ chiều rộng
+                .fillMaxSize()  
                 .wrapContentSize(Alignment.Center)
         ){data ->
             Snackbar(
                 snackbarData = data,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer, // Màu nền
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, // Màu chữ
-                actionColor = MaterialTheme.colorScheme.primary, // Màu nút
+                containerColor = MaterialTheme.colorScheme.secondaryContainer, 
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, 
+                actionColor = MaterialTheme.colorScheme.primary, 
                 shape = MaterialTheme.shapes.medium,
             )
-        } } // Thê
+        } } 
     ){paddingValues ->
         LazyColumn (
             modifier = Modifier
@@ -161,22 +161,22 @@ fun CategoryItemAdd(
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 IconButton(
                     onClick = onItemUpdateClick,
-                    modifier = Modifier.size(24.dp) // Giảm kích thước
+                    modifier = Modifier.size(24.dp) 
                 ) {
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = "Cập nhật",
-                        modifier = Modifier.size(16.dp) // Giảm kích thước icon
+                        modifier = Modifier.size(16.dp) 
                     )
                 }
                 IconButton(
                     onClick = onItemDeleteClick,
-                    modifier = Modifier.size(24.dp) // Giảm kích thước
+                    modifier = Modifier.size(24.dp) 
                 ) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = "Xóa",
-                        modifier = Modifier.size(16.dp) // Giảm kích thước icon
+                        modifier = Modifier.size(16.dp) 
                     )
                 }
             }
@@ -198,17 +198,17 @@ fun EditCategoryScreen(
         topBar = { ProfileTopAppBar("Chỉnh sửa danh mục", navController) },
         snackbarHost = { SnackbarHost(snackbarHostState,
             modifier = Modifier
-                .fillMaxSize()  // Đảm bảo SnackbarHost chiếm toàn bộ chiều rộng
+                .fillMaxSize()  
                 .wrapContentSize(Alignment.Center)
         ){data ->
             Snackbar(
                 snackbarData = data,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer, // Màu nền
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, // Màu chữ
-                actionColor = MaterialTheme.colorScheme.primary, // Màu nút
+                containerColor = MaterialTheme.colorScheme.secondaryContainer, 
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, 
+                actionColor = MaterialTheme.colorScheme.primary, 
                 shape = MaterialTheme.shapes.medium,
             )
-        } } //
+        } } 
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -255,7 +255,7 @@ fun EditCategoryScreen(
         }
     }
 }
-// Ingredient
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateDeleteIngredient(
@@ -279,26 +279,26 @@ fun UpdateDeleteIngredient(
                 title = { Text("Danh sách danh mục") }
             )
         },
-        floatingActionButton = { // Thêm FloatingActionButton
+        floatingActionButton = { 
             FloatingActionButton(onClick = {
-                navController.navigate("Insert_Ingredient") // Điều hướng đến màn hình thêm mới
+                navController.navigate("Insert_Ingredient") 
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Thêm mới danh mục")
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState,
             modifier = Modifier
-                .fillMaxSize()  // Đảm bảo SnackbarHost chiếm toàn bộ chiều rộng
+                .fillMaxSize()  
                 .wrapContentSize(Alignment.Center)
         ){data ->
             Snackbar(
                 snackbarData = data,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer, // Màu nền
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, // Màu chữ
-                actionColor = MaterialTheme.colorScheme.primary, // Màu nút
+                containerColor = MaterialTheme.colorScheme.secondaryContainer, 
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, 
+                actionColor = MaterialTheme.colorScheme.primary, 
                 shape = MaterialTheme.shapes.medium,
             )
-        } } // Thê
+        } } 
     ){paddingValues ->
         LazyColumn (
             modifier = Modifier
@@ -353,7 +353,7 @@ fun IngredientItemsAdd(
                     contentDescription = "Uploaded Image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(80.dp) // Adjust size as needed
+                        .size(80.dp) 
                         .clip(RoundedCornerShape(8.dp))
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -371,22 +371,22 @@ fun IngredientItemsAdd(
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 IconButton(
                     onClick = onItemUpdateClick,
-                    modifier = Modifier.size(24.dp) // Giảm kích thước
+                    modifier = Modifier.size(24.dp) 
                 ) {
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = "Cập nhật",
-                        modifier = Modifier.size(16.dp) // Giảm kích thước icon
+                        modifier = Modifier.size(16.dp) 
                     )
                 }
                 IconButton(
                     onClick = onItemDeleteClick,
-                    modifier = Modifier.size(24.dp) // Giảm kích thước
+                    modifier = Modifier.size(24.dp) 
                 ) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = "Xóa",
-                        modifier = Modifier.size(16.dp) // Giảm kích thước icon
+                        modifier = Modifier.size(16.dp) 
                     )
                 }
             }

@@ -49,9 +49,9 @@ fun AddCategoryScreen(navController: NavController, apiCallViewModel: ApiCallVie
         ){data ->
             Snackbar(
                 snackbarData = data,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer, // Màu nền
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, // Màu chữ
-                actionColor = MaterialTheme.colorScheme.primary, // Màu nút
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                actionColor = MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.medium,
             )
         } }

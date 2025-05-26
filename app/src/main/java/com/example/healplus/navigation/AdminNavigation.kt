@@ -51,7 +51,7 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
                 navController = navController
             )
         }
-        //Admin
+        
         composable(route = "point"){
             AddScreen(modifier = modifier,
                 navController)
@@ -122,11 +122,11 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             if (roomId != null) {
                 ChatDetailScreen(
                     roomId = roomId,
-                    viewModel = authViewModel, // Hoặc ViewModel chat riêng
+                    viewModel = authViewModel, 
                     navController = navController
                 )
             } else {
-                // Xử lý trường hợp không có roomId (ví dụ: hiển thị lỗi hoặc quay lại)
+                
                 Text("Error: Chat Room ID not found")
             }
         }

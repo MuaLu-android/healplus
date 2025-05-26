@@ -7,12 +7,10 @@ $phone = $_POST['phone'];
 $url = $_POST['url'];
 $role = $_POST['role'];
 $userId = generateRandomId('user_');
-//check data
 $query = 'SELECT * FROM `user` WHERE `email` = "'.$email.'"';
 $data = mysqli_query($conn, $query);
 $numrow = mysqli_num_rows($data);
 if ($numrow > 0) {
-	// code...
 	$arr =[
 		'success' => true, 
 		'message' => "Email da ton tai"
@@ -26,7 +24,6 @@ if ($numrow > 0) {
 			'success' => true,
 			'message' => "thanh cong"
 		];	
-		// code...
     }else{
 
 		$arr = [

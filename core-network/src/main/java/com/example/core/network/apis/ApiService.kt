@@ -1,6 +1,5 @@
 package com.example.core.network.apis
-import android.icu.text.StringSearch
-import com.example.core.model.Api.ApiResponse
+import com.example.core.model.api.ApiResponse
 import com.example.core.model.Oder.Order
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
@@ -14,23 +13,19 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-import java.sql.Time
 import java.time.LocalDate
 
 interface ApiService {
-    //GET
     @GET("get_ingredient_count.php")
     fun getIngredientCount(): Call<List<IngredientsModel>>
     @GET("getbanner.php")
     fun getBanners(): Call<List<BannersModel>>
-
     @GET("getIngredient.php")
     fun getIngredient(): Call<List<IngredientsModel>>
     @GET("get_product_showRecomment.php")
     fun getRecommendedProducts(
         @Query("showRecommended") showRecommended: Int = 0
     ): Call<List<ProductsModel>>
-
     @GET("getcategory.php")
     fun getCategories(): Call<List<CategoryModel>>
     @GET("getelemets.php")
@@ -41,18 +36,14 @@ interface ApiService {
     fun getProductsByIngredient(@Query("iding") iding: String): Call<List<ProductsModel>>
     @GET("get_products_by_element.php")
     fun getProductsByElement(@Query("ide") ide: String): Call<List<ProductsModel>>
-
     @GET("get_ingredient_by_category.php")
     fun getIngredientByCategory(@Query("idc") idc: String): Call<List<IngredientsModel>>
-
     @GET("get_elements_by_ingredient.php")
     fun getElementByIngredient(@Query("iding") iding: String): Call<List<ElementsModel>>
-
     @GET("getsearch.php")
     fun getSearchProduct(@Query("search") search: String): Call<List<ProductsModel>>
     @GET("get_oder.php")
     fun getOder(): Call<List<Order>>
-    //POST
     @FormUrlEncoded
     @POST("add_user.php")
     fun addUser(
@@ -118,19 +109,16 @@ interface ApiService {
     fun deleteCategory(
         @Field("idc") idc: String
     ): Call<ApiResponse>
-
     @FormUrlEncoded
     @POST("deldelete_ingredient.php")
     fun deleteIngnredient(
         @Field("iding") iding: String
     ): Call<ApiResponse>
-
     @FormUrlEncoded
     @POST("update_element.php")
     fun deleteElement(
         @Field("ide") ide: String
     ): Call<ApiResponse>
-    //oder
     @FormUrlEncoded
     @POST("oder.php")
     fun addOder(
@@ -224,7 +212,7 @@ interface ApiService {
         @Field("idauth") idauth: String,
         @Field("status") status: String
     ): Call<List<Order>>
-    //revenue
+    
     @GET("revenue_month.php")
     fun revenueMonth(
         @Query("month") month: Int,

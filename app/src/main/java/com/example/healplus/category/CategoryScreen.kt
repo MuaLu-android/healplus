@@ -149,7 +149,7 @@ fun CategoryScreen(
                           (currentDisplayState == DisplayState.PRODUCT_FOR_ELEMENT)){
                           item {
                               val currentTitle = when (currentDisplayState) {
-                                  DisplayState.ELEMENTS_FOR_INGREDIENT -> ingredients.find { it.iding == iding }?.title ?: "Element" // Cần trường id và name trong IngredientsModel
+                                  DisplayState.ELEMENTS_FOR_INGREDIENT -> ingredients.find { it.iding == iding }?.title ?: "Element"
                                   DisplayState.INGREDIENTS_FOR_CATEGORY -> category.find { it.idc == idc }?.title ?: "Thành phần"
                                   DisplayState.PRODUCT_FOR_ELEMENT -> element.find { it.ide == idcelm }?.title ?: "Sản phẩm"
                               }
@@ -187,7 +187,7 @@ fun CategoryScreen(
                                   ingredients.forEach { ingredients2 ->
                                       Box(
                                           modifier = Modifier
-                                              .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp) // Chia đôi màn hình
+                                              .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp)
                                       ) {
                                           CategoryItem12(ingredients2) { id, title ->
                                               iding = id
@@ -238,7 +238,7 @@ fun CategoryScreen(
                               product.forEach { productItem ->
                                   Box(
                                       modifier = Modifier
-                                          .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp) // Chia đôi màn hình
+                                          .width((LocalConfiguration.current.screenWidthDp.dp / 2) - 16.dp)
                                   ) {
                                       RecommendedList1(productItem, navController)
                                   }
@@ -502,7 +502,7 @@ fun RecommendedList1(items: ProductsModel, navController: NavController) {
     }
 }
 enum class DisplayState {
-    INGREDIENTS_FOR_CATEGORY, // Hiển thị ingredients của category đã chọn
-    ELEMENTS_FOR_INGREDIENT, // Hiển thị elements của ingredient đã chọn
+    INGREDIENTS_FOR_CATEGORY,
+    ELEMENTS_FOR_INGREDIENT,
     PRODUCT_FOR_ELEMENT,
 }

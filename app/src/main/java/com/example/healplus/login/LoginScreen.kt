@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,7 +53,6 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
     val authSate = authViewModel.authSate.observeAsState()
     LaunchedEffect(authSate.value) {
         if (authSate.value is AuthSate.Admin) {
-            // Chuyển sang MainActivity khi đã đăng nhập
             val intent = Intent(context, AdminActivity::class.java)
             context.startActivity(intent)
         }
@@ -85,7 +81,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 painter = painterResource(R.drawable.bubble_03),
         contentDescription = null,
         modifier = Modifier
-            .fillMaxWidth(0.7f) // Giữ tỷ lệ vuông
+            .fillMaxWidth(0.7f)
             .constrainAs(tvImgStart){
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -95,7 +91,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             painter = painterResource(R.drawable.bubble_06),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth(0.6f) // Co giãn theo chiều rộng màn hình
+                .fillMaxWidth(0.6f)
                 .constrainAs(tvImgBottom){
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
@@ -107,7 +103,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             painter = painterResource(R.drawable.bubblle_05),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth(0.3f) // Co giãn theo chiều rộng màn hình
+                .fillMaxWidth(0.3f)
                 .constrainAs(imgEnd){
                     top.linkTo(horizontalGuidelineImg)
                     end.linkTo(parent.end)

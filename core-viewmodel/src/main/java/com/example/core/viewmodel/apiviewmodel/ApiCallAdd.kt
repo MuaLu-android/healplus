@@ -2,7 +2,7 @@ package com.example.core.viewmodel.apiviewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.core.model.Api.ApiResponse
+import com.example.core.model.api.ApiResponse
 import com.example.core.model.products.ProductsModel
 import com.example.core.model.products.Thanhphan
 import com.example.core.model.products.UnitInfo
@@ -82,7 +82,7 @@ class ApiCallAdd : ViewModel() {
         note: String,
         quantity: Int,
         sumMoney: Float,
-        status: String,// Trạng thái đơn hàng
+        status: String,
         items: List<ProductsModel>
     ) {
         val gson = Gson()

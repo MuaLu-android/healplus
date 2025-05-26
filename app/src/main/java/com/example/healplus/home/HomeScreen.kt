@@ -402,7 +402,6 @@ fun DrugStoreInfoScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Services Grid
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -465,8 +464,6 @@ fun DrugStoreInfoScreen() {
                 }
             }
         }
-
-        // Company Information
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -514,8 +511,6 @@ fun DrugStoreInfoScreen() {
                 )
             }
         }
-
-        // Logo and Certification
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -862,9 +857,6 @@ fun MediumTopAppBar(navController: NavController,
                     showCategoryLoading: Boolean,
                     viewModel: AuthViewModel) {
     var expanded by remember { mutableStateOf(false) }
-
-
-    // Gọi hàm lấy dữ liệu khi màn hình mở
     LaunchedEffect(Unit) {
         viewModel.getCurrentUser()
     }
@@ -875,8 +867,8 @@ fun MediumTopAppBar(navController: NavController,
         navigationIcon = {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),// Thêm padding để tránh sát mép
-                verticalAlignment = Alignment.CenterVertically // Căn giữa theo trục dọc
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     onClick = { expanded = true },
@@ -913,15 +905,14 @@ fun MediumTopAppBar(navController: NavController,
             }
         }
     )
-    // DropdownMenu nằm ngoài TopAppBar để hiển thị lên trên
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false },
         modifier = Modifier
             .fillMaxWidth(0.8f)
-            .zIndex(2f) // Đưa menu lên trên các thành phần khác
+            .zIndex(2f)
             .fillMaxHeight()
-            .offset(x = 0.dp, y = -5.dp) // Tùy chỉnh vị trí nếu cần
+            .offset(x = 0.dp, y = -5.dp)
     ) {
         if (showCategoryLoading) {
             Box(
@@ -997,7 +988,7 @@ fun UserView(viewModel: AuthViewModel, navController: NavController) {
             Log.d("UserProfileScreen", "localImageUrl: ${userData.url}")
             Log.d("UserProfileScreen", "Parsed imageUri: $imageUri")
             GlideImage(
-                imageModel = { imageUri }, // Glide hỗ trợ content://
+                imageModel = { imageUri },
                 modifier = Modifier
                     .padding(10.dp)
                     .size(50.dp)

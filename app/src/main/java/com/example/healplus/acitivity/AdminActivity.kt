@@ -129,7 +129,7 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         AdminNavigation(
             modifier = Modifier.padding(innerPadding),
             authViewModel = authViewModel,
-            navController = navController // Truyền `navController` vào `MyAppNavigation`
+            navController = navController
         )
     }
 }

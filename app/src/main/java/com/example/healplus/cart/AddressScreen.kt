@@ -55,7 +55,7 @@ fun AddressScreen(navController: NavController,
     var province by remember { mutableStateOf("") }
     var addressDetail by remember { mutableStateOf("") }
     var isDefault by remember { mutableStateOf(false) }
-    var selectedType by remember { mutableStateOf("Nhà") } // Loại địa chỉ
+    var selectedType by remember { mutableStateOf("Nhà") }
     LaunchedEffect(Unit) {
         authViewModel.getCurrentUser()
     }

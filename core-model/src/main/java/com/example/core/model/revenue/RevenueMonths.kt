@@ -1,7 +1,4 @@
 package com.example.core.model.revenue
-
-import java.time.LocalDate
-
 data class RevenueData(
     val order_year: Int? = null,
     val order_month: Int? = null,

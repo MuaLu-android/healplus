@@ -17,21 +17,25 @@ suspend fun uploadImageToServer(imageUri: Uri, context: Context): String? {
     return withContext(Dispatchers.IO) {
         try {
             val filePath = getPathFromUri(context, imageUri)
-            Log.d("UploadImage", "File path: $filePath") // Log đường dẫn file
+            Log.d("UploadImage", "File path: $filePath")
             if (filePath == null) {
                 Log.e("UploadImage", "Failed to get file path from URI")
                 return@withContext null
             }
             val file = File(filePath)
-            Log.d("UploadImage", "File: ${file.name}, Size: ${file.length()} bytes") // Log thông tin file
+            Log.d("UploadImage", "File: ${file.name}, Size: ${file.length()} bytes")
 
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("image", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
+                .addFormDataPart(
+                    "image",
+                    file.name,
+                    RequestBody.create("image/*".toMediaTypeOrNull(), file)
+                )
                 .build()
 
             val request = Request.Builder()
-                .url("https://laulu.io.vn/healplus/php/upload_images.php") // Thay bằng URL server của bạn
+                .url("https://laulu.io.vn/healplus/php/upload_images.php")
                 .post(requestBody)
                 .build()
 
@@ -39,7 +43,7 @@ suspend fun uploadImageToServer(imageUri: Uri, context: Context): String? {
             Log.d("UploadImage", "Sending upload request to server...")
             val response = client.newCall(request).execute()
             val responseBody = response.body?.string()
-            Log.d("UploadImage", "Response body: $responseBody") // Log nội dung phản hồi
+            Log.d("UploadImage", "Response body: $responseBody")
 
             return@withContext responseBody?.let {
                 try {
@@ -64,8 +68,6 @@ suspend fun uploadImageToServer(imageUri: Uri, context: Context): String? {
         }
     }
 }
-
-// Hỗ trợ lấy đường dẫn file từ Uri
 fun getPathFromUri(context: Context, uri: Uri): String? {
     val cursor = context.contentResolver.query(uri, null, null, null, null)
     cursor?.use {

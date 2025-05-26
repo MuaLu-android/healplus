@@ -51,7 +51,7 @@ fun PassWordScreen() {
             painter = painterResource(R.drawable.bubble_04),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth(0.9f) // Co giãn theo chiều rộng màn hình
+                .fillMaxWidth(0.9f)
                 .constrainAs(imgTop){
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -61,7 +61,7 @@ fun PassWordScreen() {
                 painter = painterResource(R.drawable.bubble_03),
         contentDescription = null,
         modifier = Modifier
-            .fillMaxWidth(0.7f) // Giữ tỷ lệ vuông
+            .fillMaxWidth(0.7f)
             .constrainAs(tvImgStart){
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -81,9 +81,8 @@ fun PassWordScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Ảnh đại diện
             Image(
-                painter = painterResource(id = R.drawable.logo_app), // Thay ảnh avatar
+                painter = painterResource(id = R.drawable.logo_app),
                 contentDescription = "Profile Avatar",
                 modifier = Modifier
                     .size(80.dp)
@@ -93,8 +92,6 @@ fun PassWordScreen() {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Chào người dùng
             Text(
                 text = "Hello, Romina!!",
                 fontWeight = FontWeight.Bold,
@@ -103,8 +100,6 @@ fun PassWordScreen() {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Hướng dẫn nhập mật khẩu
             Text(
                 text = "Type your password",
                 fontSize = 16.sp,
@@ -112,8 +107,6 @@ fun PassWordScreen() {
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Ô nhập mật khẩu
             Row(
                 modifier = Modifier.padding(horizontal = 32.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -128,8 +121,6 @@ fun PassWordScreen() {
             }
 
             Spacer(modifier = Modifier.height(40.dp))
-
-            // Nút "Not you?"
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,

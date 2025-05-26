@@ -41,29 +41,20 @@ import kotlin.text.isNotBlank
 @Composable
 fun ChatDetailScreen(
     roomId: String,
-    viewModel: AuthViewModel = viewModel(), // Hoặc ViewModel chat riêng
+    viewModel: AuthViewModel = viewModel(),
     navController: NavController
 ) {
-    // Lắng nghe tin nhắn cho phòng chat hiện tại
-    // ViewModel cần có LiveData hoặc StateFlow cho tin nhắn của phòng chat đã chọn
-    val messages by viewModel.messages.collectAsState() // Giả định ViewModel có messagesForSelectedRoom LiveData
-    var messageInput by remember { mutableStateOf("") } // State cho ô nhập tin nhắn
-
-    // Gọi hàm trong ViewModel để chọn phòng chat và bắt đầu lắng nghe tin nhắn
+    val messages by viewModel.messages.collectAsState()
+    var messageInput by remember { mutableStateOf("") }
     LaunchedEffect(roomId) {
         viewModel.selectChatRoom(roomId)
-        // Có thể cần gọi hàm để tải lịch sử tin nhắn ban đầu
-        // viewModel.loadMessages(roomId)
     }
 
     Scaffold(
         topBar = {
-            // Sử dụng lại TopAppBar hoặc tạo TopAppBar mới cho màn hình chat
-            // Có thể hiển thị tên người dùng đối diện hoặc ID phòng chat
-            OderTopAppBar(navController = navController) // Truyền title nếu TopAppBar hỗ trợ
+            OderTopAppBar(navController = navController)
         },
         bottomBar = {
-            // Ô nhập tin nhắn và nút gửi
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -77,7 +68,7 @@ fun ChatDetailScreen(
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp),
-                    shape = RoundedCornerShape(24.dp) // Bo tròn góc
+                    shape = RoundedCornerShape(24.dp)
                 )
                 IconButton(
                     onClick = {
@@ -85,7 +76,7 @@ fun ChatDetailScreen(
                             viewModel.sendMessage1(
                                 roomId,
                                 messageInput
-                            ) // Gọi hàm gửi tin nhắn trong ViewModel
+                            )
                             messageInput = ""
                         }
                     },
@@ -102,20 +93,18 @@ fun ChatDetailScreen(
             }
         }
     ) { paddingValues ->
-        // Khu vực hiển thị tin nhắn
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
                 .padding(horizontal = 8.dp),
-            reverseLayout = true // Hiển thị tin nhắn mới nhất ở dưới cùng
+            reverseLayout = true
         ) {
             items(messages) { message ->
-                // Hiển thị từng tin nhắn
                 MessageItem(
                     message = message,
                     isCurrentUser = message.senderId == viewModel.getUserId()
-                ) // Giả định Message có senderId
+                )
             }
         }
     }
@@ -127,7 +116,7 @@ fun MessageItem(message: Message, isCurrentUser: Boolean) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start // Căn chỉnh tin nhắn
+        horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
     ) {
         Card(
             shape = RoundedCornerShape(8.dp),
@@ -136,13 +125,7 @@ fun MessageItem(message: Message, isCurrentUser: Boolean) {
             )
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                // Có thể hiển thị tên người gửi nếu cần
-                // if (!isCurrentUser) {
-                //     Text(text = message.senderName, style = MaterialTheme.typography.labelSmall)
-                // }
-                Text(text = message.text) // Giả định Message có thuộc tính content
-                // Có thể hiển thị thời gian gửi
-                // Text(text = message.timestamp, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                Text(text = message.text)
             }
         }
     }

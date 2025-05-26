@@ -57,8 +57,8 @@ fun SettingScreen(modifier: Modifier = Modifier,
      {paddingValues ->
          LazyColumn(
              modifier = Modifier.fillMaxSize()
-             .padding(paddingValues), // Dùng paddingValues để tránh che khuất
-         contentPadding = PaddingValues(bottom = 184.dp) // Thêm padding dưới cùng
+             .padding(paddingValues), 
+         contentPadding = PaddingValues(bottom = 184.dp) 
          ) {
              item {
                  Row(
@@ -91,19 +91,19 @@ fun SettingScreen(modifier: Modifier = Modifier,
              item { SettingsItem(title = R.string.address) }
              item { SettingsItem(title = R.string.Paysmethoot) }
 
-             // Shop Section
+             
              item { SectionTitle(title = R.string.shop) }
              item { SettingsItem(title = R.string.country, value = "Vietnam") }
              item { SettingsItem(title = R.string.currency, value = "$ USD") }
              item { SettingsItem(title = R.string.size, value = "UK") }
              item { SettingsItem(title = R.string.terms) }
 
-             // Account Section
+             
              item { SectionTitle(title = R.string.account) }
              item { SettingsItem(title = R.string.lauguage, value = "English") }
              item { SettingsItem(title = R.string.about) }
 
-             // Delete Account Button
+             
              item { DeleteAccountButton() }
              item { LogOut(authViewModel) }
 
@@ -179,7 +179,7 @@ fun DeleteAccountButton() {
         fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Xử lý khi nhấn */ }
+            .clickable {  }
             .padding(16.dp),
         textAlign = TextAlign.Start
     )

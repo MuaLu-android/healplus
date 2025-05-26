@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.core.model.Api.ApiResponse
+import com.example.core.model.api.ApiResponse
 import com.example.core.model.Oder.Order
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
@@ -20,7 +20,6 @@ import retrofit2.Call
 import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 class ApiCallViewModel : ViewModel() {
     private val _banner = MutableLiveData<List<BannersModel>>()
     private val _category = MutableLiveData<MutableList<CategoryModel>>()
@@ -212,9 +211,9 @@ class ApiCallViewModel : ViewModel() {
                     val orderList = response.body()?.toMutableList() ?: mutableListOf()
                     _orders.value = orderList
                     Log.d("API_ORDER_RESPONSE1", "Đã tải thành công ${orderList.size} đơn hàng.")
-                    // Log chi tiết về danh sách items
+                    
                 } else {
-                    // Xử lý lỗi HTTP (ví dụ: 404, 500)
+                    
                     Log.e(
                         "API_ORDER_ERROR",
                         "Lỗi Response Code: ${response.code()} - ${response.errorBody()?.string()}"
@@ -499,7 +498,7 @@ class ApiCallViewModel : ViewModel() {
                 response: Response<List<BannersModel>>
             ) {
                 if (response.isSuccessful) {
-                    // Gán danh sách banner vào LiveData
+                    
                     _banner.value = response.body() ?: emptyList()
                     _banner.value?.forEachIndexed { index, banner ->
                     }

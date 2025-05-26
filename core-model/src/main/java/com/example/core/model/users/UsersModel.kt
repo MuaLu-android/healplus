@@ -1,7 +1,4 @@
 package com.example.core.model.users
-
-import android.net.Uri
-
 data class UserAuthModel(
     var idauth: String = "",
     var name: String = "",

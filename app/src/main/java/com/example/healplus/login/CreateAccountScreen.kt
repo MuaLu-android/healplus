@@ -192,7 +192,6 @@ fun CreateAccountScreen(
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(8.dp))
-            // Password Input Field
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -272,12 +271,10 @@ fun CreateAccountScreen(
                     textStyle = TextStyle(
                         fontSize = 18.sp,
                         color = Color.Black,
-                        textAlign = TextAlign.Start // Căn
+                        textAlign = TextAlign.Start
                     )
                 )
             }
-
-            // Nút Done
             Button(
                 onClick = {
                     authViewModel.signupAuthState(

@@ -143,7 +143,7 @@ fun CheckOutScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text("Danh sách sản phẩm", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Column { // 🛠 Thay LazyColumn thành Column
+                    Column {
                         selectedProducts.forEach { product ->
                             ProductItem(product)
                         }
@@ -354,7 +354,7 @@ fun PaymentSummary(
     saleAmount: Int,
     onClick: (Double) -> Unit
 ) {
-    val totalSelected = totalAmount + tax - saleAmount // Tính totalSelected ở đây
+    val totalSelected = totalAmount + tax - saleAmount
     val points by remember(totalSelected) { mutableStateOf(totalSelected / 1000) }
     Card(shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {

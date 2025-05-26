@@ -1,4 +1,4 @@
-package com.example.core.model.Api
+package com.example.core.model.api
 
 data class ApiResponse(
     val success: Boolean,

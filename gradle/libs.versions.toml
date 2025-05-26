@@ -2,11 +2,13 @@
 agp = "8.8.2"
 commonsCodec = "1.14"
 composeVersion = "1.6.0"
+glide = "4.15.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+landscapistGlide = "2.2.8"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2024.04.01"
@@ -21,6 +23,7 @@ constraintLayoutCompose = "1.0.1"
 accompanistPager = "0.32.0"
 coilCompose = "2.6.0"
 lifecycleViewmodelKtx = "2.9.0"
+mpandroidchart = "v3.1.0"
 okhttp = "4.12.0"
 paymentVersion = "2.1.6"
 preferenceKtxVersion = "1.2.1"
@@ -35,11 +38,14 @@ firebaseCommonKtx = "21.0.0"
 zalopaySdk = "2.2.4"
 uiTextAndroid = "1.6.0"
 protoliteWellKnownTypes = "18.0.0"
+supportAnnotations = "28.0.0"
 
 [libraries]
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtxVersion" }
 commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
+landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapistGlide" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -67,6 +73,7 @@ androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name =
 airbnb-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 sdk-payment = { module = "vn.zalopay.sdk:payment", version.ref = "paymentVersion" }
 squareup-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
@@ -76,6 +83,7 @@ firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-k
 zalopay-sdk = { module = "vn.zalopay.sdk:zalopay-sdk", version.ref = "zalopaySdk" }
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
 protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
+support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

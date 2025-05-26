@@ -49,11 +49,11 @@ class AuthViewModel : ViewModel() {
         val userRole = userDoc.getString("role")
 
         if (userRole == "admin") {
-            // Admin: Tải danh sách các phòng chat
+            
             loadAdminChatRooms()
         } else {
-            // Người dùng thường
-            // Kiểm tra xem phòng chat đã tồn tại chưa
+            
+            
             val chatRoomsRef = db.collection("chat_rooms")
             val query = chatRoomsRef.whereArrayContains("users", userId)
             val querySnapshot = query.get().await()
@@ -63,7 +63,7 @@ class AuthViewModel : ViewModel() {
             }?.id
 
             if (chatRoomId == null) {
-                // Tạo phòng chat mới
+                
                 val newChatRoom = hashMapOf(
                     "users" to listOf(userId, adminId),
                     "adminId" to adminId
@@ -105,7 +105,7 @@ class AuthViewModel : ViewModel() {
                         .orderBy("timestamp")
                         .addSnapshotListener { snapshot, e ->
                             if (e != null) {
-                                // Xử lý lỗi
+                                
                                 return@addSnapshotListener
                             }
 
@@ -113,18 +113,18 @@ class AuthViewModel : ViewModel() {
                                 val messageList = snapshot.documents.map { doc ->
                                     doc.toObject(Message::class.java) ?: Message()
                                 }
-                                // Đảo ngược danh sách tin nhắn để hiển thị từ trên xuống
+                                
                                 _messages.value = messageList.reversed()
                             } else {
                                 _messages.value = emptyList()
                             }
                         }
                 } ?: run {
-                    // Không có phòng chat nào được chọn, không tải tin nhắn
+                    
                     _messages.value = emptyList()
                 }
             } else {
-                // Người dùng thường: Truy vấn tin nhắn từ phòng chat cụ thể
+                
                 chatRoomId?.let { roomId ->
                     db.collection("chat_rooms")
                         .document(roomId)
@@ -132,7 +132,7 @@ class AuthViewModel : ViewModel() {
                         .orderBy("timestamp")
                         .addSnapshotListener { snapshot, e ->
                             if (e != null) {
-                                // Xử lý lỗi
+                                
                                 return@addSnapshotListener
                             }
 
@@ -140,7 +140,7 @@ class AuthViewModel : ViewModel() {
                                 val messageList = snapshot.documents.map { doc ->
                                     doc.toObject(Message::class.java) ?: Message()
                                 }
-                                // Đảo ngược danh sách tin nhắn để hiển thị từ trên xuống
+                                
                                 _messages.value = messageList.reversed()
                             } else {
                                 _messages.value = emptyList()
@@ -158,7 +158,7 @@ class AuthViewModel : ViewModel() {
             val userRole = userDoc.getString("role")
 
             if (userRole == "admin") {
-                // Admin: Gửi tin nhắn đến phòng chat đã chọn
+                
                 chatRoomId?.let { roomId ->
                     val message = Message(senderId = userId, text = text)
                     db.collection("chat_rooms")
@@ -166,14 +166,13 @@ class AuthViewModel : ViewModel() {
                         .collection("messages")
                         .add(message)
                         .addOnSuccessListener {
-                            // Tin nhắn đã được gửi
+                            
                         }
                         .addOnFailureListener { e ->
-                            // Xử lý lỗi
+                            
                         }
                 }
             } else {
-                // Người dùng thường: Gửi tin nhắn đến phòng chat của mình với admin
                 chatRoomId?.let { roomId ->
                     val message = Message(senderId = userId, text = text)
                     db.collection("chat_rooms")
@@ -181,31 +180,24 @@ class AuthViewModel : ViewModel() {
                         .collection("messages")
                         .add(message)
                         .addOnSuccessListener {
-                            // Tin nhắn đã được gửi
+                            
                         }
                         .addOnFailureListener { e ->
-                            // Xử lý lỗi
+                            
                         }
                 }
             }
         }
     }
-
     fun sendMessage1(roomId: String, text: String) {
         val userId = auth.currentUser?.uid
         if (userId == null || text.isBlank()) {
-            // Không có người dùng đăng nhập hoặc tin nhắn rỗng, không gửi
+            
             return
         }
-
         viewModelScope.launch {
             try {
-                // Không cần kiểm tra vai trò admin ở đây nếu logic gửi tin nhắn là giống nhau
-                // cho cả admin và người dùng thường đến một phòng chat cụ thể.
-                // Logic kiểm tra vai trò có thể được thực hiện ở nơi khác nếu cần phân quyền.
-
-                val message = Message(senderId = userId, text = text) // Thêm timestamp nếu cần
-
+                val message = Message(senderId = userId, text = text)
                 db.collection("chat_rooms")
                     .document(roomId)
                     .collection("messages")
@@ -220,12 +212,10 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
-
     fun selectChatRoom(roomId: String) {
         chatRoomId = roomId
         loadMessages()
     }
-
     fun checkAuthSate() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -246,7 +236,6 @@ class AuthViewModel : ViewModel() {
                 }
         }
     }
-
     fun loginAuthState(email: String, password: String) {
         if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthSate.Error("Email or password can't be empty")
@@ -285,7 +274,6 @@ class AuthViewModel : ViewModel() {
                 }
             }
     }
-
     fun signupAuthState(
         name: String, email: String, password: String,
         phoneNumber: String, uploadedImageUrls: String, role: String
@@ -399,14 +387,12 @@ class AuthViewModel : ViewModel() {
                 _authState.value = AuthSate.User
                 getCurrentUser()
                 onComplete(true, "Cập nhật tài khoản thành công.")
-
             } catch (e: Exception) {
                 _authState.value = AuthSate.Error(e.message ?: "Lỗi không xác định khi cập nhật.")
                 onComplete(false, e.message ?: "Lỗi không xác định khi cập nhật.")
             }
         }
     }
-
     fun signOut() {
         auth.signOut()
         _authState.value = AuthSate.Unauthenticated
@@ -415,9 +401,7 @@ class AuthViewModel : ViewModel() {
     fun getUserId(): String? {
         return auth.currentUser?.uid
     }
-
     suspend fun getSuspendingUserFullName(): String? {
-        // Logic để lấy fullName bằng coroutines, ví dụ với await() từ Firebase Task
         return try {
             val userId = auth.currentUser?.uid ?: return null
             val document = db.collection("users").document(userId).get().await()
@@ -426,7 +410,6 @@ class AuthViewModel : ViewModel() {
             null
         }
     }
-
     suspend fun getSuspendingUrl(): String? {
         return try {
             val userId = auth.currentUser?.uid ?: return null
@@ -454,7 +437,6 @@ class AuthViewModel : ViewModel() {
             null
         }
     }
-
     fun getUserPhone(onResult: (String?) -> Unit) {
         auth.currentUser?.uid?.let { userId ->
             db.collection("users").document(userId).get()
@@ -462,7 +444,6 @@ class AuthViewModel : ViewModel() {
                 .addOnFailureListener { onResult(null) }
         } ?: onResult(null)
     }
-
     fun getEmail(onResult: (String?) -> Unit) {
         auth.currentUser?.uid?.let { userId ->
             db.collection("users").document(userId).get()
@@ -477,9 +458,7 @@ class AuthViewModel : ViewModel() {
                 .addOnFailureListener { onResult(null) }
         } ?: onResult(null)
     }
-
 }
-
 sealed class AuthSate {
     object Unauthenticated : AuthSate()
     object Loading : AuthSate()

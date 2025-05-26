@@ -189,7 +189,7 @@ fun UpdateProfileScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-            // Ngày sinh
+            
             OutlinedTextField(
                 value = birthDate,
                 onValueChange = {},

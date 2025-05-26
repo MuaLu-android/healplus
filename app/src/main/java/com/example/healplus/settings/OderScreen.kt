@@ -67,7 +67,7 @@ fun OderScreen1(){
             }
         }
         Button(
-            onClick = { /* TODO: Handle re-order */ },
+            onClick = {  },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007BFF))
         ) {

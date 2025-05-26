@@ -326,10 +326,10 @@ fun OderManagersTopAppBar(navController: NavController) {
 
         },
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) { // Sử dụng IconButton cho navigationIcon
+            IconButton(onClick = { navController.popBackStack() }) { 
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowLeft,
-                    contentDescription = "Quay lại" // Thêm contentDescription cho khả năng tiếp cận
+                    contentDescription = "Quay lại" 
                 )
             }
         }

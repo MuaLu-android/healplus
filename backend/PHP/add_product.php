@@ -21,30 +21,20 @@ $congdung = $_POST['congdung'] ?? '';
 $cachdung = $_POST['cachdung'] ?? '';
 $tacdungphu = $_POST['tacdungphu'] ?? '';
 $baoquan = $_POST['baoquan'] ?? '';
-// Clean và parse productImages
 function parseProductImages($input) {
-    // Remove brackets and split by comma
     $input = trim($input, '[]');
     $images = explode(',', $input);
     return array_map(function($url) {
         return trim($url);
     }, $images);
 }
-
-// Parse thanhphan string
 function parseThanhPhan($input) {
-    // Remove outer brackets
     $input = trim($input, '[]');
-    // Split by ), to separate items
     $items = explode('),', $input);
     $result = [];
-    
     foreach ($items as $item) {
-        // Clean up the item
         $item = trim($item, ' ()');
         if (empty($item)) continue;
-        
-        // Extract title and body
         if (preg_match('/title=(.*?),\s*body=(.*)/i', $item, $matches)) {
             $result[] = [
                 'title' => trim($matches[1]),
@@ -54,20 +44,13 @@ function parseThanhPhan($input) {
     }
     return $result;
 }
-
-// Parse UnitInfo string
 function parseUnitInfo($input) {
-    // Remove outer brackets
     $input = trim($input, '[]');
     $items = explode('),', $input);
     $result = [];
-    
     foreach ($items as $item) {
-        // Clean up the item
         $item = trim($item, ' ()');
         if (empty($item)) continue;
-        
-        // Extract unit_name and isSelected
         if (preg_match('/unit_name=(.*?),\s*isSelected=(.*)/i', $item, $matches)) {
             $result[] = [
                 'unit_name' => trim($matches[1]),
@@ -77,7 +60,6 @@ function parseUnitInfo($input) {
     }
     return $result;
 }
-// Tạo ID sản phẩm trước khi bắt đầu transaction
 function generateProductId() {
     $prefix = '#P';
     $timestamp = date('ymd');
@@ -90,22 +72,16 @@ $idp = generateProductId();
 mysqli_begin_transaction($conn);
 
 try {
-    // Parse the data
     $productImages = parseProductImages($_POST['productImages']);
     $thanhphan = parseThanhPhan($_POST['thanhphan']);
     $unitNames = parseUnitInfo($_POST['unitNames']);
-
-    // Debug parsed data
     error_log("Parsed productImages: " . print_r($productImages, true));
     error_log("Parsed thanhphan: " . print_r($thanhphan, true));
     error_log("Parsed unitNames: " . print_r($unitNames, true));
-    // Query chính
     $query = "INSERT INTO `product` (`idp`, `name`, `trademark`, `rating`, `review`, `sold`, `expiry`, 
               `price`, `preparation`, `origin`, `manufacturer`, `description`, `ide`, `productiondate`, 
               `specification`, `ingredient`, `quantity`, `congdung`, `cachdung`, `tacdungphu`, `baoquan`) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    // Sử dụng Prepared Statement
     $stmt = mysqli_prepare($conn, $query);
     if (!$stmt) {
         throw new Exception("Lỗi prepare statement: " . mysqli_error($conn));
@@ -130,8 +106,6 @@ try {
             }
         }
     }
-
-    // Xử lý thanhphan
     if (!empty($thanhphan) && is_array($thanhphan)) {
         foreach ($thanhphan as $tp) {
             $title = mysqli_real_escape_string($conn, $tp['title']);
@@ -142,8 +116,6 @@ try {
             }
         }
     }
-
-    // Xử lý unitNames
     if (!empty($unitNames) && is_array($unitNames)) {
         foreach ($unitNames as $unit) {
             $unitName = mysqli_real_escape_string($conn, $unit['unit_name']);

@@ -256,13 +256,13 @@ fun OrderItem(order: DetailedOrder, navController: NavController) {
                 )
             }
             IconButton(
-                onClick = { navController.navigate("order_detail_route/${order.id}") }, // Gọi lambda khi icon được nhấp
-                modifier = Modifier.size(24.dp) // Đặt kích thước cho icon
+                onClick = { navController.navigate("order_detail_route/${order.id}") },
+                modifier = Modifier.size(24.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight, // Sử dụng icon mũi tên tiến
+                    imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = "Xem chi tiết đơn hàng",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant // Màu sắc icon
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

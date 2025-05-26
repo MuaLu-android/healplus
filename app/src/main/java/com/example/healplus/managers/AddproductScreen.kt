@@ -593,7 +593,6 @@ fun PriceAndUnitSection(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Trường nhập giá
                 OutlinedTextField(
                     value = price,
                     onValueChange = onPriceChange,
@@ -602,14 +601,11 @@ fun PriceAndUnitSection(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(8.dp)
                 )
-
-                // Box chứa Dropdown
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(TextFieldDefaults.MinHeight)
                 ) {
-                    // Nút hiển thị đơn vị đã chọn
                     OutlinedButton(
                         onClick = { expandedUnit = true },
                         modifier = Modifier
@@ -633,8 +629,6 @@ fun PriceAndUnitSection(
                             )
                         }
                     }
-
-                    // Menu dropdown
                     DropdownMenu(
                         expanded = expandedUnit,
                         onDismissRequest = { expandedUnit = false },
@@ -645,7 +639,6 @@ fun PriceAndUnitSection(
                             DropdownMenuItem(
                                 onClick = {
                                     selectedUnit = unit
-                                    // Tạo danh sách mới với đơn vị được chọn
                                     val newUnitInfo = listOf(
                                         UnitInfo(
                                             unit_name = unit,
@@ -750,9 +743,9 @@ fun ThanhPhanItem(thanhphan: Thanhphan, onDelete: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             Text(text = thanhphan.title, style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.width(8.dp)) // Khoảng cách giữa title và vạch
-            VerticalDivider() // Thêm vạch ngăn cách
-            Spacer(modifier = Modifier.width(8.dp)) // Khoảng cách giữa vạch và body
+            Spacer(modifier = Modifier.width(8.dp))
+            VerticalDivider()
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = thanhphan.body, style = MaterialTheme.typography.bodyMedium)
         }
         IconButton(onClick = onDelete) {
@@ -763,10 +756,10 @@ fun ThanhPhanItem(thanhphan: Thanhphan, onDelete: () -> Unit) {
 @Composable
 fun VerticalDivider() {
     Canvas(modifier = Modifier
-        .height(24.dp) // Chiều cao của vạch
-        .width(1.dp)) { // Độ dày của vạch
+        .height(24.dp)
+        .width(1.dp)) {
         drawLine(
-            color = Color.Gray, // Màu của vạch
+            color = Color.Gray,
             start = Offset(0f, 0f),
             end = Offset(0f, size.height),
             strokeWidth = 1f

@@ -498,21 +498,19 @@ fun ProductReviewsSection(
         Spacer(modifier = Modifier.height(16.dp))
         if (individualReviews.isNotEmpty()) {
             Text(
-                text = stringResource(R.string.notable_reviews), // "Đánh giá nổi bật"
+                text = stringResource(R.string.notable_reviews),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            individualReviews.take(3).forEach { review -> // Lấy 3 đánh giá đầu tiên
+            individualReviews.take(3).forEach { review ->
                 ReviewCard(
                     review = review,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
-
-            // Nút xem tất cả đánh giá
-            if (totalReviews > 3) { // Chỉ hiển thị nếu có nhiều hơn 3 đánh giá
+            if (totalReviews > 3) {
                 TextButton(
                     onClick = { onSeeAllReviewsClick() },
                     modifier = Modifier
@@ -524,7 +522,7 @@ fun ProductReviewsSection(
                             R.string.see_all_reviews,
                             totalReviews
                         )
-                    ) // "Xem tất cả (X) đánh giá"
+                    )
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
                         contentDescription = null,
@@ -534,14 +532,13 @@ fun ProductReviewsSection(
             }
         } else {
             Text(
-                text = stringResource(R.string.no_reviews_yet), // "Chưa có đánh giá nào."
+                text = stringResource(R.string.no_reviews_yet),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        // Cân nhắc thêm nút "Viết đánh giá" ở đây
         OutlinedButton(
             onClick = {
                 onWriteReviewClick()
@@ -550,7 +547,7 @@ fun ProductReviewsSection(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            Text(stringResource(R.string.write_a_review)) // "Viết đánh giá"
+            Text(stringResource(R.string.write_a_review))
         }
     }
 }
@@ -586,7 +583,6 @@ fun ReviewSummary(
 fun ReviewCard(review: ReviewItem, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Ảnh đại diện (nếu có)
             review.profileImageUrl?.let { imageUrl ->
                 Image(
                     painter = rememberAsyncImagePainter(model = imageUrl),
@@ -624,16 +620,14 @@ fun RatingBar(
     rating: Float,
     modifier: Modifier = Modifier,
     starCount: Int = 5,
-    starSize: Dp = 24.dp, // Kích thước mặc định cho sao
-    starColor: Color = Color(0xFFFFC107), // Màu vàng cho sao đầy
-    emptyStarColor: Color = Color.LightGray // Màu cho sao rỗng/viền
+    starSize: Dp = 24.dp,
+    starColor: Color = Color(0xFFFFC107),
+    emptyStarColor: Color = Color.LightGray
 ) {
     Row(modifier = modifier) {
         val filledStars = kotlin.math.floor(rating).toInt()
         val halfStar = rating - filledStars >= 0.5f
         val emptyStars = starCount - filledStars - if (halfStar) 1 else 0
-
-        // Sao đầy
         repeat(filledStars) {
             Icon(
                 imageVector = Icons.Filled.Star,
@@ -642,21 +636,17 @@ fun RatingBar(
                 modifier = Modifier.size(starSize)
             )
         }
-
-        // Nửa sao (nếu có)
         if (halfStar) {
             Icon(
-                painter = painterResource(R.drawable.star_half_24px), // Material Icons có sẵn
+                painter = painterResource(R.drawable.star_half_24px),
                 contentDescription = null,
                 tint = starColor,
                 modifier = Modifier.size(starSize)
             )
         }
-
-        // Sao rỗng
         repeat(emptyStars) {
             Icon(
-                painter = painterResource(R.drawable.star_24px), // Material Icons có sẵn
+                painter = painterResource(R.drawable.star_24px),
                 contentDescription = null,
                 tint = emptyStarColor,
                 modifier = Modifier.size(starSize)

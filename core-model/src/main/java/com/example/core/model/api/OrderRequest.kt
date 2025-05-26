@@ -1,4 +1,4 @@
-package com.example.core.model.Api
+package com.example.core.model.api
 
 import com.example.core.model.products.ProductsModel
 

@@ -2,7 +2,6 @@ package com.example.healplus.home
 
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.launch
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,14 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,7 +44,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
-import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import kotlinx.coroutines.launch
@@ -59,7 +55,7 @@ import java.util.Date
 @Composable
 fun WriteReviewScreen(
     navController: NavController,
-    productId: String, // ID sản phẩm cần đánh giá
+    productId: String,
     apiCallAdd: ApiCallAdd = viewModel(),
     authViewModel: AuthViewModel = viewModel(),
 ) {
@@ -118,7 +114,6 @@ fun WriteReviewScreen(
                 onRatingChange = { newRating -> rating = newRating },
                 modifier = Modifier.padding(bottom = 24.dp)
             )
-            // Nội dung bình luận
             OutlinedTextField(
                 value = reviewComment,
                 onValueChange = { reviewComment = it },
@@ -126,19 +121,19 @@ fun WriteReviewScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 120.dp),
-                placeholder = { Text(stringResource(R.string.share_your_thoughts_placeholder)) } // "Chia sẻ cảm nghĩ của bạn về sản phẩm..."
+                placeholder = { Text(stringResource(R.string.share_your_thoughts_placeholder)) }
             )
             Text(
                 text = stringResource(
                     R.string.min_characters_required,
                     20
-                ), // "*Tối thiểu 20 ký tự"
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.weight(1f)) // Đẩy nút xuống dưới
+            Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = {
@@ -159,7 +154,7 @@ fun WriteReviewScreen(
                         return@Button
                     }
                     coroutineScope.launch {
-                        isLoading = true // Bắt đầu loading
+                        isLoading = true
                         try {
                             val fetchedUsername = authViewModel.getSuspendingUserFullName()
                             val reviewerNameToSubmit = fetchedUsername ?: "Người dùng ẩn danh"
@@ -176,13 +171,12 @@ fun WriteReviewScreen(
                             apiCallAdd.addReview(
                                 reviewerName = reviewerNameToSubmit,
                                 rating = rating.toFloat(),
-                                comment = reviewComment, // Nên thêm reviewTitle nếu có
+                                comment = reviewComment,
                                 date = currentDateAndTime,
                                 profileImageUrl = imageUrlToSubmit,
                                 idp = productId
                             )
                         } catch (e: Exception) {
-                            // Xử lý lỗi nếu getSuspendingUserFullName hoặc getSuspendingUrl thất bại
                             Log.e("WriteReviewScreen", "Error fetching user data: ${e.message}", e)
                             Toast.makeText(
                                 context,
@@ -202,7 +196,7 @@ fun WriteReviewScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text(stringResource(R.string.submit_review_button)) // "Gửi đánh giá"
+                    Text(stringResource(R.string.submit_review_button))
                 }
             }
         }
@@ -215,7 +209,7 @@ fun RatingInput(
     onRatingChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
     starCount: Int = 5,
-    starSize: Dp = 40.dp, // Sao to hơn cho việc nhập liệu
+    starSize: Dp = 40.dp,
     selectedColor: Color = Color(0xFFFFC107),
     defaultColor: Color = Color.Gray
 ) {

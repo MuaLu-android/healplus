@@ -1,24 +1,17 @@
 <?php
-include "connect.php"; // Kết nối database
-
-// Kiểm tra nếu có dữ liệu POST từ client gửi lên
+include "connect.php"; 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['idc'])) {
-    $idc = trim($_POST['idc']); // Lấy idc từ request và loại bỏ khoảng trắng thừa
-
+    $idc = trim($_POST['idc']); 
     if (!empty($idc)) {
-        // Kiểm tra xem danh mục có tồn tại không
         $sqlCheck = "SELECT * FROM category WHERE idc = ?";
         $stmtCheck = $conn->prepare($sqlCheck);
         $stmtCheck->bind_param("s", $idc);
         $stmtCheck->execute();
         $resultCheck = $stmtCheck->get_result();
-
         if ($resultCheck->num_rows > 0) {
-            // Nếu tồn tại, tiến hành xóa
             $sqlDelete = "DELETE FROM category WHERE idc = ?";
             $stmtDelete = $conn->prepare($sqlDelete);
             $stmtDelete->bind_param("s", $idc);
-
             if ($stmtDelete->execute()) {
                 $arr = [
                     'success' => true,
@@ -48,8 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['idc'])) {
         'message' => "Thiếu tham số idc!"
     ];
 }
-
-// Trả về JSON response
 echo json_encode($arr, JSON_UNESCAPED_UNICODE);
 $conn->close();
 ?>

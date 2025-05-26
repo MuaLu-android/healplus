@@ -112,7 +112,7 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (currentRoute !in routesToHideBottomBar) { // Kiểm tra đăng nhập
+            if (currentRoute !in routesToHideBottomBar) {
                 NavigationBar {
                     navItemList.forEachIndexed { index, navItem ->
                         NavigationBarItem(

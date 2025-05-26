@@ -39,7 +39,6 @@ fun LottieLoadingAnimation(modifier: Modifier= Modifier, navController: NavContr
     LaunchedEffect(authSate.value) {
         delay(2000)
         if (authSate.value is AuthSate.Admin) {
-            // Chuyển sang MainActivity khi đã đăng nhập
             val intent = Intent(context, AdminActivity::class.java)
             context.startActivity(intent)
         }
@@ -49,7 +48,7 @@ fun LottieLoadingAnimation(modifier: Modifier= Modifier, navController: NavContr
         }
     }
     LaunchedEffect(Unit) {
-        delay(2000) // Chờ 3 giây
+        delay(2000)
         showSecondAnimation = true
         navController.navigate("onboarding")
     }

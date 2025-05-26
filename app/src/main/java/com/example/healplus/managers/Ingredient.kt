@@ -61,8 +61,8 @@ fun EditIngredientScreen(
     val categoryList = remember { mutableStateListOf<CategoryModel>() }
     var selectedIngredientId by remember { mutableStateOf<String>("") }
     val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent() // Changed to GetContent
-    ) { uri: Uri? -> // Result is a single Uri or null
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
         selectedImageUri = uri
         if (uri != null) {
             scope.launch {
@@ -86,17 +86,17 @@ fun EditIngredientScreen(
         topBar = { ProfileTopAppBar("Chỉnh sửa danh mục", navController) },
         snackbarHost = { SnackbarHost(snackbarHostState,
             modifier = Modifier
-                .fillMaxSize()  // Đảm bảo SnackbarHost chiếm toàn bộ chiều rộng
+                .fillMaxSize()
                 .wrapContentSize(Alignment.Center)
         ){data ->
             Snackbar(
                 snackbarData = data,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer, // Màu nền
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer, // Màu chữ
-                actionColor = MaterialTheme.colorScheme.primary, // Màu nút
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                actionColor = MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.medium,
             )
-        } } //
+        } }
     ) { paddingValues ->
         Column (modifier = Modifier
             .fillMaxSize()
@@ -148,9 +148,9 @@ fun EditIngredientScreen(
 
             Text("Danh sách ảnh đã chọn")
             AsyncImage(
-                model = uploadedImageUrl, // Use selectedImageUri if available, otherwise uploadedImageUrl
+                model = uploadedImageUrl,
                 contentDescription = "Selected or uploaded image",
-                modifier = Modifier.size(100.dp) // Adjust size as needed
+                modifier = Modifier.size(100.dp)
             )
             Box(
                 modifier = Modifier

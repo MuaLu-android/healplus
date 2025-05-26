@@ -136,7 +136,7 @@ fun UserOrderItemCard(navController: NavController, order: Order) {
             )
             Text(text = "Địa chỉ giao hàng: ${order.address}", fontSize = 14.sp, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Tổng tiền: ${NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(order.sumMoney)}", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF4CAF50)) // Màu xanh lá cây
+            Text(text = "Tổng tiền: ${NumberFormat.getCurrencyInstance(Locale("vi", "VN")).format(order.sumMoney)}", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color(0xFF4CAF50)) 
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = "Trạng thái: ${status1}", fontSize = 14.sp, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(8.dp))
