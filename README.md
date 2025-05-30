@@ -1,8 +1,8 @@
 # Hướng Dẫn Cài Đặt MySQL và Chạy File PHP API Cục Bộ (Localhost)
 
-## 🧠 Mục đích
+## Mục đích
 
-Một số API PHP trên hosting server có thể bị lỗi hoặc không ổn định. Vì vậy, bạn có thể chạy chúng **cục bộ** bằng XAMPP để tiếp tục phát triển và kiểm thử ứng dụng mà không bị gián đoạn.
+Một số API PHP trên hosting server có thể bị lỗi do chưa được cập nhật. Vì vậy, bạn có thể chạy chúng cục bộ bằng XAMPP để tiếp tục phát triển và kiểm thử ứng dụng mà không bị gián đoạn.
 
 ---
 
@@ -16,8 +16,8 @@ Một số API PHP trên hosting server có thể bị lỗi hoặc không ổn 
 ### ✅ Cài đặt:
 
 1. Chạy file cài đặt và làm theo hướng dẫn.
-2. Mở **XAMPP Control Panel**.
-3. Bấm **Start** cho cả 2 service: `Apache` và `MySQL`.
+2. Mở XAMPP Control Panel.
+3. Bấm Start cho cả 2 service: `Apache` và `MySQL`.
 
 ---
 
@@ -30,7 +30,7 @@ Một số API PHP trên hosting server có thể bị lỗi hoặc không ổn 
 ### Thực hiện:
 
 1. Tạo **database mới**, ví dụ: `healplus_db`
-2. Import file SQL nếu có (ví dụ: `db/healplus.sql`) vào database vừa tạo
+2. Import file SQL (https://github.com/MuaLu-android/healplus/blob/main/db/healplus_25_05.sql)  vào database vừa tạo
 
 ---
 
@@ -40,4 +40,16 @@ Một số API PHP trên hosting server có thể bị lỗi hoặc không ổn 
 2. Tạo một thư mục con, ví dụ: `healplus-api`
 3. Copy toàn bộ file PHP từ thư mục `backend/PHP` trong dự án vào `htdocs/healplus-api`
 
-📁 Ví dụ đường dẫn sau khi copy:
+## 4️⃣ Cấu Hình Kết Nối Database
+
+Mở file PHP có kết nối CSDL (`connect.php`) và chỉnh sửa:
+
+```php
+$host = "localhost";
+$db_name = "healplus_db";
+$username = "root";
+$password = "";
+```
+## 5️⃣ Cập Nhật Base URL Trong Ứng Dụng Android
+const val BASE_URL = "http://10.0.2.2/healplus-api/"  // nếu chạy trên Android Emulator
+const val BASE_URL = "http://192.168.x.x/healplus-api/" // nếu chạy thiết bị thật trong cùng WiFi
