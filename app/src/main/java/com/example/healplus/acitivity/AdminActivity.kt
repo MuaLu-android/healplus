@@ -63,7 +63,7 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     val navItemList = listOf(
         NavItemModel.DrawableResItem(route = "home", label = stringResource(id = R.string.home), R.drawable.home_24px, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "point", label = stringResource(id = R.string.manager), R.drawable.shopping_bag_24px, badgeCount = 0),
-        NavItemModel.DrawableResItem(route = "add", label = stringResource(R.string.add), R.drawable.mail_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "add", label = "Liên hệ", R.drawable.connect, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "oder", label = stringResource(R.string.oder), R.drawable.orders_24px, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "settings", label = stringResource(R.string.settings), R.drawable.settings_24px, badgeCount = 0),
     )
@@ -86,6 +86,7 @@ fun AdminMain(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
         "edit_category/{idc}/{title}",
         "oderscreen",
         "profile",
+        "chat_detail/{roomId}",
         "editProfile/{userData}")
     LaunchedEffect(navController.currentBackStackEntry) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
