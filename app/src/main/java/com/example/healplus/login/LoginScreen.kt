@@ -175,7 +175,10 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 .height(37.dp))
             Button(
                 onClick = {
-                    authViewModel.loginAuthState(email, password)
+                    authViewModel.loginAuthState(email, password){
+                        message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
                 },
                 enabled = authSate.value != AuthSate.Loading,
                 modifier = Modifier

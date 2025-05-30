@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.model.api.ApiResponse
 import com.example.core.model.chat.Message
 import com.example.core.model.users.UserAuthModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
@@ -236,7 +237,8 @@ class AuthViewModel : ViewModel() {
                 }
         }
     }
-    fun loginAuthState(email: String, password: String) {
+    fun loginAuthState(email: String, password: String,
+                       onResult: (String) -> Unit) {
         if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthSate.Error("Email or password can't be empty")
             return
@@ -254,8 +256,10 @@ class AuthViewModel : ViewModel() {
                                     val role = document.getString("role")
                                     if (role == "admin") {
                                         _authState.value = AuthSate.Admin
+                                        onResult("Đăng nhập thành công")
                                     } else {
                                         _authState.value = AuthSate.User
+                                        onResult("Đăng nhập thành công")
                                     }
                                 } else {
                                     _authState.value = AuthSate.Error("User data not found")
@@ -276,7 +280,8 @@ class AuthViewModel : ViewModel() {
     }
     fun signupAuthState(
         name: String, email: String, password: String,
-        phoneNumber: String, uploadedImageUrls: String, role: String
+        phoneNumber: String, uploadedImageUrls: String, role: String,
+        onResult: (String) -> Unit
     ) {
         if (email.isEmpty() || password.isEmpty() || phoneNumber.isEmpty()) {
             _authState.value = AuthSate.Error("Email, password, or phone number can't be empty")
@@ -309,6 +314,7 @@ class AuthViewModel : ViewModel() {
                                 _authState.value =
                                     AuthSate.Error(e.message ?: "Failed to save user data")
                             }
+                        onResult("Đăng ký thành công")
                     } else {
                         _authState.value = AuthSate.Error("User ID is null")
                     }

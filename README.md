@@ -1,3 +1,8 @@
+## Tài khoản
+role = "admin"
+email: "Admin0ad2@gmail.com"
+password: "111111"
+
 # Hướng Dẫn Cài Đặt MySQL và Chạy File PHP API Cục Bộ (Localhost)
 
 ## Mục đích

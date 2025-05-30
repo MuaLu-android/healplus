@@ -284,7 +284,9 @@ fun CreateAccountScreen(
                         phoneNumber = phoneNumber,
                         uploadedImageUrls!!,
                         role.toString()
-                    )
+                    ){ message ->
+                       Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
                     apiCallAdd.addUser(
                         name = fullName,
                         email = email,
@@ -292,7 +294,7 @@ fun CreateAccountScreen(
                         phone = phoneNumber,
                         uploadedImageUrls!!,
                         role.toString())
-                    Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
+
                 },
                 enabled = authSate.value != AuthSate.Loading,
                 modifier = Modifier
