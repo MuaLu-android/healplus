@@ -58,7 +58,6 @@ fun ProductDetailScreen(
             item {
                 ProductInfoItem(stringResource(R.string.categories), item.element_names)
                 ProductInfoItem(stringResource(R.string.dogam_from), item.preparation)
-                ProductInfoItem(stringResource(R.string.Specification), item.specification)
                 ProductInfoItem(stringResource(R.string.origa), item.origin)
                 ProductInfoItem(stringResource(R.string.Manufacturer), item.manufacturer)
                 ProductInfoItem(stringResource(R.string.product), item.productiondate)

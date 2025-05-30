@@ -176,7 +176,6 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
             Button(
                 onClick = {
                     authViewModel.loginAuthState(email, password)
-                    Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                 },
                 enabled = authSate.value != AuthSate.Loading,
                 modifier = Modifier
