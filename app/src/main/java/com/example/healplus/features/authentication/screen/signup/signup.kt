@@ -1,5 +1,6 @@
-package com.example.healplus.login
+package com.example.healplus.features.authentication.screen.signup
 
+import TextSkipPage
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -24,12 +25,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,8 +46,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,11 +56,13 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
 import com.example.core.viewmodel.authviewmodel.AuthSate
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
+import com.example.healplus.R
 import com.example.healplus.acitivity.AdminActivity
 import com.example.healplus.acitivity.MainActivity
-import com.example.healplus.R
+import com.example.healplus.common.styles.ButtonStyle
 import com.example.healplus.managers.uploadImageToServer
 import kotlinx.coroutines.launch
+import tOutLindTextField
 
 @Composable
 fun CreateAccountScreen(
@@ -77,7 +75,6 @@ fun CreateAccountScreen(
     var fullName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
-    var isPasswordVisible by remember { mutableStateOf(false) }
     val role by remember { mutableStateOf<String?>("user") }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -111,7 +108,7 @@ fun CreateAccountScreen(
 
     }
     ConstraintLayout(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
         val (imgTop, imgEnd, tvColunm) = createRefs()
@@ -174,43 +171,11 @@ fun CreateAccountScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text(stringResource(id = R.string.email)) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                singleLine = true
-            )
+            email = tOutLindTextField(text = R.string.email, title = email)
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = fullName,
-                onValueChange = { fullName = it },
-                label = { Text(stringResource(id = R.string.fullname)) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                singleLine = true
-            )
+            fullName = tOutLindTextField(text = R.string.fullname, title = fullName)
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text(stringResource(id = R.string.password)) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                singleLine = true,
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                        Icon(
-                            painter = if (isPasswordVisible) painterResource(R.drawable.visibility_24px) else painterResource(
-                                R.drawable.visibility_off_24px
-                            ),
-                            contentDescription = "Toggle Password Visibility"
-                        )
-                    }
-                }
-            )
+            password = tOutLindTextField(text = R.string.password, title = password, tShowIcon = true)
             Spacer(modifier = Modifier.height(8.dp))
             ConstraintLayout(
                 modifier = Modifier
@@ -275,41 +240,26 @@ fun CreateAccountScreen(
                     )
                 )
             }
-            Button(
-                onClick = {
-                    authViewModel.signupAuthState(
-                        name = fullName,
-                        email = email,
-                        password = password,
-                        phoneNumber = phoneNumber,
-                        uploadedImageUrls!!,
-                        role.toString()
-                    )
-                    apiCallAdd.addUser(
-                        name = fullName,
-                        email = email,
-                        password = password,
-                        phone = phoneNumber,
-                        uploadedImageUrls!!,
-                        role.toString())
-                    Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
-                },
-                enabled = authSate.value != AuthSate.Loading,
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth()
-                    .height(61.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.done),
-                    color = Color.White,
-                    fontSize = 22.sp
+            Spacer(modifier = Modifier.height(8.dp))
+            ButtonStyle(title = R.string.done, authSate = authSate, onPressed = {
+                authViewModel.signupAuthState(
+                    name = fullName,
+                    email = email,
+                    password = password,
+                    phoneNumber = phoneNumber,
+                    uploadedImageUrls!!,
+                    role.toString()
                 )
-            }
-            TextButton(onClick = { navController.popBackStack() }) {
-                Text(text = stringResource(id = R.string.cancel), color = Color.Gray)
-            }
+                apiCallAdd.addUser(
+                    name = fullName,
+                    email = email,
+                    password = password,
+                    phone = phoneNumber,
+                    uploadedImageUrls!!,
+                    role.toString())
+                Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
+            })
+            TextSkipPage(title = R.string.cancel, onPressed = { navController.popBackStack() })
         }
     }
 }

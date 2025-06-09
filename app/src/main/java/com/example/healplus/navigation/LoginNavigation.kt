@@ -5,16 +5,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
-import com.example.healplus.login.CreateAccountScreen
-import com.example.healplus.login.LoginScreen
-import com.example.healplus.login.LottieLoadingAnimation
-import com.example.healplus.login.OnboardingScreen
+import com.example.healplus.features.authentication.screen.login.LoginScreen
+import com.example.healplus.features.authentication.screen.onboarding.OnboardingScreen
+import com.example.healplus.features.authentication.screen.splash.LottieLoadingAnimation
+import com.example.healplus.features.authentication.screen.signup.CreateAccountScreen
 
 @Composable
 fun LoginNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
     NavHost(navController = navController, startDestination = "introApp") {
-        composable("introApp") { LottieLoadingAnimation(modifier, navController, authViewModel) }
-        composable("onboarding") { OnboardingScreen(modifier, navController, authViewModel) }
+        composable("introApp") { LottieLoadingAnimation(modifier, navController) }
+        composable("onboarding") { OnboardingScreen(modifier, navController) }
         composable("signup") { CreateAccountScreen(modifier, navController, authViewModel) }
         composable("login") { LoginScreen(modifier, navController, authViewModel) }
     }

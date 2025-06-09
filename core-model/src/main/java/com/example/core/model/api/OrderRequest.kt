@@ -10,6 +10,6 @@ data class OrderRequest(
     val address: String,
     val quantity: String,
     val sumMoney: String,
-    val bonuspoint: String,
+    val bonus_point: String,
     val detail: List<ProductsModel>
 )
