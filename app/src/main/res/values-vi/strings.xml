@@ -39,7 +39,7 @@
     <string name="personal">Quyền riêng tư</string>
     <string name="profile">Thông tin tài khoản</string>
     <string name="address">Địa chỉ giao hàng</string>
-    <string name="Paysmethoot">Thể thanh toán</string>
+    <string name="Paysmethoot">Thẻ thanh toán</string>
     <string name="country">Nước</string>
     <string name="currency">Currensy</string>
     <string name="size">Kích thước</string>
@@ -49,7 +49,7 @@
     <string name="emnitys">Gio hàng trống</string>
     <string name="total">Tổng cộng:</string>
     <string name="checkout">Kiểm tra</string>
-    <string name="poit">Thưởng</string>
+    <string name="poit">Đơn hàng</string>
     <string name="notification">Thông báo</string>
     <string name="inpomation">Thông tin sản phẩm</string>
     <string name="buynow">Mua ngay</string>

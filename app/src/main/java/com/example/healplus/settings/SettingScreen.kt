@@ -1,7 +1,6 @@
 package com.example.healplus.settings
 import android.content.Intent
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,45 +8,41 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
-import com.example.healplus.acitivity.LoginActivity
 import com.example.healplus.R
+import com.example.healplus.acitivity.LoginActivity
 
 @Composable
-fun SettingScreen(modifier: Modifier = Modifier,
-                  navController: NavController,
-                  authViewModel: AuthViewModel
+fun SettingScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel
 ){
 
     Scaffold (
@@ -94,8 +89,6 @@ fun SettingScreen(modifier: Modifier = Modifier,
              
              item { SectionTitle(title = R.string.shop) }
              item { SettingsItem(title = R.string.country, value = "Vietnam") }
-             item { SettingsItem(title = R.string.currency, value = "$ USD") }
-             item { SettingsItem(title = R.string.size, value = "UK") }
              item { SettingsItem(title = R.string.terms) }
 
              
@@ -125,7 +118,7 @@ fun SettingTopAppBar(navController: NavController) {
         },
         navigationIcon = {
             IconButton(onClick = {navController.popBackStack() }) {
-                Icon(imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = null)
+                Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = null)
             }
         }
     )
@@ -161,7 +154,7 @@ fun SettingsItem(@StringRes title: Int, value: String? = null, onClick: () -> Un
                     modifier = Modifier.padding(end = 8.dp)
                 )
             }
-            Icon(imageVector = Icons.Default.KeyboardArrowRight,
+            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Arrow",
                 modifier = Modifier
                     .clickable { onClick() }

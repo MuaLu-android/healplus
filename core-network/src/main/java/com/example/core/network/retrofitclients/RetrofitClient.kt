@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://laulu.io.vn/healplus/PHP/"
+    private const val BASE_URL = "http://192.168.1.23/banhang/PHP/PHP/"
     private val gson = GsonBuilder()
         .setLenient()
         .create()

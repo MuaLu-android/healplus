@@ -13,8 +13,15 @@ import com.example.core.model.ingredients.IngredientsModel
 import com.example.core.model.products.ProductsModel
 import com.example.core.model.users.UserAuthModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallAdd
-import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
+import com.example.healplus.admin.MonthlyRevenueBarChart
+import com.example.healplus.category.CategoryScreen
+import com.example.healplus.chat.AdminChatScreen
+import com.example.healplus.chat.ChatDetailScreen
+import com.example.healplus.home.DetailScreen
+import com.example.healplus.home.MainActivityScreen
+import com.example.healplus.home.ProductDetailScreen
 import com.example.healplus.managers.AddCategoryScreen
 import com.example.healplus.managers.AddIngredientsScreen
 import com.example.healplus.managers.AddProductScreen
@@ -23,19 +30,13 @@ import com.example.healplus.managers.EditCategoryScreen
 import com.example.healplus.managers.EditIngredientScreen
 import com.example.healplus.managers.UpdateDeleteCategory
 import com.example.healplus.managers.UpdateDeleteIngredient
-import com.example.healplus.admin.MonthlyRevenueBarChart
-import com.example.healplus.category.CategoryScreen
-import com.example.healplus.chat.AdminChatScreen
-import com.example.healplus.chat.ChatDetailScreen
-import com.example.healplus.home.DetailScreen
-import com.example.healplus.home.MainActivityScreen
-import com.example.healplus.home.ProductDetailScreen
 import com.example.healplus.oder.OderManagers
 import com.example.healplus.search.SearchScreen
 import com.example.healplus.settings.ProfileScreen
 import com.example.healplus.settings.SettingScreen
 import com.example.healplus.settings.UpdateProfileScreen
 import com.google.gson.Gson
+
 @Composable
 fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
     val viewModel: ApiCallViewModel = viewModel()
@@ -72,6 +73,9 @@ fun AdminNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
         }
         composable(route = "Danh mục phụ"){
             UpdateDeleteIngredient(navController, viewModel)
+        }
+        composable(route = "Danh mục chi tiết"){
+            AddScreen(navController = navController)
         }
         composable(route = "Insert_Ingredient"){
             AddIngredientsScreen(navController, viewModel)

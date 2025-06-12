@@ -57,7 +57,7 @@ fun MainApp(modifier: Modifier = Modifier, authViewModel: AuthViewModel){
     val managementCart = remember { ManagmentCart(context, userId) }
     val navItemList = listOf(
         NavItemModel.DrawableResItem(route = "home", label = stringResource(id = R.string.home), R.drawable.home_24px, badgeCount = 0),
-        NavItemModel.DrawableResItem(route = "point", label = stringResource(id = R.string.poit), R.drawable.rewarded_ads_24px, badgeCount = 0),
+        NavItemModel.DrawableResItem(route = "point", label = stringResource(id = R.string.poit), R.drawable.orders_24px, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "add", label = "Liên hệ", R.drawable.contacts_24dp, badgeCount = 0),
         NavItemModel.DrawableResItem(route = "cart", label = stringResource(R.string.cart), R.drawable.shopping_cart_24px, badgeCount = managementCart.getItemCount()),
         NavItemModel.DrawableResItem(route = "settings", label = stringResource(R.string.settings), R.drawable.settings_24px, badgeCount = 0),

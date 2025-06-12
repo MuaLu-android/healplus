@@ -11,8 +11,8 @@ import androidx.navigation.navArgument
 import com.example.core.model.products.ProductsModel
 import com.example.core.model.products.ReviewItem
 import com.example.core.model.users.UserAuthModel
-import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.core.viewmodel.apiviewmodel.ApiCallViewModel
+import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.cart.AddressScreen
 import com.example.healplus.cart.CartScreen
 import com.example.healplus.cart.CheckOutScreen
@@ -43,7 +43,7 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel,
             )
         }
         composable(route = "point"){
-
+            UsersOder(navController)
         }
         composable(route = "oderscreen"){
             UsersOder(navController)

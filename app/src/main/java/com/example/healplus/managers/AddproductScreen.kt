@@ -2,7 +2,6 @@ package com.example.healplus.managers
 
 import android.app.DatePickerDialog
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -165,9 +164,6 @@ fun AddProductScreen(modifier: Modifier = Modifier,
                                 onValueChange = { name = it },
                                 label = { Text("Tên sản phẩm") },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    unfocusedBorderColor = Color.Gray
-                                ),
                                 shape = RoundedCornerShape(8.dp)
                             )
 
@@ -178,9 +174,6 @@ fun AddProductScreen(modifier: Modifier = Modifier,
                                 onValueChange = { trademark = it },
                                 label = { Text("Thương hiệu") },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    unfocusedBorderColor = Color.Gray
-                                ),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             Spacer(modifier = Modifier.height(12.dp))
@@ -190,9 +183,6 @@ fun AddProductScreen(modifier: Modifier = Modifier,
                                 onValueChange = { preparation = it },
                                 label = { Text("Dạng điều chế") },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    unfocusedBorderColor = Color.Gray
-                                ),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             Spacer(modifier = Modifier.height(12.dp))
@@ -202,9 +192,6 @@ fun AddProductScreen(modifier: Modifier = Modifier,
                                 onValueChange = { specification = it },
                                 label = { Text("Quy cách trên 1 sản phẩm") },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    unfocusedBorderColor = Color.Gray
-                                ),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             Spacer(modifier = Modifier.height(12.dp))
@@ -214,9 +201,6 @@ fun AddProductScreen(modifier: Modifier = Modifier,
                                 onValueChange = { quantity = it },
                                 label = { Text("Số lượng") },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    unfocusedBorderColor = Color.Gray
-                                ),
                                 shape = RoundedCornerShape(8.dp)
                             )
                         }

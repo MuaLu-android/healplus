@@ -8,7 +8,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +17,6 @@ import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,30 +31,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -77,7 +66,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -111,18 +99,15 @@ import com.example.core.viewmodel.authviewmodel.AuthSate
 import com.example.core.viewmodel.authviewmodel.AuthViewModel
 import com.example.healplus.R
 import com.example.healplus.category.ListItems
-import com.example.healplus.ui.theme.errorContainerLight
 import com.example.healplus.ui.theme.errorDarkHighContrast
 import com.example.healplus.ui.theme.inverseOnSurfaceLight
 import com.example.healplus.ui.theme.inverseOnSurfaceLightMediumContrast
-import com.example.healplus.ui.theme.inversePrimaryDark
 import com.example.healplus.ui.theme.inversePrimaryLight
 import com.example.healplus.ui.theme.inversePrimaryLightHighContrast
 import com.example.healplus.ui.theme.onPrimaryLightMediumContrast
 import com.example.healplus.ui.theme.onTertiaryLightHighContrast
 import com.example.healplus.ui.theme.primaryDark
 import com.example.healplus.ui.theme.surfaceBrightLight
-import com.example.healplus.ui.theme.tertiaryDarkHighContrast
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -628,14 +613,15 @@ fun CategoryItem(
     onItemClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .height(50.dp)
-            .wrapContentWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = true),
-                onClick = onItemClick
-            ),
+        modifier = Modifier.run {
+            height(50.dp)
+                .wrapContentWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onItemClick
+                )
+        },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (iSelected) {
@@ -715,7 +701,6 @@ fun Banners(banners: List<BannersModel>) {
 
 @Composable
 fun AutoSlidingCarousel(
-    modifier: Modifier = Modifier,
     banners: List<BannersModel>
 ) {
     val paperState = rememberPagerState(pageCount = { banners.size })
@@ -906,7 +891,7 @@ fun MediumTopAppBar(navController: NavController,
             .fillMaxWidth(0.8f)
             .zIndex(2f)
             .fillMaxHeight()
-            .offset(x = 0.dp, y = -5.dp)
+            .offset(x = 0.dp, y = (-5).dp)
     ) {
         if (showCategoryLoading) {
             Box(
@@ -978,7 +963,7 @@ fun UserView(viewModel: AuthViewModel, navController: NavController) {
         },
         verticalAlignment = Alignment.CenterVertically) {
         user?.let { userData ->
-            val imageUri = userData.url?.let { Uri.parse(it) }
+            val imageUri = userData.url.let { Uri.parse(it) }
             Log.d("UserProfileScreen", "localImageUrl: ${userData.url}")
             Log.d("UserProfileScreen", "Parsed imageUri: $imageUri")
             GlideImage(
