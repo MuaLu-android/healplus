@@ -3,7 +3,7 @@ role = "admin"
 email: "Admin0ad2@gmail.com"
 password: "111111"
 
-# Hướng Dẫn Cài Đặt MySQL và Chạy File PHP API Cục Bộ (Localhost)
+# Cài Đặt MySQL và Chạy File PHP API Cục Bộ (Localhost)
 ## Mục đích
 
 Một số API PHP trên hosting server bị lỗi do chưa được cập nhật version. 
