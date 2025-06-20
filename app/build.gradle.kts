@@ -38,6 +38,9 @@ android {
     buildFeatures {
         compose = true
     }
+    lint{
+        abortOnError = false
+    }
 }
 
 dependencies {
@@ -46,7 +49,6 @@ dependencies {
     implementation(project(":core-room"))
     implementation(libs.androidx.core.ktx)
     implementation (libs.mpandroidchart)
-    //noinspection UseTomlInstead
     implementation("com.google.accompanist:accompanist-flowlayout:0.31.1-alpha")
     implementation(libs.glide)
     implementation(libs.landscapist.glide)

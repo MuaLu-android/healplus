@@ -1,5 +1,4 @@
 package com.example.healplus.feature.authentication.signup
-
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
