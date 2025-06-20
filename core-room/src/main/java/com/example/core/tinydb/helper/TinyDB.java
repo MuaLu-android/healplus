@@ -2,6 +2,8 @@
 
 package com.example.core.tinydb.helper;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -27,13 +29,13 @@ import java.util.Map;
 
 public class TinyDB {
 
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
     private String lastImagePath = "";
     private Context context;
 
     public TinyDB(Context appContext) {
-        preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        preferences = getDefaultSharedPreferences(appContext);
     }
     public static boolean isExternalStorageWritable() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
@@ -66,7 +68,7 @@ public class TinyDB {
         this.DEFAULT_APP_IMAGEDATA_DIRECTORY = theFolder;
         String mFullPath = setupFullPath(theImageName);
 
-        if (!mFullPath.equals("")) {
+        if (!mFullPath.isEmpty()) {
             lastImagePath = mFullPath;
             saveBitmap(mFullPath, theBitmap);
         }
