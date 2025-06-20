@@ -3,7 +3,6 @@ header('Content-Type: application/json; charset=utf-8');
 include "connect.php";
 
 try {
-    // Query lấy tất cả thông tin sản phẩm
     $sql = "SELECT p.*, 
             COALESCE(p.quantity, 0) as quantity,
             CASE 
@@ -22,7 +21,6 @@ try {
 
     $products = [];
     while ($row = $result->fetch_assoc()) {
-        // Chuyển đổi kiểu dữ liệu
         $formattedProduct = [
             'idp' => $row['idp'],
             'name' => $row['name'],
@@ -42,14 +40,10 @@ try {
             'ingredient' => $row['ingredient'],
             'quantity' => (int)$row['quantity'],
             'stock_status' => $row['stock_status'],
-            
-            // Thông tin thêm về thuốc
             'congdung' => $row['congdung'],
             'cachdung' => $row['cachdung'],
             'tacdungphu' => $row['tacdungphu'],
             'baoquan' => $row['baoquan'],
-
-            // Thêm các thông tin tính toán
             'pricing_info' => [
                 'base_price' => (int)$row['price'],
                 'formatted_price' => number_format($row['price'], 0, ',', '.') . ' đ'
@@ -60,16 +54,12 @@ try {
                 'alert_level' => $row['quantity'] <= 5 ? 'high' : 'medium'
             ]
         ];
-        
-        // Thêm định dạng ngày nếu có
         if (!empty($row['productiondate'])) {
             $formattedProduct['formatted_production_date'] = date('d/m/Y', strtotime($row['productiondate']));
         }
 
         $products[] = $formattedProduct;
     }
-    
-    // Tính tổng số sản phẩm thỏa điều kiện
     $totalCount = count($products);
     
     if (!empty($products)) {

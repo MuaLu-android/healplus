@@ -8,8 +8,6 @@ $input_week_start = isset($_GET['start_date']) ? $_GET['start_date'] : null;
 
 $start_date = date('Y-m-d', strtotime($input_week_start));
 $end_date = date('Y-m-d', strtotime($start_date . ' +6 days'));
-
-// Mảng 1: Doanh thu theo từng ngày trong tuần
 $revenue = [];
 
 $query_daily = "SELECT 
@@ -45,8 +43,6 @@ if ($result_daily) {
     mysqli_free_result($result_daily);
 }
 mysqli_stmt_close($stmt_daily);
-
-// Mảng 2: Danh sách đơn hàng chi tiết
 $detailed_delivered_orders = [];
 
 $query_details = "SELECT 
@@ -77,8 +73,6 @@ if ($result_details) {
     mysqli_free_result($result_details);
 }
 mysqli_stmt_close($stmt_details);
-
-// Trả kết quả JSON
 echo json_encode([
     'revenue' => $revenue,
     'detaily_orders' => $detailed_delivered_orders

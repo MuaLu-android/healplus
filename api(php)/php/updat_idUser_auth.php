@@ -2,16 +2,13 @@
 include "connect.php";
 $idauth = $_POST['idauth'];
 $id = $_POST['id'];
-
-//check data
 $query = 'UPDATE `user` SET `idauth`="'.$token.'" WHERE `id`="'.$id.'"';
     $data = mysqli_query($conn, $query);
     if ($data == true) {
 		$arr = [
 			'success' => true,
 			'message' => "khong thanh cong"
-		];	
-		// code...
+		];
     }else{
 		$arr = [
 			'success' => false,

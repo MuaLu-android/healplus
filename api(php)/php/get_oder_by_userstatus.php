@@ -6,14 +6,11 @@ $status = isset($_POST["status"]) ? $_POST["status"] : '';
 $query = "SELECT * FROM `oder` WHERE `idauth` = ? AND `status` = ? ORDER BY id DESC";
 $stmt = mysqli_prepare($conn, $query);
 mysqli_stmt_bind_param($stmt, "ss", $idauth, $status);
-
-// Thực thi truy vấn
 mysqli_stmt_execute($stmt);
 $result_order = mysqli_stmt_get_result($stmt);
 
 $orders = array();
 while ($row_order = mysqli_fetch_assoc($result_order)) {
-    // Truy vấn chi tiết đơn hàng (bao gồm tên element)
     $query_detail = "SELECT orderdetails.*,
                            product.*,
                            IFNULL(GROUP_CONCAT(DISTINCT e.title ORDER BY e.ide SEPARATOR '||'), '') AS element_names,
@@ -37,14 +34,12 @@ while ($row_order = mysqli_fetch_assoc($result_order)) {
 
     $items = array();
     while ($row_detail = mysqli_fetch_assoc($result_detail)) {
-        // Chuyển danh sách ảnh và unit_name thành mảng
         $row_detail["product_images"] = $row_detail["product_images"] ? explode("||", $row_detail["product_images"]) : [];
         $row_detail["unit_names"] = $row_detail["unit_names"] ? explode("||", $row_detail["unit_names"]) : [];
         $row_detail["element_names"] = $row_detail["element_names"] ? $row_detail["element_names"] : '';
         $ingredients = [];
         $ingredient_titles = $row_detail["ingredient_titles"] ? explode("||", $row_detail["ingredient_titles"]) : [];
         $ingredient_bodies = $row_detail["ingredient_bodies"] ? explode("||", $row_detail["ingredient_bodies"]) : [];
-        // Ghép các thành phần với thông tin chi tiết vào một mảng
         for ($i = 0; $i < count($ingredient_titles); $i++) {
             $ingredients[] = [
                 'title' => $ingredient_titles[$i],
@@ -52,7 +47,6 @@ while ($row_order = mysqli_fetch_assoc($result_order)) {
             ];
         }
         $row_detail["ingredients"] = $ingredients;
-        // Tách thành phần chi tiết review
         $review_sql = "SELECT reviewerName, rating, comment, date, profileImageUrl FROM productreview WHERE idp = ?";
         $review_stmt = $conn->prepare($review_sql);
         $review_stmt->bind_param("s", $row_detail['idp']); // Giả sử idp là string, nếu là integer thì "i"
@@ -74,7 +68,6 @@ while ($row_order = mysqli_fetch_assoc($result_order)) {
     $orders[] = $row_order;
 }
 
-// Trả về kết quả
 if (!empty($orders)) {
     $response = [
         'success' => true,
@@ -90,10 +83,9 @@ if (!empty($orders)) {
 }
 
 header('Content-Type: application/json; charset=utf-8');
-// echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Nếu bạn muốn trả về cấu trúc response đầy đủ
+
 echo json_encode($orders, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); // Giữ nguyên cách trả về orders như code gốc
 
-// Đóng kết nối và statement
 mysqli_stmt_close($stmt);
 if (isset($stmt_detail) && $stmt_detail) { // Kiểm tra xem $stmt_detail có được khởi tạo không
     mysqli_stmt_close($stmt_detail);

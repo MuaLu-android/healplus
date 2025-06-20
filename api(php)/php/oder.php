@@ -1,7 +1,5 @@
 <?php
 include "connect.php";
-
-// Lấy dữ liệu từ POST request và làm sạch
 $name = isset($_POST['name']) ? mysqli_real_escape_string($conn, $_POST['name']) : '';
 $phone = isset($_POST['phone']) ? mysqli_real_escape_string($conn, $_POST['phone']) : '';
 $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
@@ -13,12 +11,9 @@ $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 0;
 $sumMoney = isset($_POST['sumMoney']) ? intval($_POST['sumMoney']) : 0;
 $status = isset($_POST['status']) ? mysqli_real_escape_string($conn, $_POST['status']) : '';
 $detail = isset($_POST['detail']) ? $_POST['detail'] : '[]'; // Mặc định là mảng rỗng nếu không có
-
-// Bắt đầu transaction
 mysqli_begin_transaction($conn);
 
 try {
-    // Thêm đơn hàng vào bảng 'oder'
     $queryOrder = "INSERT INTO `oder`(`name`, `phone`, `email`, `idauth`, `address`, `datetime`, `note`, `quantity`, `sumMoney`, `status`) 
                    VALUES ('$name', '$phone', '$email', '$idauth', '$address', '$datetime', '$note', $quantity, $sumMoney, '$status')";
     $dataOrder = mysqli_query($conn, $queryOrder);
@@ -26,11 +21,7 @@ try {
     if (!$dataOrder) {
         throw new Exception('Lỗi thêm đơn hàng: ' . mysqli_error($conn));
     }
-
-    // Lấy ID của đơn hàng vừa thêm
     $orderId = mysqli_insert_id($conn);
-
-    // Thêm chi tiết đơn hàng vào bảng 'orderdetails'
     $detail = json_decode($detail, true);
     if (is_array($detail)) {
         foreach ($detail as $item) {
@@ -49,8 +40,6 @@ try {
     } else {
         throw new Exception('Lỗi: detail không phải là mảng hợp lệ');
     }
-
-    // Commit transaction
     mysqli_commit($conn);
 
     $arr = [
@@ -60,7 +49,6 @@ try {
     ];
 
 } catch (Exception $e) {
-    // Rollback transaction nếu có lỗi
     mysqli_rollback($conn);
     $arr = [
         'success' => false,
@@ -68,7 +56,6 @@ try {
     ];
 }
 
-// Trả về kết quả dưới dạng JSON
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode($arr, JSON_UNESCAPED_UNICODE);
 

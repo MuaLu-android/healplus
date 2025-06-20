@@ -3,7 +3,6 @@ header('Content-Type: application/json; charset=utf-8');
 include "connect.php";
 
 try {
-    // Lấy tổng số lượng product
     $sumQuery = "SELECT COUNT(*) as total FROM product";
     $sumResult = $conn->query($sumQuery);
     $sumquantity = 0;
@@ -11,8 +10,6 @@ try {
         $sumRow = $sumResult->fetch_assoc();
         $sumquantity = (int)$sumRow['total'];
     }
-
-    // Sửa lại câu SQL để đếm và group by đúng cách
     $sql = "SELECT e.ide, e.title, e.url, COUNT(p.idp) as quantity 
             FROM element e 
             LEFT JOIN product p ON e.ide = p.ide 
@@ -26,13 +23,8 @@ try {
 
     $elements = [];
     while ($row = $result->fetch_assoc()) {
-        // Chuyển đổi quantity sang integer
         $quantity = (int)$row['quantity'];
-        
-        // Tính percentage
         $percentage = ($sumquantity > 0) ? round(($quantity / $sumquantity) * 100, 2) : 0.0;
-        
-        // Cập nhật vào bảng element sử dụng prepared statement
         $updateSql = "UPDATE element SET quantity = ? WHERE ide = ?";
         $stmt = $conn->prepare($updateSql);
         if ($stmt === false) {
@@ -42,8 +34,6 @@ try {
         $stmt->bind_param("is", $quantity, $row['ide']);
         $stmt->execute();
         $stmt->close();
-
-        // Thêm thông tin vào mảng kết quả
         $elements[] = [
             'ide' => $row['ide'],
             'title' => $row['title'],
@@ -77,7 +67,6 @@ try {
         'total_quantity' => 0
     ];
 } finally {
-    // Đảm bảo luôn trả về JSON và đóng kết nối
     echo json_encode($elements, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
     if (isset($conn)) {
         $conn->close();

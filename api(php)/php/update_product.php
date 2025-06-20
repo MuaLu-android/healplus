@@ -1,7 +1,5 @@
 <?php
 include "connect.php";
-
-// Kiểm tra phương thức và dữ liệu đầu vào
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'], $_POST['trademark'], $_POST['rating'], $_POST['review'], $_POST['sold'], $_POST['price'], $_POST['preparation'], $_POST['specification'], $_POST['origin'], $_POST['manufacturer'], $_POST['production'], $_POST['ingredient'], $_POST['description'], $_POST['quantity'], $_POST['showRecommended'], $_POST['ide'], $_POST['productiondate'], $_POST['congdung'], $_POST['cachdung'], $_POST['tacdungphu'], $_POST['baoquan'])) {
 
     $idp = trim($_POST['idp']);
@@ -26,8 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'],
     $cachdung = trim($_POST['cachdung']);
     $tacdungphu = trim($_POST['tacdungphu']);
     $baoquan = trim($_POST['baoquan']);
-
-    // Làm sạch dữ liệu
     $idp = mysqli_real_escape_string($conn, $idp);
     $name = mysqli_real_escape_string($conn, $name);
     $trademark = mysqli_real_escape_string($conn, $trademark);
@@ -50,12 +46,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'],
     $cachdung = mysqli_real_escape_string($conn, $cachdung);
     $tacdungphu = mysqli_real_escape_string($conn, $tacdungphu);
     $baoquan = mysqli_real_escape_string($conn, $baoquan);
-
-    // Bắt đầu transaction
     mysqli_begin_transaction($conn);
 
     try {
-        // Cập nhật sản phẩm trong bảng Product
         $query = "UPDATE `product` SET 
                   `name` = '$name', 
                   `trademark` = '$trademark', 
@@ -83,17 +76,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'],
         if (!$data) {
             throw new Exception("Lỗi cập nhật sản phẩm: " . mysqli_error($conn));
         }
-
-        // Xử lý productImages
         if (isset($_POST['productImages'])) {
             $productImages = json_decode($_POST['productImages'], true);
             if (is_array($productImages)) {
-                // Xóa ảnh cũ
                 $sqlDeleteImages = "DELETE FROM productimages WHERE idp = '$idp'";
                 if (!mysqli_query($conn, $sqlDeleteImages)) {
                     throw new Exception("Lỗi xóa ảnh cũ: " . mysqli_error($conn));
                 }
-                // Thêm ảnh mới
                 foreach ($productImages as $image) {
                     $imageUrl = mysqli_real_escape_string($conn, $image);
                     $queryImage = "INSERT INTO productimages (url, idp) VALUES ('$imageUrl', '$idp')";
@@ -103,17 +92,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'],
                 }
             }
         }
-
-        // Xử lý thanhphan
         if (isset($_POST['thanhphan'])) {
             $thanhphan = json_decode($_POST['thanhphan'], true);
             if (is_array($thanhphan)) {
-                // Xóa thành phần cũ
                 $sqlDeleteThanhPhan = "DELETE FROM thanhphan WHERE idp = '$idp'";
                 if (!mysqli_query($conn, $sqlDeleteThanhPhan)) {
                     throw new Exception("Lỗi xóa thành phần cũ: " . mysqli_error($conn));
                 }
-                // Thêm thành phần mới
                 foreach ($thanhphan as $tp) {
                     $title = mysqli_real_escape_string($conn, $tp['title']);
                     $body = mysqli_real_escape_string($conn, $tp['body']);
@@ -124,17 +109,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'],
                 }
             }
         }
-
-        // Xử lý unitinfo (lưu ý: tên bảng đã sửa)
         if (isset($_POST['unitNames'])) {  // Client gửi lên 'unitNames'
             $unitNames = json_decode($_POST['unitNames'], true);
             if (is_array($unitNames)) {
-                // Xóa đơn vị cũ
                 $sqlDeleteUnitInfo = "DELETE FROM unitinfo WHERE idp = '$idp'"; // Tên bảng là unitinfo
                 if (!mysqli_query($conn, $sqlDeleteUnitInfo)) {
                     throw new Exception("Lỗi xóa đơn vị cũ: " . mysqli_error($conn));
                 }
-                // Thêm đơn vị mới
                 foreach ($unitNames as $unitName) {
                     $unitNameValue = mysqli_real_escape_string($conn, $unitName);
                     $queryUnit = "INSERT INTO unitinfo (unit_name, idp) VALUES ('$unitNameValue', '$idp')"; // Tên bảng là unitinfo, sửa lại thứ tự cột
@@ -144,8 +125,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idp'], $_POST['name'],
                 }
             }
         }
-
-        // Commit transaction
         mysqli_commit($conn);
 
         $arr = [

@@ -19,7 +19,6 @@ $sql = "UPDATE user SET
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sssssss", 
     $name, $email, $gender, $phone, $url, $dateBirth, $idauth);
-// Thực thi truy vấn
 if ($stmt->execute()) {
     echo json_encode(["status" => "success", "message" => "Cập nhật thành công"]);
 } else {

@@ -1,26 +1,18 @@
 <?php
 include "connect.php";
-
-// Kiểm tra phương thức và dữ liệu đầu vào
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["ide"], $_POST["title"], $_POST["url"], $_POST["quantity"], $_POST["iding"])) {
     $ide = trim($_POST["ide"]);
     $title = trim($_POST["title"]);
     $url = trim($_POST["url"]);
     $quantity = trim($_POST["quantity"]);
     $iding = trim($_POST["iding"]);
-
-    // Kiểm tra xem các trường có bị trống không
     if (!empty($ide) && !empty($title) && !empty($url) && !empty($quantity) && !empty($iding)) {
-        // Kiểm tra xem quantity có phải là số không
         if (is_numeric($quantity)) {
-            // Làm sạch dữ liệu để tránh SQL injection
             $ide = mysqli_real_escape_string($conn, $ide);
             $title = mysqli_real_escape_string($conn, $title);
             $url = mysqli_real_escape_string($conn, $url);
             $quantity = intval($quantity); // Chuyển đổi quantity thành số nguyên
             $iding = mysqli_real_escape_string($conn, $iding);
-
-            // Câu truy vấn UPDATE
             $sql = "UPDATE element SET title = '$title', url = '$url', quantity = $quantity, iding = '$iding' WHERE ide = '$ide'";
 
             if (mysqli_query($conn, $sql)) {
@@ -42,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["ide"], $_POST["title"]
     $response = array("success" => false, "message" => "Dữ liệu không hợp lệ hoặc thiếu.");
 }
 
-// Trả về kết quả dưới dạng JSON
 header('Content-Type: application/json');
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
 mysqli_close($conn);

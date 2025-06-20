@@ -5,8 +5,6 @@ define('DELIVERED_ORDER_STATUS_STRING', 'Đã giao hàng');
 
 $input_month = isset($_GET['month']) ? intval($_GET['month']) : 0;
 $input_year = isset($_GET['year']) ? intval($_GET['year']) : 0;
-
-// Mảng 1: Doanh thu theo từng ngày
 $revenue = [];
 
 $query_daily = "SELECT 
@@ -43,8 +41,6 @@ if ($result_daily) {
     mysqli_free_result($result_daily);
 }
 mysqli_stmt_close($stmt_daily);
-
-// Mảng 2: Danh sách đơn hàng chi tiết
 $detailed_delivered_orders = [];
 
 $query_details = "SELECT 
@@ -76,8 +72,6 @@ if ($result_details) {
     mysqli_free_result($result_details);
 }
 mysqli_stmt_close($stmt_details);
-
-// Trả kết quả JSON
 echo json_encode([
     'revenue' => $revenue,
     'detaily_orders' => $detailed_delivered_orders

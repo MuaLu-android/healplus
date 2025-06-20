@@ -1,7 +1,5 @@
 <?php 
 include "connect.php";
-
-// Nhận ide từ request (chuỗi)
 $ide = isset($_GET['ide']) ? $_GET['ide'] : '';
 
 $sql = "SELECT p.*,
@@ -25,17 +23,12 @@ $result = $stmt->get_result();
 
 $products = [];
 while ($row = $result->fetch_assoc()) {
-    // Tách danh sách ảnh và đơn vị thành mảng
     $row["product_images"] = $row["product_images"] ? explode("||", $row["product_images"]) : [];
     $row["unit_names"] = $row["unit_names"] ? explode("||", $row["unit_names"]) : [];
     $row["element_names"] = $row["element_names"] ? $row["element_names"] : '';
-    //  Không cần gán lại $row["element_names"] vì đã lấy trực tiếp từ câu truy vấn
-
-    // Tách thành phần chi tiết thành mảng
     $ingredients = [];
     $ingredient_titles = $row["ingredient_titles"] ? explode("||", $row["ingredient_titles"]) : [];
     $ingredient_bodies = $row["ingredient_bodies"] ? explode("||", $row["ingredient_bodies"]) : [];
-    // Ghép các thành phần với thông tin chi tiết vào một mảng
     for ($i = 0; $i < count($ingredient_titles); $i++) {
         $ingredients[] = [
             'title' => $ingredient_titles[$i],
@@ -43,7 +36,6 @@ while ($row = $result->fetch_assoc()) {
         ];
     }
     $row["ingredients"] = $ingredients; // Lưu vào mảng ingredients
-    // Tách thành phần chi tiết review
     $review_sql = "SELECT reviewerName, rating, comment, date, profileImageUrl FROM productreview WHERE idp = ?";
     $review_stmt = $conn->prepare($review_sql);
     $review_stmt->bind_param("s", $row['idp']);
