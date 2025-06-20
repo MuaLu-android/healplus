@@ -5,5 +5,6 @@ data class ElementsModel(
     val title: String = "",
     val url: String = "",
     val quantity: Int,
+    val percentage: Float,
     val iding: String
 )

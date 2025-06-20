@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.protolite.well.known.types)
     implementation(libs.protolite.well.known.types)
     implementation(libs.support.annotations)
+    implementation(libs.androidx.compose.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,12 +1,11 @@
 package com.example.core.viewmodel.apiviewmodel
 
-import retrofit2.Callback
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.core.model.api.ApiResponse
 import com.example.core.model.Oder.Order
+import com.example.core.model.api.ApiResponse
 import com.example.core.model.banners.BannersModel
 import com.example.core.model.categories.CategoryModel
 import com.example.core.model.elements.ElementsModel
@@ -17,9 +16,11 @@ import com.example.core.model.revenue.RevenueData
 import com.example.core.model.revenue.RevenueResponse
 import com.example.core.network.retrofitclients.RetrofitClient
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
 class ApiCallViewModel : ViewModel() {
     private val _banner = MutableLiveData<List<BannersModel>>()
     private val _category = MutableLiveData<MutableList<CategoryModel>>()
@@ -463,28 +464,19 @@ class ApiCallViewModel : ViewModel() {
     }
 
     fun loadRecommended() {
-        Log.d("API_REQUEST", "Gửi yêu cầu API để lấy sản phẩm được đề xuất...")
-
         RetrofitClient.instance.getRecommendedProducts(1)
             .enqueue(object : Callback<List<ProductsModel>> {
                 override fun onResponse(
                     call: Call<List<ProductsModel>>,
                     response: Response<List<ProductsModel>>
                 ) {
-                    Log.d("API_RESPONSE", "Nhận phản hồi từ API - Code: ${response.code()}")
                     if (response.isSuccessful) {
                         val productList = response.body()?.toMutableList() ?: mutableListOf()
                         _recommended.value = productList
-                        Log.d("API_RESPONSE", "Số lượng sản phẩm nhận được: ${productList.size}")
-                        productList.forEachIndexed { index, item ->
-                            Log.d("API_RESPONSE", "Sản phẩm [$index]: $item")
-                        }
-
                     } else {
                         Log.e("API_ERROR", "Lỗi Response Code: ${response.code()}")
                     }
                 }
-
                 override fun onFailure(call: Call<List<ProductsModel>>, t: Throwable) {
                     Log.e("API_ERROR", "Lỗi khi gọi API: ${t.message}")
                 }
@@ -537,9 +529,7 @@ class ApiCallViewModel : ViewModel() {
                     Log.e("API_ERROR", "Error: ${t.message}")
                 }
             })
-
     }
-
     fun loadCategory() {
         RetrofitClient.instance.getCategories()
             .enqueue(object : Callback<List<CategoryModel>> {
